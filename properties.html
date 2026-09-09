@@ -124,6 +124,17 @@
     <!-- PAGE BODY -->
     <div class="page-body">
 
+      <nav class="property-management-nav" id="propertyManagementNav" aria-label="Property management sections">
+        <button class="property-management-tab active" type="button" data-property-view="properties" aria-pressed="true">
+          All Properties
+        </button>
+        <button class="property-management-tab" type="button" data-property-view="market-insights" aria-pressed="false">
+          Market Insights
+        </button>
+      </nav>
+
+      <div class="property-management-view" id="propertiesManagementView">
+
       <!-- PROPERTY STATS -->
       <section class="stats-grid prop-stats" id="propStatsGrid">
         <div class="stat-card" data-accent="blue">
@@ -299,6 +310,86 @@
         </div>
       </section>
 
+      </div><!-- end properties-management-view -->
+
+      <section class="property-management-view market-management-view" id="marketInsightsManagementView" hidden>
+        <div class="market-insights-header">
+          <div>
+            <h2 class="market-management-title">Market Insights</h2>
+            <p class="market-management-desc">Manage the data that powers Average price by bedroom and Price Trends on public property pages.</p>
+          </div>
+          <button class="action-btn primary" type="button" id="marketAddButton" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Market Statistic
+          </button>
+        </div>
+
+        <div class="market-insights-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Published statistics are visible on eligible public property pages. Draft statistics remain available only to authorized administrators.
+        </div>
+
+        <div class="market-filter-card" aria-label="Market statistic filters">
+          <div class="market-filter-field">
+            <label for="marketFilterArea">Area</label>
+            <select id="marketFilterArea"><option value="">All approved areas</option></select>
+          </div>
+          <div class="market-filter-field">
+            <label for="marketFilterPropertyType">Property Type</label>
+            <select id="marketFilterPropertyType">
+              <option value="">All property types</option>
+              <option value="House">House</option>
+              <option value="Apartment">Apartment</option>
+            </select>
+          </div>
+          <div class="market-filter-field">
+            <label for="marketFilterPurpose">Purpose</label>
+            <select id="marketFilterPurpose"><option value="For Sale">For Sale</option></select>
+          </div>
+          <div class="market-filter-field">
+            <label for="marketFilterCurrency">Currency</label>
+            <select id="marketFilterCurrency">
+              <option value="">All currencies</option>
+              <option value="ZMW">ZMW</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+          <div class="market-filter-field market-filter-year">
+            <label for="marketFilterYear">Year</label>
+            <input id="marketFilterYear" type="number" min="1900" max="9999" inputmode="numeric" placeholder="All years" />
+          </div>
+          <button class="action-btn outline market-filter-reset" type="button" id="marketFilterReset">Reset</button>
+        </div>
+
+        <section class="market-statistics-list" aria-labelledby="marketStatisticsTitle">
+          <div class="market-statistics-list-heading">
+            <div>
+              <h3 id="marketStatisticsTitle">Existing Statistics</h3>
+              <p id="marketStatisticsSummary">Approved production markets only</p>
+            </div>
+          </div>
+          <div class="market-state" id="marketLoadingState" role="status">
+            <span class="market-loading-spinner" aria-hidden="true"></span>
+            Loading market statistics…
+          </div>
+          <div class="market-state market-state-error" id="marketErrorState" role="alert" hidden>
+            Market statistics could not be loaded. Please try again.
+          </div>
+          <div class="empty-state market-empty-state" id="marketEmptyState" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="4" y1="19" x2="20" y2="19"/><rect x="6" y="11" width="3" height="6"/><rect x="11" y="7" width="3" height="10"/><rect x="16" y="3" width="3" height="14"/></svg>
+            <h3>No market statistics found</h3>
+            <p>No market statistics have been added for these filters yet.</p>
+          </div>
+          <div class="market-table-wrap" id="marketTableWrap" hidden>
+            <table class="prop-table market-statistics-table">
+              <thead><tr><th>Area</th><th>Property Type</th><th>Bedroom Type</th><th>Year</th><th>Average Price</th><th>Sample Size</th><th>Currency</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody id="marketStatisticsBody"></tbody>
+            </table>
+          </div>
+          <div class="market-statistic-cards" id="marketStatisticCards" hidden></div>
+        </section>
+      </section>
+
     </div><!-- end page-body -->
   </main>
 
@@ -422,6 +513,51 @@
               </select>
             </div>
           </div>
+
+          <div class="form-section-label">Map Location</div>
+          <p class="form-section-help">
+            Optional. These details place the property on its public website map without replacing the area or full address above.
+          </p>
+          <div class="form-row">
+            <div class="form-group half">
+              <label for="fLocationLabel">Location Label</label>
+              <input type="text" id="fLocationLabel" placeholder="e.g. Ibex Hill, Lusaka" />
+              <p class="form-help">The visitor-friendly location shown above the map.</p>
+            </div>
+            <div class="form-group half">
+              <label for="fMapAddress">Map Address</label>
+              <input type="text" id="fMapAddress" placeholder="e.g. Plot 42, Twin Palm Road, Ibex Hill, Lusaka" />
+              <p class="form-help">An optional, more specific address shown with the map.</p>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group half">
+              <label for="fLatitude">Latitude</label>
+              <input type="number" id="fLatitude" inputmode="decimal" step="0.000001" min="-90" max="90"
+                placeholder="e.g. -15.416700" aria-describedby="coordinateHelp coordinateValidationMessage" />
+            </div>
+            <div class="form-group half">
+              <label for="fLongitude">Longitude</label>
+              <input type="number" id="fLongitude" inputmode="decimal" step="0.000001" min="-180" max="180"
+                placeholder="e.g. 28.283300" aria-describedby="coordinateHelp coordinateValidationMessage" />
+            </div>
+          </div>
+          <div class="coordinate-feedback">
+            <p class="form-help" id="coordinateHelp">Enter both coordinates to show the map, or leave both blank.</p>
+            <p class="coordinate-validation-message" id="coordinateValidationMessage" role="alert" hidden></p>
+          </div>
+
+          <div class="form-section-label">Market Insights</div>
+          <section class="property-market-status" id="propertyMarketStatus" aria-live="polite" aria-busy="false">
+            <div class="property-market-status__icon" id="propertyMarketStatusIcon" aria-hidden="true">i</div>
+            <div class="property-market-status__content">
+              <p class="property-market-status__title" id="propertyMarketStatusTitle">Complete the market details to check availability</p>
+              <p class="property-market-status__message" id="propertyMarketStatusMessage">Area, property type, purpose, currency and bedrooms are used only to look up published Market Insights.</p>
+              <div class="property-market-status__meta" id="propertyMarketStatusMeta" hidden></div>
+              <div class="property-market-status__prices" id="propertyMarketStatusPrices" hidden></div>
+            </div>
+            <button class="action-btn outline small property-market-status__action" type="button" id="propertyMarketStatusAction" hidden></button>
+          </section>
 
           <div class="form-section-label">Specifications</div>
           <div class="form-row specs-row">
@@ -637,6 +773,80 @@
     </div><!-- end modal-inner -->
   </div><!-- end prop-modal -->
 
+  <div class="prop-modal market-statistic-modal" id="marketStatisticModal" role="dialog" aria-modal="true" aria-labelledby="marketStatisticModalTitle">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="marketStatisticModalTitle">Add Market Statistic</h2>
+          <p class="modal-subtitle" id="marketStatisticModalSubtitle">Add an approved market price observation.</p>
+        </div>
+        <button class="modal-close" type="button" id="marketStatisticModalClose" aria-label="Close market statistic form">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form class="market-statistic-form" id="marketStatisticForm" novalidate>
+        <div class="form-row">
+          <div class="form-group half"><label for="marketArea">Area</label><select id="marketArea" required></select></div>
+          <div class="form-group half"><label for="marketPropertyType">Property Type</label><select id="marketPropertyType" required><option value="House">House</option><option value="Apartment">Apartment</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group half"><label for="marketPurpose">Purpose</label><select id="marketPurpose" required><option value="For Sale">For Sale</option></select></div>
+          <div class="form-group half"><label for="marketCurrency">Currency</label><select id="marketCurrency" required><option value="ZMW">ZMW</option><option value="USD">USD</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group half"><label for="marketBedroom">Bedroom Type</label><select id="marketBedroom" required><option value="1">1 Bedroom</option><option value="2">2 Bedrooms</option><option value="3">3 Bedrooms</option><option value="4">4 Bedrooms</option><option value="5_plus">5+ Bedrooms</option></select></div>
+          <div class="form-group half"><label for="marketYear">Year</label><input id="marketYear" type="number" min="1900" max="9999" step="1" inputmode="numeric" required /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group half">
+            <label for="marketAveragePrice">Average Price</label>
+            <input id="marketAveragePrice" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="e.g. 2570000" required />
+            <small class="market-field-help">Enter the numeric amount without currency symbols or separators.</small>
+          </div>
+          <div class="form-group half">
+            <label for="marketSampleSize">Sample Size</label>
+            <input id="marketSampleSize" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 12" required />
+            <small class="market-field-help">Number of comparable observations supporting this statistic.</small>
+          </div>
+        </div>
+        <div class="form-group full market-published-field">
+          <label class="checkbox-label" for="marketPublished">
+            <input id="marketPublished" type="checkbox" />
+            <span><strong>Published</strong><small>Visible on eligible public property pages when enabled.</small></span>
+          </label>
+        </div>
+        <div class="market-form-error" id="marketFormError" role="alert" hidden></div>
+      </form>
+      <div class="modal-footer">
+        <button type="button" class="action-btn outline" id="marketStatisticModalCancel">Cancel</button>
+        <button type="submit" class="action-btn primary" id="marketStatisticSave" form="marketStatisticForm">Save Statistic</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="prop-modal market-confirm-modal" id="marketDeleteModal" role="alertdialog" aria-modal="true" aria-labelledby="marketDeleteTitle" aria-describedby="marketDeleteDescription">
+    <div class="modal-inner">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title" id="marketDeleteTitle">Delete this market statistic?</h2>
+          <p class="modal-subtitle">This action cannot be undone.</p>
+        </div>
+        <button class="modal-close" type="button" id="marketDeleteClose" aria-label="Close delete confirmation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="market-confirm-body">
+        <div class="market-confirm-icon" aria-hidden="true">!</div>
+        <p id="marketDeleteDescription">Removing a published statistic may cause Market Insights to disappear from affected property pages if no suitable data remains.</p>
+        <p class="market-confirm-record" id="marketDeleteRecord"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="action-btn outline" id="marketDeleteCancel">Cancel</button>
+        <button type="button" class="action-btn danger" id="marketDeleteConfirm">Delete Statistic</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== TOAST NOTIFICATION ===== -->
   <div class="toast" id="toast"></div>
 
@@ -644,6 +854,8 @@
   <script src="supabase-config.js"></script>
   <script src="auth-guard.js"></script>
   <script src="currency.js"></script>
+  <script src="market-insights.js"></script>
+  <script src="market-insights-admin.js"></script>
   <script src="properties.js"></script>
 </body>
 </html>

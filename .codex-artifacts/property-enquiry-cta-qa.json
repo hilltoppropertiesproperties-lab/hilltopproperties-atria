@@ -1,0 +1,352 @@
+[
+  {
+    "name": "mobile-375",
+    "width": 375,
+    "height": 667,
+    "pass": {
+      "viewport": true,
+      "singleCta": true,
+      "responsivePosition": true,
+      "attachedToViewport": true,
+      "styleMatchesConnect": true,
+      "noHorizontalOverflow": true,
+      "footerClear": true,
+      "propertyMessage": true,
+      "interaction": true
+    },
+    "passed": true,
+    "initial": {
+      "viewport": [
+        375,
+        667
+      ],
+      "buttonCount": 1,
+      "position": "fixed",
+      "barRect": {
+        "top": 592,
+        "right": 375,
+        "bottom": 667,
+        "left": 0,
+        "height": 75
+      },
+      "style": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)",
+        "minHeight": "50px"
+      },
+      "connectStyle": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)"
+      },
+      "horizontalOverflow": false,
+      "propertyMessage": "Hello, I'm interested in FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE (HT-LS-34561). Please share more details.",
+      "propertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16"
+    },
+    "afterScroll": {
+      "scrollY": 1548,
+      "top": 592,
+      "bottom": 667,
+      "height": 75
+    },
+    "footerCheck": {
+      "barTop": 592,
+      "footerBottom": 580.546875,
+      "adminBottom": 580.546875,
+      "adminAboveBar": true,
+      "scrollBottomGap": 0
+    },
+    "interaction": {
+      "modalOpen": true,
+      "ariaHidden": "false",
+      "activeElement": "enquiryName",
+      "enquiryPropertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16",
+      "enquiryDisplay": "HT-LS-34561 - FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE",
+      "enquiryNotes": "Website enquiry for property HT-LS-34561",
+      "modalZ": "100",
+      "barZ": "90"
+    },
+    "consoleErrors": []
+  },
+  {
+    "name": "mobile-390",
+    "width": 390,
+    "height": 844,
+    "pass": {
+      "viewport": true,
+      "singleCta": true,
+      "responsivePosition": true,
+      "attachedToViewport": true,
+      "styleMatchesConnect": true,
+      "noHorizontalOverflow": true,
+      "footerClear": true,
+      "propertyMessage": true,
+      "interaction": true
+    },
+    "passed": true,
+    "initial": {
+      "viewport": [
+        390,
+        844
+      ],
+      "buttonCount": 1,
+      "position": "fixed",
+      "barRect": {
+        "top": 769,
+        "right": 390,
+        "bottom": 844,
+        "left": 0,
+        "height": 75
+      },
+      "style": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)",
+        "minHeight": "50px"
+      },
+      "connectStyle": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)"
+      },
+      "horizontalOverflow": false,
+      "propertyMessage": "Hello, I'm interested in FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE (HT-LS-34561). Please share more details.",
+      "propertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16"
+    },
+    "afterScroll": {
+      "scrollY": 1559,
+      "top": 769,
+      "bottom": 844,
+      "height": 75
+    },
+    "footerCheck": {
+      "barTop": 769,
+      "footerBottom": 757.921875,
+      "adminBottom": 757.921875,
+      "adminAboveBar": true,
+      "scrollBottomGap": 0
+    },
+    "interaction": {
+      "modalOpen": true,
+      "ariaHidden": "false",
+      "activeElement": "enquiryName",
+      "enquiryPropertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16",
+      "enquiryDisplay": "HT-LS-34561 - FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE",
+      "enquiryNotes": "Website enquiry for property HT-LS-34561",
+      "modalZ": "100",
+      "barZ": "90"
+    },
+    "consoleErrors": []
+  },
+  {
+    "name": "mobile-430",
+    "width": 430,
+    "height": 932,
+    "pass": {
+      "viewport": true,
+      "singleCta": true,
+      "responsivePosition": true,
+      "attachedToViewport": true,
+      "styleMatchesConnect": true,
+      "noHorizontalOverflow": true,
+      "footerClear": true,
+      "propertyMessage": true,
+      "interaction": true
+    },
+    "passed": true,
+    "initial": {
+      "viewport": [
+        430,
+        932
+      ],
+      "buttonCount": 1,
+      "position": "fixed",
+      "barRect": {
+        "top": 857,
+        "right": 430,
+        "bottom": 932,
+        "left": 0,
+        "height": 75
+      },
+      "style": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)",
+        "minHeight": "50px"
+      },
+      "connectStyle": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)"
+      },
+      "horizontalOverflow": false,
+      "propertyMessage": "Hello, I'm interested in FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE (HT-LS-34561). Please share more details.",
+      "propertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16"
+    },
+    "afterScroll": {
+      "scrollY": 1578,
+      "top": 857,
+      "bottom": 932,
+      "height": 75
+    },
+    "footerCheck": {
+      "barTop": 857,
+      "footerBottom": 845.921875,
+      "adminBottom": 845.921875,
+      "adminAboveBar": true,
+      "scrollBottomGap": 0
+    },
+    "interaction": {
+      "modalOpen": true,
+      "ariaHidden": "false",
+      "activeElement": "enquiryName",
+      "enquiryPropertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16",
+      "enquiryDisplay": "HT-LS-34561 - FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE",
+      "enquiryNotes": "Website enquiry for property HT-LS-34561",
+      "modalZ": "100",
+      "barZ": "90"
+    },
+    "consoleErrors": []
+  },
+  {
+    "name": "tablet-768",
+    "width": 768,
+    "height": 900,
+    "pass": {
+      "viewport": true,
+      "singleCta": true,
+      "responsivePosition": true,
+      "attachedToViewport": true,
+      "styleMatchesConnect": true,
+      "noHorizontalOverflow": true,
+      "footerClear": true,
+      "propertyMessage": true,
+      "interaction": true
+    },
+    "passed": true,
+    "initial": {
+      "viewport": [
+        768,
+        900
+      ],
+      "buttonCount": 1,
+      "position": "static",
+      "barRect": {
+        "top": 3359.140625,
+        "right": 753,
+        "bottom": 3485.140625,
+        "left": 0,
+        "height": 126
+      },
+      "style": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)",
+        "minHeight": "50px"
+      },
+      "connectStyle": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)"
+      },
+      "horizontalOverflow": false,
+      "propertyMessage": "Hello, I'm interested in FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE (HT-LS-34561). Please share more details.",
+      "propertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16"
+    },
+    "afterScroll": {
+      "scrollY": 1600,
+      "top": 1759.140625,
+      "bottom": 1885.140625,
+      "height": 126
+    },
+    "footerCheck": {
+      "barTop": 704.140625,
+      "footerBottom": 900.140625,
+      "adminBottom": 900.140625,
+      "adminAboveBar": false,
+      "scrollBottomGap": 0
+    },
+    "interaction": {
+      "modalOpen": true,
+      "ariaHidden": "false",
+      "activeElement": "enquiryName",
+      "enquiryPropertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16",
+      "enquiryDisplay": "HT-LS-34561 - FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE",
+      "enquiryNotes": "Website enquiry for property HT-LS-34561",
+      "modalZ": "100",
+      "barZ": "auto"
+    },
+    "consoleErrors": []
+  },
+  {
+    "name": "desktop-1440",
+    "width": 1440,
+    "height": 1000,
+    "pass": {
+      "viewport": true,
+      "singleCta": true,
+      "responsivePosition": true,
+      "attachedToViewport": true,
+      "styleMatchesConnect": true,
+      "noHorizontalOverflow": true,
+      "footerClear": true,
+      "propertyMessage": true,
+      "interaction": true
+    },
+    "passed": true,
+    "initial": {
+      "viewport": [
+        1440,
+        1000
+      ],
+      "buttonCount": 1,
+      "position": "static",
+      "barRect": {
+        "top": 3251.203125,
+        "right": 1425,
+        "bottom": 3377.203125,
+        "left": 0,
+        "height": 126
+      },
+      "style": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)",
+        "minHeight": "50px"
+      },
+      "connectStyle": {
+        "background": "rgb(220, 239, 249)",
+        "border": "rgb(173, 213, 237)",
+        "color": "rgb(11, 82, 127)"
+      },
+      "horizontalOverflow": false,
+      "propertyMessage": "Hello, I'm interested in FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE (HT-LS-34561). Please share more details.",
+      "propertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16"
+    },
+    "afterScroll": {
+      "scrollY": 1600,
+      "top": 1651.203125,
+      "bottom": 1777.203125,
+      "height": 126
+    },
+    "footerCheck": {
+      "barTop": 804.203125,
+      "footerBottom": 1000.203125,
+      "adminBottom": 1000.203125,
+      "adminAboveBar": false,
+      "scrollBottomGap": 0
+    },
+    "interaction": {
+      "modalOpen": true,
+      "ariaHidden": "false",
+      "activeElement": "enquiryName",
+      "enquiryPropertyId": "e95bb8cc-a5a4-4837-9360-9c1108d16a16",
+      "enquiryDisplay": "HT-LS-34561 - FULLY FURNISHED HOUSE FOR RENT IN LIVINGSTONE",
+      "enquiryNotes": "Website enquiry for property HT-LS-34561",
+      "modalZ": "100",
+      "barZ": "auto"
+    },
+    "consoleErrors": []
+  }
+]

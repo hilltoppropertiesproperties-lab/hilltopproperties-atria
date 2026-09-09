@@ -12,12 +12,18 @@
 
   function showError(message) {
     errorBox.textContent = message;
+    errorBox.classList.remove('success');
     errorBox.classList.add('show');
+  }
+
+  function showSuccess(message) {
+    errorBox.textContent = message;
+    errorBox.classList.add('success', 'show');
   }
 
   function clearError() {
     errorBox.textContent = '';
-    errorBox.classList.remove('show');
+    errorBox.classList.remove('show', 'success');
   }
 
   function showRedirectReasonMessage() {
@@ -36,6 +42,11 @@
 
     if (reason === 'session_expired') {
       showError('Your session has expired. Please sign in again.');
+      return;
+    }
+
+    if (reason === 'password_reset') {
+      showSuccess('Your password has been changed successfully. Sign in using your new password.');
     }
   }
 

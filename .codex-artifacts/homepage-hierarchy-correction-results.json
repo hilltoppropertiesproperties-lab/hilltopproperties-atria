@@ -1,0 +1,184 @@
+{
+  "errors": [],
+  "warnings": [],
+  "failedResponses": [],
+  "viewports": [
+    {
+      "width": 1440,
+      "titles": [
+        "Property for Sale",
+        "Property for Rent",
+        "New Developments"
+      ],
+      "overflow": false,
+      "gap": 76,
+      "saleScrollable": true,
+      "discoveryBeforeDivisions": true,
+      "divisionsBeforeExclusive": true
+    },
+    {
+      "width": 1024,
+      "titles": [
+        "Property for Sale",
+        "Property for Rent",
+        "New Developments"
+      ],
+      "overflow": false,
+      "gap": 76,
+      "saleScrollable": true,
+      "discoveryBeforeDivisions": true,
+      "divisionsBeforeExclusive": true
+    },
+    {
+      "width": 768,
+      "titles": [
+        "Property for Sale",
+        "Property for Rent",
+        "New Developments"
+      ],
+      "overflow": false,
+      "gap": 76,
+      "saleScrollable": true,
+      "discoveryBeforeDivisions": true,
+      "divisionsBeforeExclusive": true
+    },
+    {
+      "width": 430,
+      "titles": [
+        "Property for Sale",
+        "Property for Rent",
+        "New Developments"
+      ],
+      "overflow": false,
+      "gap": 48,
+      "saleScrollable": true,
+      "discoveryBeforeDivisions": true,
+      "divisionsBeforeExclusive": true
+    },
+    {
+      "width": 375,
+      "titles": [
+        "Property for Sale",
+        "Property for Rent",
+        "New Developments"
+      ],
+      "overflow": false,
+      "gap": 48,
+      "saleScrollable": true,
+      "discoveryBeforeDivisions": true,
+      "divisionsBeforeExclusive": true
+    }
+  ],
+  "interactions": {
+    "developments": {
+      "cards": 0,
+      "controls": 2,
+      "controlsDisabled": true,
+      "viewAllTag": "SPAN",
+      "viewAllDisabled": "true",
+      "emptyText": "New development listings are not yet available."
+    },
+    "exclusiveLoading": {
+      "visible": true,
+      "busy": "true",
+      "skeletons": 5
+    },
+    "saleCard": {
+      "href": "property-details.html?id=5febe5a1-ce7b-4832-95ac-f59b48945cf6",
+      "images": [
+        {
+          "complete": false,
+          "naturalWidth": 1085,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/5febe5a1-ce7b-4832-95ac-f59b48945cf6/images/1787261611851-chatgpt-image-aug-19-2026-01_09_15-pm.png"
+        },
+        {
+          "complete": true,
+          "naturalWidth": 590,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/7e921d38-45a3-4ec5-a872-ee11ff2b283f/images/1783950203179-731843565_1612888187359017_749108468841141920_n.jpg"
+        },
+        {
+          "complete": true,
+          "naturalWidth": 1280,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/8b473d0e-b857-4b45-ae20-6bd839f84a41/images/1783901934313-img-20260711-wa0091.jpg"
+        },
+        {
+          "complete": true,
+          "naturalWidth": 1600,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/b4151b58-04d7-49b3-bdbf-2b41f6800ee3/images/1783546891374-img-20260708-wa0022.jpg"
+        },
+        {
+          "complete": true,
+          "naturalWidth": 590,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/68d14857-86c2-4889-91cf-96492c977a3e/images/1783093984384-672688178_1549703960344107_2089830722748872406_n.jpg"
+        }
+      ]
+    },
+    "saleCarousel": {
+      "enabled": true,
+      "moved": true
+    },
+    "exclusive": {
+      "hidden": false,
+      "cards": 3,
+      "images": [
+        {
+          "complete": false,
+          "naturalWidth": 1085,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/5febe5a1-ce7b-4832-95ac-f59b48945cf6/images/1787261611851-chatgpt-image-aug-19-2026-01_09_15-pm.png"
+        },
+        {
+          "complete": true,
+          "naturalWidth": 960,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/d71a130e-adb7-4f97-85bb-89e441716051/images/1784488595128-whatsapp-image-2026-07-19-at-9.08.26-pm-1-.jpeg"
+        },
+        {
+          "complete": true,
+          "naturalWidth": 1600,
+          "src": "https://jhyedqmoaenkyzrgpvsc.supabase.co/storage/v1/object/public/property-images/properties/b4151b58-04d7-49b3-bdbf-2b41f6800ee3/images/1783546891374-img-20260708-wa0022.jpg"
+        }
+      ],
+      "goExclusiveHref": "listings.html",
+      "carouselEnabled": true,
+      "carouselMoved": true
+    },
+    "cardOpened": {
+      "url": "http://127.0.0.1:50366/property-details.html?id=5febe5a1-ce7b-4832-95ac-f59b48945cf6",
+      "title": "Luxury Family Villa"
+    },
+    "viewAll": {
+      "purpose": "For Sale",
+      "matching": true,
+      "renderedCards": 5
+    }
+  },
+  "aliases": {
+    "index": {
+      "titles": [
+        "Property for Sale",
+        "Property for Rent",
+        "New Developments"
+      ],
+      "duplicateIds": [],
+      "propertyCount": 10,
+      "exclusiveCount": 3,
+      "order": 4,
+      "featuredDomCount": 0,
+      "featuredTextPresent": false,
+      "goExclusivePresent": true
+    },
+    "website": {
+      "titles": [
+        "Property for Sale",
+        "Property for Rent",
+        "New Developments"
+      ],
+      "duplicateIds": [],
+      "propertyCount": 10,
+      "exclusiveCount": 3,
+      "order": 4,
+      "featuredDomCount": 0,
+      "featuredTextPresent": false,
+      "goExclusivePresent": true
+    }
+  }
+}

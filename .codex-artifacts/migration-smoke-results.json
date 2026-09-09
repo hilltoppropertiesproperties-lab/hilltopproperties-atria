@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "name": "Homepage target features and migrated sections",
+      "result": "PASS",
+      "detail": "Division switcher, featured cards, discovery, property sections, services, decorative map and testimonials present"
+    },
+    {
+      "name": "Homepage modal and form validation",
+      "result": "PASS",
+      "detail": "No enquiry submitted"
+    },
+    {
+      "name": "Homepage mobile navigation and layout",
+      "result": "PASS",
+      "detail": "No horizontal overflow"
+    },
+    {
+      "name": "Property detail, location and market modules",
+      "result": "PASS",
+      "detail": "property-details.html?id=5febe5a1-ce7b-4832-95ac-f59b48945cf6"
+    },
+    {
+      "name": "About, services and construction navigation",
+      "result": "PASS",
+      "detail": "All pages loaded without local resource errors"
+    },
+    {
+      "name": "No runtime or local resource errors",
+      "result": "PASS"
+    },
+    {
+      "name": "Invalid property lookup does not fabricate a listing",
+      "result": "FAIL",
+      "detail": "Pre-existing mock property fallback remains active"
+    }
+  ],
+  "pageErrors": [],
+  "responseErrors": []
+}

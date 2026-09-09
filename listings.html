@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/fonts/proda-sans-medium/proda-sans-medium.css" />
-  <link rel="stylesheet" href="website.css" />
+  <link rel="stylesheet" href="assets/fonts/concise-regular-demo/concise-regular-demo.css" />
+  <link rel="stylesheet" href="website.css?v=20260909-property-card-type" />
 </head>
 <body class="listings-page category-pending">
   <header class="site-header">
@@ -46,29 +47,69 @@
     </section>
 
     <section class="section listings-section">
-      <p class="listing-count" id="listingsCount" hidden></p>
-
-      <div class="listings-controls" aria-label="Property listing controls">
-        <input type="search" id="listingSearchInput" placeholder="Search title, reference, area, address, or type" />
-        <select id="listingPurposeFilter">
-          <option value="all">All purposes</option>
-          <option value="For Sale">Sale</option>
-          <option value="For Rent">Rent</option>
-        </select>
-        <select id="listingTypeFilter">
-          <option value="all">All property types</option>
-        </select>
-        <select id="listingStatusFilter">
-          <option value="all">All public</option>
-          <option value="Active">Active</option>
-          <option value="Under Offer">Under Offer</option>
-        </select>
-        <select id="listingSortSelect">
+      <div class="listing-search-panel" aria-label="Property search">
+        <div class="listing-purpose-row">
+          <div class="listing-purpose-tabs" role="group" aria-label="Purpose">
+            <button type="button" data-listing-purpose="all" aria-pressed="true">All properties</button>
+            <button type="button" data-listing-purpose="For Sale" aria-pressed="false">For Sale</button>
+            <button type="button" data-listing-purpose="For Rent" aria-pressed="false">For Rent</button>
+          </div>
+          <div hidden><label>Purpose<select id="listingPurposeFilter">
+            <option value="all">All purposes</option>
+            <option value="For Sale">Sale</option>
+            <option value="For Rent">Rent</option>
+          </select></label></div>
+        </div>
+        <div class="listings-controls listing-primary-controls">
+          <label>Location<select id="listingProvinceFilter"><option value="all">All Zambia</option></select></label>
+          <label>Property type<select id="listingTypeFilter"><option value="all">All property types</option></select></label>
+          <div class="listing-price-control"><span id="listingPriceLabel">Price</span><button type="button" id="listingPriceToggle" aria-labelledby="listingPriceLabel listingPriceSummary" aria-expanded="false" aria-controls="listingPricePanel"><span id="listingPriceSummary">Any price</span><span aria-hidden="true">⌄</span></button></div>
+          <button class="btn primary listing-show-properties" type="button" id="listingShowProperties">Show properties <span aria-hidden="true">→</span></button>
+        </div>
+        <div id="listingPricePanel" class="listing-disclosure" hidden>
+          <div class="listings-controls listing-price-fields">
+            <label>Currency<select id="listingCurrencyFilter"><option value="all">All currencies</option><option value="ZMW">ZMW</option><option value="USD">USD</option></select></label>
+            <label>Minimum price<input id="listingMinPriceFilter" type="number" min="0" step="any" placeholder="No minimum" aria-describedby="listingPriceHelp" /></label>
+            <label>Maximum price<input id="listingMaxPriceFilter" type="number" min="0" step="any" placeholder="No maximum" aria-describedby="listingPriceHelp" /></label>
+          </div>
+          <p class="listing-filter-help" id="listingPriceHelp">Choose ZMW or USD to set a price range.</p>
+          <button type="button" class="listing-text-button" data-close-panel="listingPricePanel">Done</button>
+        </div>
+        <div class="listing-secondary-actions">
+          <button class="listing-text-button" type="button" id="listingMoreToggle" aria-expanded="false" aria-controls="listingMorePanel"><span aria-hidden="true">+</span> More filters <span id="listingMoreCount"></span></button>
+          <button class="listing-text-button" type="button" id="listingMapToggle" aria-expanded="false" aria-controls="listingMapPanel"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Z M9 3v16 M15 5v16"/></svg> Browse by province</button>
+        </div>
+        <div id="listingMorePanel" class="listing-disclosure" hidden>
+          <div class="listing-disclosure-heading"><h2>Refine your search</h2><button type="button" class="listing-icon-button" data-close-panel="listingMorePanel" aria-label="Close more filters">×</button></div>
+          <div class="listings-controls listing-advanced-controls">
+            <label>City<select id="listingCityFilter"><option value="all">All cities</option></select></label>
+            <label>Area<select id="listingAreaFilter"><option value="all">All areas</option></select></label>
+            <label>Bedrooms<select id="listingBedroomsFilter"><option value="">Any bedrooms</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option><option value="5">5+</option></select></label>
+            <label>Managing branch<select id="listingBranchFilter"><option value="all">All branches</option></select></label>
+            <label>Status<select id="listingStatusFilter"><option value="all">All public</option><option value="Active">Active</option><option value="Under Offer">Under Offer</option></select></label>
+            <label>Search<input type="search" id="listingSearchInput" placeholder="Keyword, reference or address" /></label>
+          </div>
+        </div>
+        <section id="listingMapPanel" class="listing-province-map listing-disclosure" aria-labelledby="listingMapTitle" hidden>
+          <div class="listing-disclosure-heading"><h2 id="listingMapTitle">Browse properties by province</h2><button type="button" class="listing-icon-button" data-close-panel="listingMapPanel" aria-label="Close province map">×</button></div>
+          <div class="listing-map-layout">
+            <div class="listing-map-canvas"><p class="listing-map-country">Zambia</p><div id="listingMapHolder" aria-busy="true"><p>Loading province map…</p></div></div>
+            <div class="listing-map-selection"><p class="eyebrow">Your location</p><h3 id="listingMapSelection">All Zambia</h3><p id="listingMapCount" role="status">Loading properties…</p><button class="btn primary" type="button" id="listingMapView">View properties</button><button class="listing-text-button" type="button" id="listingAllZambia">All Zambia</button></div>
+          </div>
+          <p class="listing-map-credit"><a href="https://paintmaps.com/" target="_blank" rel="noopener">Created with paintmaps.com</a></p>
+        </section>
+      </div>
+      <div class="listing-quick-filters" id="listingQuickFilters" role="group" aria-label="Quick property types" hidden></div>
+      <div class="listing-active-filters" id="listingActiveFilters" aria-label="Active filters" hidden></div>
+      <p class="listing-filter-help" id="listingFilterMessage" role="status"></p>
+      <div class="listing-results-heading" id="listingResultsHeading" tabindex="-1">
+        <p class="listing-count" id="listingsCount" aria-live="polite" hidden></p>
+        <div class="listings-controls listing-sort-control"><label>Sort by<select id="listingSortSelect">
           <option value="newest">Newest</option>
           <option value="price-low">Price low to high</option>
           <option value="price-high">Price high to low</option>
           <option value="featured">Featured first</option>
-        </select>
+        </select></label></div>
       </div>
 
       <div class="listing-results" aria-live="polite" aria-busy="true">
@@ -145,6 +186,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="currency.js"></script>
-  <script src="website.js"></script>
+  <script src="website.js?v=20260908-filter-migration"></script>
 </body>
 </html>

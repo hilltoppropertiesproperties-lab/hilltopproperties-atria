@@ -8,13 +8,23 @@ var publicState = {
   exclusiveProperties: [],
   images: [],
   branches: [],
+  provinces: [],
+  cities: [],
+  province: 'all',
+  city: 'all',
+  area: 'all',
+  currency: 'all',
+  minPrice: '',
+  maxPrice: '',
+  minBedrooms: '',
+  listingsLoaded: false,
   homepage: null,
   banners: [],
   testimonials: [],
-  featuredRows: [],
   propertyServices: null,
   appSettings: {},
   search: '',
+  locationText: '',
   purpose: 'all',
   type: 'all',
   branch: 'all',
@@ -275,11 +285,12 @@ function buildPublicPropertyQuery(supabase, fields) {
 }
 
 async function selectPublicPropertyRows(supabase) {
-  var response = await buildPublicPropertyQuery(supabase, PUBLIC_PROPERTY_FIELDS);
+  var geography = byId('discoveryForm') ? ', province_id, city_id, area_slug' : '';
+  var response = await buildPublicPropertyQuery(supabase, PUBLIC_PROPERTY_FIELDS + geography);
 
   if (isMissingCurrencyColumnError(response.error)) {
     console.warn('[Hilltop] The property currency migration is not applied. Public properties are loading with the legacy ZMW fallback.');
-    response = await buildPublicPropertyQuery(supabase, LEGACY_PUBLIC_PROPERTY_FIELDS);
+    response = await buildPublicPropertyQuery(supabase, LEGACY_PUBLIC_PROPERTY_FIELDS + geography);
   }
 
   return response;
@@ -295,9 +306,13 @@ async function loadPublicData() {
 
   showStatus('Loading website content...');
 
+  var propertiesLoaded = false;
   var results = await Promise.all([
     safeSelect('properties', function () {
-      return selectPublicPropertyRows(supabase);
+      return selectPublicPropertyRows(supabase).then(function (response) {
+        propertiesLoaded = !response.error;
+        return response;
+      });
     }),
     safeSelect('property images', function () {
       return supabase
@@ -332,13 +347,6 @@ async function loadPublicData() {
         .eq('is_visible', true)
         .order('display_order', { ascending: true });
     }),
-    safeSelect('CMS featured properties', function () {
-      return supabase
-        .from('cms_featured_properties')
-        .select('id, property_id, display_order, is_visible')
-        .eq('is_visible', true)
-        .order('display_order', { ascending: true });
-    }),
     safeSelect('app settings', function () {
       return supabase
         .from('app_settings')
@@ -353,30 +361,30 @@ async function loadPublicData() {
         .eq('exclusive_property', true)
         .eq('status', 'Active')
         .order('created_at', { ascending: false });
+    }),
+    safeSelect('provinces', function () {
+      return supabase.from('provinces').select('id, name, slug, map_key, sort_order').order('sort_order');
+    }),
+    safeSelect('cities', function () {
+      return supabase.from('cities').select('id, province_id, name, slug').order('name');
     })
   ]);
 
+  publicState.listingsLoaded = propertiesLoaded;
   publicState.properties = results[0];
   publicState.images = results[1];
   publicState.branches = results[2];
   publicState.homepage = results[3] && results[3].length ? results[3][0] : null;
   publicState.banners = results[4];
   publicState.testimonials = results[5];
-  publicState.featuredRows = results[6];
   publicState.appSettings = {};
-  (results[7] || []).forEach(function (row) {
+  (results[6] || []).forEach(function (row) {
     publicState.appSettings[row.setting_key] = row.setting_value || {};
   });
-  publicState.propertyServices = results[8];
-  publicState.exclusiveProperties = results[9] || [];
-
-  // Injected mock properties fallback if DB is empty
-  if (!publicState.properties.length && typeof getMockProperties === 'function') {
-    console.warn("Using local mock properties database for testing/screenshot rendering.");
-    publicState.properties = getMockProperties();
-    publicState.images = getMockPropertyImages();
-    publicState.branches = getMockBranches();
-  }
+  publicState.propertyServices = results[7];
+  publicState.exclusiveProperties = results[8] || [];
+  publicState.provinces = results[9] || [];
+  publicState.cities = results[10] || [];
 
   renderWebsite();
   hideStatus();
@@ -419,6 +427,7 @@ async function loadSharedPublicData() {
 
 async function loadListingsData() {
   var supabase = getSupabaseClient();
+  publicState.listingsLoaded = false;
   setListingsViewState('loading');
 
   if (!supabase) {
@@ -429,7 +438,7 @@ async function loadListingsData() {
 
   try {
     var results = await Promise.all([
-      selectPublicPropertyRows(supabase),
+      buildPublicPropertyQuery(supabase, PUBLIC_PROPERTY_FIELDS + ', province_id, city_id, area_slug'),
       supabase
         .from('property_images')
         .select('property_id, image_url, display_order, is_cover')
@@ -441,7 +450,9 @@ async function loadListingsData() {
       supabase
         .from('app_settings')
         .select('setting_key, setting_value')
-        .in('setting_key', PUBLIC_SETTING_KEYS)
+        .in('setting_key', PUBLIC_SETTING_KEYS),
+      supabase.from('provinces').select('id, name, slug, map_key, sort_order').order('sort_order'),
+      supabase.from('cities').select('id, province_id, name, slug').order('name')
     ]);
 
     results.forEach(function (result) {
@@ -451,25 +462,22 @@ async function loadListingsData() {
     publicState.properties = results[0].data || [];
     publicState.images = results[1].data || [];
     publicState.branches = results[2].data || [];
-
-    // Injected mock properties fallback if DB is empty
-    if (!publicState.properties.length && typeof getMockProperties === 'function') {
-      console.warn("Using local mock properties database for testing/screenshot rendering.");
-      publicState.properties = getMockProperties();
-      publicState.images = getMockPropertyImages();
-      publicState.branches = getMockBranches();
-    }
+    publicState.provinces = results[4].data || [];
+    publicState.cities = results[5].data || [];
 
     publicState.appSettings = {};
     (results[3].data || []).forEach(function (row) {
       publicState.appSettings[row.setting_key] = row.setting_value || {};
     });
 
+    publicState.listingsLoaded = true;
+    readListingUrl();
     renderListingsPage();
   } catch (error) {
     console.warn('Public listings could not be loaded.', error);
     publicState.properties = [];
     publicState.images = [];
+    publicState.listingsLoaded = false;
     renderListingsTypeFilter();
     setListingsViewState('error', 'We could not load listings right now. Please try again shortly or contact Hilltop Properties.');
   }
@@ -687,45 +695,6 @@ function renderHero() {
   );
 }
 
-function resolveFeaturedProperties() {
-  var allPublic = (publicState.properties || []).filter(function (p) {
-    if (!p) return false;
-    var status = String(p.status || '').toLowerCase();
-    return status === 'active' || status === 'under offer';
-  });
-
-  var propertyLookup = buildLookup(publicState.properties);
-  var featuredFromCMS = (publicState.featuredRows || [])
-    .map(function (row) { return propertyLookup[String(row.property_id)]; })
-    .filter(Boolean)
-    .filter(function (p) {
-      var status = String(p.status || '').toLowerCase();
-      return p.featured === true && (status === 'active' || status === 'under offer');
-    });
-
-  var featuredFromData = allPublic.filter(function (p) {
-    return p.featured === true;
-  });
-
-  var featuredList = [];
-  var seenIds = {};
-
-  function addUnique(list) {
-    for (var i = 0; i < list.length; i++) {
-      var p = list[i];
-      if (p && !seenIds[p.id]) {
-        seenIds[p.id] = true;
-        featuredList.push(p);
-      }
-    }
-  }
-
-  addUnique(featuredFromCMS);
-  addUnique(featuredFromData);
-
-  return featuredList.slice(0, 3);
-}
-
 function propertyStatusClass(status) {
   var value = String(status || '').toLowerCase();
   if (value === 'active') return 'status-active';
@@ -734,17 +703,66 @@ function propertyStatusClass(status) {
   return 'status-default';
 }
 
-function featuredPropertyCard(property) {
-  return propertyCard(property);
+function propertyTitleForDisplay(value) {
+  var title = String(value || '').replace(/\s+/g, ' ').trim();
+  var letters = title.match(/[A-Za-z]/g);
+
+  // Preserve titles that already contain intentional mixed-case formatting.
+  if (!letters || title !== title.toUpperCase()) return title;
+
+  var minorWords = {
+    a: true,
+    an: true,
+    and: true,
+    as: true,
+    at: true,
+    by: true,
+    for: true,
+    from: true,
+    in: true,
+    of: true,
+    on: true,
+    or: true,
+    the: true,
+    to: true,
+    via: true,
+    with: true
+  };
+  var acronyms = {
+    cbd: 'CBD',
+    mls: 'MLS',
+    unza: 'UNZA',
+    usd: 'USD',
+    usa: 'USA',
+    uae: 'UAE',
+    uk: 'UK',
+    zmw: 'ZMW'
+  };
+  var wordIndex = 0;
+
+  return title.toLowerCase().replace(/[a-z]+(?:['’][a-z]+)*/g, function (word) {
+    var replacement = acronyms[word];
+    var isFirstWord = wordIndex === 0;
+    wordIndex += 1;
+
+    if (replacement) return replacement;
+    if (!isFirstWord && minorWords[word]) return word;
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  });
 }
 
-function propertyCard(property) {
+function propertyCard(property, variant) {
+  var isHomepageCard = variant === 'homepage';
   var image = getCoverImage(property.id);
   var detailsUrl = 'property-details.html?id=' + encodeURIComponent(property.id);
   var detailsLabel = 'View details for ' + (property.title || property.reference_number || 'Hilltop property');
+  var displayTitle = propertyTitleForDisplay(property.title || property.reference_number || 'Hilltop property');
   var statusClass = propertyStatusClass(property.status);
   var location = property.area || getBranchName(property.branch_id) || 'Location available on request';
   var imageMarkup = image ? '<img class="property-card-img" src="' + escapeHtml(image) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'" />' : '';
+  var statusBadgeMarkup = isHomepageCard
+    ? ''
+    : '<span class="badge status-badge ' + statusClass + '">' + escapeHtml(property.status) + '</span>';
 
   var specHtmls = [];
   var isLand = String(property.property_type || '').toLowerCase() === 'land';
@@ -799,7 +817,7 @@ function propertyCard(property) {
   var specsHtml = specHtmls.length ? '<div class="property-card-specs">' + specHtmls.join('') + '</div>' : '';
 
   return [
-    '<a class="property-card" href="' + detailsUrl + '" aria-label="' + escapeHtml(detailsLabel) + '">',
+    '<a class="property-card' + (isHomepageCard ? ' property-card--homepage' : '') + '" href="' + detailsUrl + '" aria-label="' + escapeHtml(detailsLabel) + '">',
     '<div class="property-card-image-wrapper">',
     '<div class="property-card-placeholder" aria-hidden="true">',
     '<svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
@@ -811,27 +829,22 @@ function propertyCard(property) {
     imageMarkup,
     '<div class="property-card-badges">',
     '<span class="badge purpose-badge">' + escapeHtml(property.purpose) + '</span>',
-    '<span class="badge status-badge ' + statusClass + '">' + escapeHtml(property.status) + '</span>',
+    statusBadgeMarkup,
     '</div>',
-    '<div class="property-card-overlay-label">',
-    '<span class="property-card-ref">' + escapeHtml(property.reference_number) + '</span>',
-    '<h4 class="property-card-overlay-title">' + escapeHtml(property.title) + '</h4>',
-    '</div>',
+    isHomepageCard
+      ? '<span class="property-card-verified">HILLTOP.Verified</span>'
+      : '<div class="property-card-overlay-label"><span class="property-card-ref">' +
+        escapeHtml(property.reference_number) + '</span><h4 class="property-card-overlay-title">' +
+        escapeHtml(property.title) + '</h4></div>',
     '</div>',
     '<div class="property-card-body">',
     '<div class="property-card-price">' + formatPrice(property.price, property.purpose, property.currency_code, property.billing_period) + '</div>',
+    isHomepageCard ? '<h4 class="property-card-title">' + escapeHtml(displayTitle) + '</h4>' : '',
     '<p class="property-card-location">' + escapeHtml(location) + ' &middot; ' + escapeHtml(property.property_type) + '</p>',
     specsHtml,
     '</div>',
     '</a>'
   ].join('');
-}
-
-function renderFeatured() {
-  if (!byId('featuredGrid') || !byId('featuredEmpty')) return;
-  var featured = resolveFeaturedProperties();
-  byId('featuredGrid').innerHTML = featured.map(featuredPropertyCard).join('');
-  byId('featuredEmpty').style.display = featured.length ? 'none' : 'block';
 }
 
 function resolveMoreProperties() {
@@ -1090,15 +1103,431 @@ function compareListingPricesWithinCurrency(a, b, direction) {
   return direction * (Number(a.price || 0) - Number(b.price || 0));
 }
 
+var listingControlFields = {
+  listingSearchInput: 'search',
+  listingProvinceFilter: 'province',
+  listingCityFilter: 'city',
+  listingAreaFilter: 'area',
+  listingBranchFilter: 'branch',
+  listingPurposeFilter: 'purpose',
+  listingTypeFilter: 'type',
+  listingCurrencyFilter: 'currency',
+  listingMinPriceFilter: 'minPrice',
+  listingMaxPriceFilter: 'maxPrice',
+  listingBedroomsFilter: 'minBedrooms',
+  listingStatusFilter: 'publicStatus',
+  listingSortSelect: 'sort'
+};
+
+function readListingUrl() {
+  var query = new URLSearchParams(window.location.search);
+  publicState.category = normalizeListingCategory(query.get('category'));
+  publicState.purpose = normalizeListingPurpose(query.get('listingType') || query.get('purpose'));
+  publicState.search = query.get('q') || '';
+  publicState.locationText = query.get('location') || '';
+  ['province', 'city', 'area'].forEach(function (field) {
+    publicState[field] = (query.get(field) || 'all').trim().toLowerCase();
+  });
+  publicState.branch = query.get('branch') || 'all';
+  var types = {house: 'House', apartment: 'Apartment', commercial: 'Commercial', land: 'Land', farm: 'Farm'};
+  publicState.type = types[(query.get('type') || '').toLowerCase()] || 'all';
+  publicState.currency = ['ZMW', 'USD'].indexOf((query.get('currency') || '').toUpperCase()) !== -1
+    ? query.get('currency').toUpperCase() : 'all';
+  ['minPrice', 'maxPrice', 'minBedrooms'].forEach(function (field) {
+    publicState[field] = query.get(field) || '';
+  });
+  publicState.publicStatus = {active: 'Active', 'under-offer': 'Under Offer'}[query.get('status')] || 'all';
+  publicState.sort = ['newest', 'price-low', 'price-high', 'featured'].indexOf(query.get('sort')) !== -1
+    ? query.get('sort') : 'newest';
+}
+
+function writeListingUrl() {
+  var url = new URL(window.location.href);
+  var values = {
+    category: publicState.category,
+    purpose: publicState.purpose === 'For Sale' ? 'sale' : publicState.purpose === 'For Rent' ? 'rent' : 'all',
+    location: publicState.locationText,
+    q: publicState.search,
+    province: publicState.province,
+    city: publicState.city,
+    area: publicState.area,
+    branch: publicState.branch,
+    type: publicState.type.toLowerCase(),
+    currency: publicState.currency,
+    minPrice: publicState.minPrice,
+    maxPrice: publicState.maxPrice,
+    minBedrooms: publicState.minBedrooms,
+    status: publicState.publicStatus.toLowerCase().replace(' ', '-'),
+    sort: publicState.sort === 'newest' ? '' : publicState.sort
+  };
+  url.searchParams.delete('listingType');
+  Object.keys(values).forEach(function (key) {
+    if (values[key] === '' || values[key] === 'all') url.searchParams.delete(key);
+    else url.searchParams.set(key, values[key]);
+  });
+  if (url.href !== window.location.href) window.history.pushState(null, '', url.href);
+}
+
+function matchesListingLocation(property) {
+  var province = publicState.provinces.find(function (row) { return row.id === property.province_id; });
+  var city = publicState.cities.find(function (row) {
+    return row.id === property.city_id && row.province_id === property.province_id;
+  });
+  var matchesText = !publicState.locationText || [property.area, property.full_address].some(function (value) {
+    return String(value || '').toLowerCase() === publicState.locationText.toLowerCase();
+  });
+  return matchesText &&
+    (publicState.province === 'all' || Boolean(province && province.slug === publicState.province)) &&
+    (publicState.city === 'all' || Boolean(city && city.slug === publicState.city));
+}
+
+function listingAreaSources() {
+  return publicState.properties.filter(function (property) {
+    return property.area_slug && matchesListingLocation(property);
+  });
+}
+
+function matchesListingArea(property) {
+  if (publicState.area === 'all') return true;
+  if (property.area_slug) return property.area_slug === publicState.area;
+  return listingAreaSources().some(function (source) {
+    return source.area_slug === publicState.area && property.area === source.area &&
+      property.province_id && property.city_id &&
+      property.province_id === source.province_id && property.city_id === source.city_id;
+  });
+}
+
+function listingFilterError() {
+  var invalid = ['minPrice', 'maxPrice', 'minBedrooms'].some(function (field) {
+    var value = publicState[field];
+    return value !== '' && (!Number.isFinite(Number(value)) || Number(value) < 0 ||
+      (field === 'minBedrooms' && !Number.isInteger(Number(value))));
+  });
+  if (invalid) return 'Use non-negative numbers for price limits and a whole number for bedrooms.';
+  if ((publicState.minPrice !== '' || publicState.maxPrice !== '') && publicState.currency === 'all') {
+    return 'Choose ZMW or USD to apply your price limits.';
+  }
+  if (publicState.minPrice !== '' && publicState.maxPrice !== '' && Number(publicState.minPrice) > Number(publicState.maxPrice)) {
+    return 'Minimum price must not exceed maximum price.';
+  }
+  return '';
+}
+
+function renderListingOptions(id, options, label, selected) {
+  var control = byId(id);
+  if (!control) return;
+  if (selected !== 'all' && !options.some(function (option) { return option.value === selected; })) {
+    options.push({value: selected, label: selected + ' (unavailable in this location)'});
+  }
+  control.innerHTML = '<option value="all">' + escapeHtml(label) + '</option>' + options.map(function (option) {
+    return '<option value="' + escapeHtml(option.value) + '">' + escapeHtml(option.label) + '</option>';
+  }).join('');
+  control.value = selected;
+}
+
+function syncListingControls() {
+  renderListingOptions('listingProvinceFilter', publicState.provinces.map(function (province) {
+    return {value: province.slug, label: province.name};
+  }), 'All Zambia', publicState.province);
+  var selectedProvince = publicState.provinces.find(function (province) {
+    return province.slug === publicState.province;
+  });
+  renderListingOptions('listingCityFilter', publicState.cities.filter(function (city) {
+    return publicState.province === 'all' || (selectedProvince && city.province_id === selectedProvince.id);
+  }).map(function (city) {
+    return {value: city.slug, label: city.name};
+  }), 'All cities', publicState.city);
+  var areas = [];
+  listingAreaSources().forEach(function (property) {
+    if (!areas.some(function (area) { return area.value === property.area_slug; })) {
+      areas.push({value: property.area_slug, label: property.area});
+    }
+  });
+  areas.sort(function (first, second) { return first.label.localeCompare(second.label); });
+  renderListingOptions('listingAreaFilter', areas, 'All areas', publicState.area);
+  renderListingOptions('listingBranchFilter', publicState.branches.map(function (branch) {
+    return {value: String(branch.id), label: branch.name};
+  }), 'All branches', publicState.branch);
+  Object.keys(listingControlFields).forEach(function (id) {
+    var control = byId(id);
+    if (control) control.value = publicState[listingControlFields[id]];
+  });
+  syncListingMap();
+  syncListingSearchUI();
+}
+
+function syncListingSearchUI() {
+  if (!byId('listingPriceSummary')) return;
+  document.querySelectorAll('[data-listing-purpose]').forEach(function (button) {
+    button.setAttribute('aria-pressed', String(button.dataset.listingPurpose === publicState.purpose));
+  });
+  var hasLimits = publicState.minPrice !== '' || publicState.maxPrice !== '';
+  byId('listingPriceSummary').textContent = hasLimits
+    ? (publicState.currency === 'all' ? '' : publicState.currency + ' ') +
+      (publicState.minPrice === '' ? 'Any' : Number(publicState.minPrice).toLocaleString()) + ' – ' +
+      (publicState.maxPrice === '' ? 'Any' : Number(publicState.maxPrice).toLocaleString())
+    : publicState.currency === 'all' ? 'Any price' : 'Any price · ' + publicState.currency;
+  var advanced = ['city', 'area', 'minBedrooms', 'branch', 'publicStatus', 'search'].filter(function (field) {
+    return publicState[field] !== '' && publicState[field] !== 'all';
+  });
+  byId('listingMoreCount').textContent = advanced.length ? '(' + advanced.length + ')' : '';
+  var quickFilters = byId('listingQuickFilters');
+  var labels = {House: 'Houses', Apartment: 'Apartments', Land: 'Land', Commercial: 'Commercial', Farm: 'Farms'};
+  var types = Array.from(byId('listingTypeFilter').options).filter(function (option) {
+    return labels[option.value] && publicState.properties.some(function (property) {
+      return property.property_type === option.value;
+    });
+  });
+  var signature = types.map(function (option) { return option.value; }).join('|');
+  if (quickFilters.dataset.types !== signature) {
+    quickFilters.dataset.types = signature;
+    quickFilters.innerHTML = '<span>Explore</span>' + types.map(function (option) {
+      return '<button type="button" data-listing-type="' + escapeHtml(option.value) + '">' + labels[option.value] + '</button>';
+    }).join('');
+  }
+  quickFilters.hidden = !types.length;
+  quickFilters.querySelectorAll('button').forEach(function (button) {
+    button.setAttribute('aria-pressed', String(button.dataset.listingType === publicState.type));
+  });
+  var chips = byId('listingActiveFilters');
+  var active = Object.keys(listingControlFields).filter(function (id) {
+    var field = listingControlFields[id];
+    return field !== 'sort' && publicState[field] !== '' && publicState[field] !== 'all';
+  });
+  chips.hidden = !active.length && publicState.category === 'all';
+  chips.innerHTML = active.map(function (id) {
+    var control = byId(id);
+    var field = listingControlFields[id];
+    var label = control.tagName === 'SELECT' && control.selectedIndex >= 0
+      ? control.options[control.selectedIndex].text
+      : control.value;
+    if (field === 'minPrice') label = 'Min: ' + label;
+    if (field === 'maxPrice') label = 'Max: ' + label;
+    if (field === 'minBedrooms') label += ' bedrooms';
+    if (field === 'search') label = 'Search: ' + label;
+    return '<button type="button" data-clear-control="' + id + '" aria-label="Remove ' + escapeHtml(label) + '">' +
+      escapeHtml(label) + ' <span aria-hidden="true">×</span></button>';
+  }).join('') +
+    (publicState.category !== 'all'
+      ? '<button type="button" data-clear-category>Category: ' + escapeHtml(publicState.category) + ' <span aria-hidden="true">×</span></button>'
+      : '') +
+    '<button type="button" class="listing-clear-all" data-clear-all>Clear all</button>';
+}
+
+function setListingPanel(id, open, returnFocus) {
+  var panel = byId(id);
+  var trigger = document.querySelector('[aria-controls="' + id + '"]');
+  if (!panel || !trigger) return;
+  panel.hidden = !open;
+  trigger.setAttribute('aria-expanded', String(open));
+  if (returnFocus) trigger.focus();
+}
+
+function bindListingSearchUI() {
+  if (!byId('listingMoreToggle')) return;
+  ['listingPricePanel', 'listingMorePanel', 'listingMapPanel'].forEach(function (id) {
+    var trigger = document.querySelector('[aria-controls="' + id + '"]');
+    trigger.addEventListener('click', function () {
+      var open = byId(id).hidden;
+      ['listingPricePanel', 'listingMorePanel', 'listingMapPanel'].forEach(function (other) {
+        setListingPanel(other, other === id && open, false);
+      });
+      if (open) {
+        var firstControl = byId(id).querySelector('input, select, button');
+        if (firstControl) firstControl.focus({preventScroll: true});
+      }
+    });
+    byId(id).addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setListingPanel(id, false, true);
+      }
+    });
+  });
+  document.querySelectorAll('[data-close-panel]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      setListingPanel(button.dataset.closePanel, false, true);
+    });
+  });
+  function changeControl(id, value) {
+    var control = byId(id);
+    control.value = value;
+    control.dispatchEvent(new Event(control.type === 'search' ? 'input' : 'change', {bubbles: true}));
+  }
+  document.querySelectorAll('[data-listing-purpose]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      changeControl('listingPurposeFilter', button.dataset.listingPurpose);
+    });
+  });
+  byId('listingQuickFilters').addEventListener('click', function (event) {
+    var button = event.target.closest('[data-listing-type]');
+    if (button) {
+      changeControl('listingTypeFilter', publicState.type === button.dataset.listingType ? 'all' : button.dataset.listingType);
+    }
+  });
+  byId('listingActiveFilters').addEventListener('click', function (event) {
+    var button = event.target.closest('button');
+    if (!button) return;
+    if (button.hasAttribute('data-clear-all')) {
+      Object.keys(listingControlFields).forEach(function (id) {
+        var field = listingControlFields[id];
+        if (field !== 'sort') {
+          publicState[field] = ['search', 'minPrice', 'maxPrice', 'minBedrooms'].indexOf(field) !== -1 ? '' : 'all';
+        }
+      });
+      publicState.category = 'all';
+    } else if (button.hasAttribute('data-clear-category')) {
+      publicState.category = 'all';
+    } else {
+      var field = listingControlFields[button.dataset.clearControl];
+      publicState[field] = ['search', 'minPrice', 'maxPrice', 'minBedrooms'].indexOf(field) !== -1 ? '' : 'all';
+    }
+    writeListingUrl();
+    renderListingsPage();
+    var next = byId('listingActiveFilters').querySelector('button');
+    if (!byId('listingActiveFilters').hidden && next) next.focus();
+    else byId('listingProvinceFilter').focus();
+  });
+  function showProperties() {
+    ['listingPricePanel', 'listingMorePanel', 'listingMapPanel'].forEach(function (id) {
+      setListingPanel(id, false, false);
+    });
+    byId('listingResultsHeading').focus({preventScroll: true});
+    byId('listingResultsHeading').scrollIntoView({
+      block: 'start',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+    });
+  }
+  byId('listingShowProperties').addEventListener('click', showProperties);
+  byId('listingMapView').addEventListener('click', showProperties);
+}
+
+function syncListingMap() {
+  var holder = byId('listingMapHolder');
+  if (!holder) return;
+  holder.querySelectorAll('[data-province]').forEach(function (path) {
+    path.setAttribute('aria-pressed', String(path.dataset.province === publicState.province));
+  });
+  var province = publicState.provinces.find(function (item) {
+    return item.slug === publicState.province;
+  });
+  var selection = byId('listingMapSelection');
+  if (selection) {
+    selection.textContent = publicState.province === 'all'
+      ? 'All Zambia'
+      : province ? province.name : publicState.province;
+  }
+}
+
+function selectListingProvince(slug) {
+  publicState.province = slug;
+  publicState.city = 'all';
+  publicState.area = 'all';
+  publicState.locationText = '';
+  if (byId('discoveryForm')) {
+    applyDiscoveryFilters();
+    return;
+  }
+  writeListingUrl();
+  syncListingControls();
+  renderListings();
+}
+
+async function loadListingMap() {
+  var holder = byId('listingMapHolder');
+  if (!holder) return;
+  try {
+    var response = await fetch('assets/zambia-provinces.json');
+    if (!response.ok) throw new Error('Map unavailable');
+    var regions = await response.json();
+    if (!Array.isArray(regions) || regions.length !== 10) throw new Error('Invalid map');
+    var namespace = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(namespace, 'svg');
+    svg.setAttribute('viewBox', '290 110 860 750');
+    svg.setAttribute('role', 'group');
+    svg.setAttribute('aria-label', 'Choose a Zambia province');
+    regions.forEach(function (region) {
+      var path = document.createElementNS(namespace, 'path');
+      path.setAttribute('d', region.d);
+      path.setAttribute('id', 'province-' + region.map_key);
+      path.setAttribute('class', 'listing-province-path');
+      path.dataset.province = region.slug;
+      path.setAttribute('role', 'button');
+      path.setAttribute('tabindex', '0');
+      path.setAttribute('aria-label', 'View properties in ' + region.name + ' Province');
+      path.addEventListener('click', function () {
+        selectListingProvince(region.slug);
+      });
+      path.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          selectListingProvince(region.slug);
+        }
+      });
+      svg.appendChild(path);
+    });
+    regions.forEach(function (region) {
+      var label = document.createElementNS(namespace, 'text');
+      label.setAttribute('x', region.label[0]);
+      label.setAttribute('y', region.label[1]);
+      label.setAttribute('class', 'listing-map-label');
+      label.setAttribute('aria-hidden', 'true');
+      label.textContent = region.name;
+      svg.appendChild(label);
+    });
+    holder.replaceChildren(svg);
+    syncListingMap();
+  } catch (error) {
+    holder.textContent = 'The map could not load. Please use the province selector.';
+  } finally {
+    holder.setAttribute('aria-busy', 'false');
+  }
+}
+
+function bindListingControls() {
+  if (!byId('listingsGrid')) return;
+  readListingUrl();
+  bindListingSearchUI();
+  byId('listingAllZambia').addEventListener('click', function () {
+    selectListingProvince('all');
+  });
+  loadListingMap();
+  Object.keys(listingControlFields).forEach(function (id) {
+    var control = byId(id);
+    if (!control) return;
+    control.addEventListener(control.type === 'search' ? 'input' : 'change', function () {
+      publicState[listingControlFields[id]] = control.type === 'search' ? control.value : control.value.trim();
+      writeListingUrl();
+      syncListingControls();
+      renderListings();
+    });
+  });
+  window.addEventListener('popstate', function () {
+    readListingUrl();
+    renderListingsPage();
+  });
+}
+
 function filteredListings() {
+  if (listingFilterError()) return [];
   var categoryRows = filterPropertiesByCategory(publicState.properties, publicState.category);
   var rows = categoryRows.filter(function (property) {
-    var search = publicState.search.toLowerCase();
+    var search = publicState.search.trim().toLowerCase();
     var matchesSearch = !search || listingSearchBlob(property).indexOf(search) !== -1;
     var matchesPurpose = publicState.purpose === 'all' || property.purpose === publicState.purpose;
     var matchesType = publicState.type === 'all' || property.property_type === publicState.type;
     var matchesStatus = publicState.publicStatus === 'all' || property.status === publicState.publicStatus;
-    return matchesSearch && matchesPurpose && matchesType && matchesStatus;
+    var isPublic = property.status === 'Active' || property.status === 'Under Offer';
+    var matchesBranch = publicState.branch === 'all' || String(property.branch_id) === publicState.branch;
+    var matchesCurrency = publicState.currency === 'all' || property.currency_code === publicState.currency;
+    var price = Number(property.price);
+    var matchesPrice =
+      (publicState.minPrice === '' || (property.price != null && Number.isFinite(price) && price >= Number(publicState.minPrice))) &&
+      (publicState.maxPrice === '' || (property.price != null && Number.isFinite(price) && price <= Number(publicState.maxPrice)));
+    var matchesBedrooms = publicState.minBedrooms === '' ||
+      (property.bedrooms != null && Number(property.bedrooms) >= Number(publicState.minBedrooms));
+    return isPublic && matchesSearch && matchesPurpose && matchesType && matchesStatus && matchesBranch &&
+      matchesListingLocation(property) && matchesListingArea(property) && matchesCurrency && matchesPrice && matchesBedrooms;
   });
 
   return rows.sort(function (a, b) {
@@ -1116,7 +1545,7 @@ function renderListingsTypeFilter() {
   var typeFilter = byId('listingTypeFilter');
   if (!typeFilter) return;
 
-  var currentValue = typeFilter.value || 'all';
+  var currentValue = publicState.type;
   var types = [];
   filterPropertiesByCategory(publicState.properties, publicState.category).forEach(function (property) {
     if (property.property_type && types.indexOf(property.property_type) === -1) {
@@ -1125,12 +1554,9 @@ function renderListingsTypeFilter() {
   });
   types.sort();
 
-  typeFilter.innerHTML = '<option value="all">All property types</option>' + types.map(function (type) {
-    return '<option value="' + escapeHtml(type) + '">' + escapeHtml(type) + '</option>';
-  }).join('');
-
-  typeFilter.value = types.indexOf(currentValue) !== -1 ? currentValue : 'all';
-  publicState.type = typeFilter.value;
+  renderListingOptions('listingTypeFilter', types.map(function (type) {
+    return {value: type, label: type};
+  }), 'All property types', currentValue);
 }
 
 function categoryEmptyStateMarkup(config) {
@@ -1151,20 +1577,132 @@ function setListingsViewState(state, message) {
   loading.classList.toggle('is-active', state === 'loading');
   error.classList.toggle('is-active', state === 'error');
   empty.classList.toggle('is-active', state === 'empty');
-  grid.classList.toggle('is-active', state === 'ready');
+  grid.classList.toggle('is-active', state === 'ready' || state === 'empty');
 
   if (state === 'error') error.textContent = message || 'Property listings could not be loaded.';
   if (count) count.hidden = state === 'loading' || state === 'error';
   if (results) results.setAttribute('aria-busy', state === 'loading' ? 'true' : 'false');
 }
 
+var propertySectionDefinitions = [
+  {key: 'sale', title: 'Property for Sale', purpose: 'For Sale', href: 'listings.html?purpose=sale'},
+  {key: 'rent', title: 'Property for Rent', purpose: 'For Rent', href: 'listings.html?purpose=rent'},
+  {key: 'developments', title: 'New Developments', purpose: null, href: null}
+];
+
+function renderPropertySection(section, properties) {
+  var id = 'property-section-' + section.key;
+  var useHomepageCardLayout = section.key === 'sale' || section.key === 'rent';
+  var viewAll = section.href
+    ? '<a class="property-section__view-all" href="' + section.href + '" aria-label="View all ' +
+      escapeHtml(section.title.toLowerCase()) + '">View All</a>'
+    : '<span class="property-section__view-all" role="link" aria-disabled="true" title="Development listings are not yet available">View All</span>';
+  return [
+    '<section class="property-section" aria-labelledby="' + id + '-title">',
+    '<div class="property-section__header"><h2 id="' + id + '-title">' + escapeHtml(section.title) + '</h2>',
+    '<div class="property-section__controls">' + viewAll,
+    '<button type="button" class="property-section__arrow" data-direction="-1" aria-controls="' + id +
+      '-viewport" aria-label="Previous properties for ' + escapeHtml(section.key) +
+      '" aria-disabled="true" disabled><svg class="property-section__arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg></button>',
+    '<button type="button" class="property-section__arrow" data-direction="1" aria-controls="' + id +
+      '-viewport" aria-label="Next properties for ' + escapeHtml(section.key) +
+      '" aria-disabled="true" disabled><svg class="property-section__arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg></button>',
+    '</div></div>',
+    '<div class="property-section__viewport" id="' + id + '-viewport" role="region" aria-labelledby="' + id +
+      '-title"' + (properties.length ? ' tabindex="0"' : '') + '><div class="property-section__track" id="' + id + '-track">',
+    properties.length
+      ? properties.map(function (property) {
+        return propertyCard(property, useHomepageCardLayout ? 'homepage' : null);
+      }).join('')
+      : '<p class="property-section__empty">' +
+        (section.key === 'developments'
+          ? 'New development listings are not yet available.'
+          : 'No properties match your current filters in this section.') +
+        '</p>',
+    '</div></div></section>'
+  ].join('');
+}
+
+function setPropertyCarouselButtonState(button, disabled) {
+  button.disabled = disabled;
+  button.setAttribute('aria-disabled', String(disabled));
+}
+
+function updatePropertySectionControls(section) {
+  if (!section) {
+    document.querySelectorAll('.property-section').forEach(updatePropertySectionControls);
+    return;
+  }
+  var viewport = section.querySelector('.property-section__viewport');
+  var maximum = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+  setPropertyCarouselButtonState(section.querySelector('[data-direction="-1"]'), viewport.scrollLeft <= 2);
+  setPropertyCarouselButtonState(section.querySelector('[data-direction="1"]'), viewport.scrollLeft >= maximum - 2);
+}
+
+function initializePropertyCarousel(section) {
+  var viewport = section.querySelector('.property-section__viewport');
+  var track = section.querySelector('.property-section__track');
+  section.querySelectorAll('.property-section__arrow').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var card = track.querySelector('.property-card');
+      if (!card) return;
+      var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+      viewport.scrollBy({
+        left: Number(button.dataset.direction) * (card.getBoundingClientRect().width + gap),
+        behavior: prefersReducedMotion() ? 'auto' : 'smooth'
+      });
+    });
+  });
+  viewport.addEventListener('scroll', function () {
+    updatePropertySectionControls(section);
+  }, {passive: true});
+  updatePropertySectionControls(section);
+}
+
+function renderPropertySections(container, rows) {
+  if (!container) return;
+  container.innerHTML = propertySectionDefinitions.map(function (section) {
+    return renderPropertySection(section, section.purpose ? rows.filter(function (property) {
+      return property.purpose === section.purpose;
+    }) : []);
+  }).join('');
+
+  var unclassified = rows.filter(function (property) {
+    return property.purpose !== 'For Sale' && property.purpose !== 'For Rent';
+  });
+  if (unclassified.length) {
+    container.insertAdjacentHTML('beforeend', renderPropertySection({
+      key: 'other',
+      title: 'Other Properties',
+      href: 'listings.html'
+    }, unclassified));
+    console.warn('[Hilltop] Properties without a recognised purpose:', unclassified.map(function (property) {
+      return property.reference_number || property.id;
+    }));
+  }
+
+  container.querySelectorAll('.property-section').forEach(initializePropertyCarousel);
+  if (!container.dataset.resizeBound) {
+    window.addEventListener('resize', function () {
+      updatePropertySectionControls();
+    }, {passive: true});
+    container.dataset.resizeBound = 'true';
+  }
+  window.requestAnimationFrame(function () {
+    updatePropertySectionControls();
+  });
+}
+
 function renderListings() {
+  if (!publicState.listingsLoaded) return;
   var grid = byId('listingsGrid');
   var empty = byId('listingsEmpty');
   var count = byId('listingsCount');
   if (!grid || !empty) return;
 
   var rows = filteredListings();
+  var filterMessage = byId('listingFilterMessage');
+  if (filterMessage) filterMessage.textContent = listingFilterError();
   var categoryRows = filterPropertiesByCategory(publicState.properties, publicState.category);
   var categoryContent = listingCategoryContent[publicState.category];
   grid.innerHTML = rows.map(propertyCard).join('');
@@ -1176,7 +1714,16 @@ function renderListings() {
     }
   }
   if (count) {
-    count.textContent = rows.length + ' public listing' + (rows.length === 1 ? '' : 's') + ' found';
+    var province = publicState.provinces.find(function (item) {
+      return item.slug === publicState.province;
+    });
+    count.textContent = rows.length + ' propert' + (rows.length === 1 ? 'y' : 'ies') +
+      (province ? ' in ' + province.name : '');
+  }
+  if (byId('listingMapCount')) {
+    byId('listingMapCount').textContent = listingFilterError() ||
+      rows.length + ' matching propert' + (rows.length === 1 ? 'y' : 'ies');
+    byId('listingMapView').textContent = 'View ' + rows.length + ' propert' + (rows.length === 1 ? 'y' : 'ies');
   }
   setListingsViewState(rows.length ? 'ready' : 'empty');
 }
@@ -1206,9 +1753,9 @@ function applyCategoryPageContent(config) {
 applyCategoryPageContent(categoryConfig);
 
 function renderListingsPage() {
-  var purposeFilter = byId('listingPurposeFilter');
-  if (purposeFilter) purposeFilter.value = publicState.purpose;
+  applyCategoryPageContent(listingCategoryContent[publicState.category]);
   renderListingsTypeFilter();
+  syncListingControls();
   renderListings();
 }
 
@@ -1815,35 +2362,7 @@ function bindEvents() {
     renderProperties();
   });
 
-  var listingsSearchInput = byId('listingSearchInput');
-  if (listingsSearchInput) listingsSearchInput.addEventListener('input', function (event) {
-    publicState.search = event.target.value.trim();
-    renderListings();
-  });
-
-  var listingPurposeFilter = byId('listingPurposeFilter');
-  if (listingPurposeFilter) listingPurposeFilter.addEventListener('change', function (event) {
-    publicState.purpose = event.target.value;
-    renderListings();
-  });
-
-  var listingTypeFilter = byId('listingTypeFilter');
-  if (listingTypeFilter) listingTypeFilter.addEventListener('change', function (event) {
-    publicState.type = event.target.value;
-    renderListings();
-  });
-
-  var listingStatusFilter = byId('listingStatusFilter');
-  if (listingStatusFilter) listingStatusFilter.addEventListener('change', function (event) {
-    publicState.publicStatus = event.target.value;
-    renderListings();
-  });
-
-  var listingSortSelect = byId('listingSortSelect');
-  if (listingSortSelect) listingSortSelect.addEventListener('change', function (event) {
-    publicState.sort = event.target.value;
-    renderListings();
-  });
+  bindListingControls();
 
   var generalEnquiryButton = byId('generalEnquiryButton');
   if (generalEnquiryButton) generalEnquiryButton.addEventListener('click', function () {
@@ -2325,12 +2844,213 @@ function renderPropertyServices() {
   grid.replaceChildren(fragment);
 }
 
+function discoveryLocations() {
+  var options = [{value: 'all', label: 'All Zambia', province: 'all', city: 'all', area: 'all', text: ''}];
+  function add(label, province, city, area, text) {
+    var value = JSON.stringify([province, city, area, text]);
+    if (!options.some(function (option) { return option.value === value; })) {
+      options.push({value: value, label: label, province: province, city: city, area: area, text: text});
+    }
+  }
+  publicState.provinces.forEach(function (province) {
+    add(province.name + ' Province', province.slug, 'all', 'all', '');
+  });
+  publicState.cities.forEach(function (city) {
+    var province = publicState.provinces.find(function (item) {
+      return item.id === city.province_id;
+    });
+    if (province) add(city.name + ' · ' + province.name, province.slug, city.slug, 'all', '');
+  });
+  publicState.properties.forEach(function (property) {
+    var province = publicState.provinces.find(function (item) {
+      return item.id === property.province_id;
+    });
+    var city = publicState.cities.find(function (item) {
+      return item.id === property.city_id && item.province_id === property.province_id;
+    });
+    [property.area, property.full_address].forEach(function (label, index) {
+      if (!label) return;
+      var area = index === 0 && property.area_slug ? property.area_slug : 'all';
+      add(
+        label + (city ? ' · ' + city.name : ''),
+        province ? province.slug : 'all',
+        city ? city.slug : 'all',
+        area,
+        area === 'all' ? label : ''
+      );
+    });
+  });
+  return options;
+}
+
+function syncDiscoveryControls() {
+  var locations = discoveryLocations();
+  var selected = locations.find(function (option) {
+    return option.province === publicState.province &&
+      option.city === publicState.city &&
+      option.area === publicState.area &&
+      option.text === publicState.locationText;
+  });
+  renderListingOptions(
+    'discoveryLocation',
+    locations.slice(1),
+    'All Zambia',
+    selected ? selected.value : JSON.stringify([
+      publicState.province,
+      publicState.city,
+      publicState.area,
+      publicState.locationText
+    ])
+  );
+  var types = Array.from(new Set(publicState.properties.map(function (property) {
+    return property.property_type;
+  }).filter(Boolean))).sort();
+  renderListingOptions('discoveryType', types.map(function (type) {
+    return {value: type, label: type};
+  }), 'All property types', publicState.type);
+
+  var price = byId('discoveryPrice');
+  var limits = [];
+  ['ZMW', 'USD'].forEach(function (currency) {
+    var amounts = Array.from(new Set(publicState.properties.filter(function (property) {
+      return property.purpose === publicState.purpose &&
+        window.HilltopCurrency.normalizeCurrencyCode(property.currency_code) === currency &&
+        property.price != null &&
+        Number.isFinite(Number(property.price));
+    }).map(function (property) {
+      return Number(property.price);
+    }))).sort(function (first, second) {
+      return first - second;
+    });
+    amounts = amounts.filter(function (_, index) {
+      return amounts.length <= 8 ||
+        index === amounts.length - 1 ||
+        index % Math.ceil(amounts.length / 8) === 0;
+    });
+    amounts.forEach(function (amount) {
+      limits.push({
+        value: currency + ':' + amount,
+        label: currency + ' ' + amount.toLocaleString()
+      });
+    });
+  });
+  var current = publicState.maxPrice === '' ? '' : publicState.currency + ':' + publicState.maxPrice;
+  if (current && !limits.some(function (limit) { return limit.value === current; })) {
+    limits.push({
+      value: current,
+      label: publicState.currency + ' ' + Number(publicState.maxPrice).toLocaleString()
+    });
+  }
+  price.innerHTML = '<option value="">No maximum</option>' + limits.map(function (limit) {
+    return '<option value="' + escapeHtml(limit.value) + '">' + escapeHtml(limit.label) + '</option>';
+  }).join('');
+  price.value = current;
+  document.querySelectorAll('[data-discovery-purpose]').forEach(function (button) {
+    button.setAttribute('aria-pressed', String(button.dataset.discoveryPurpose === publicState.purpose));
+  });
+  syncListingMap();
+}
+
+function applyDiscoveryFilters(updateUrl) {
+  if (updateUrl !== false) writeListingUrl();
+  syncDiscoveryControls();
+  var rows = filteredListings();
+  byId('discoveryStatus').textContent = listingFilterError() || (publicState.listingsLoaded
+    ? rows.length
+      ? rows.length + ' matching propert' + (rows.length === 1 ? 'y' : 'ies')
+      : 'No properties match. Try another location, type or price.'
+    : 'Properties could not be loaded. Please refresh to try again.');
+  var count = byId('discoveryCount');
+  if (count) {
+    count.textContent = publicState.listingsLoaded
+      ? rows.length + ' propert' + (rows.length === 1 ? 'y' : 'ies')
+      : '';
+  }
+  renderPropertySections(byId('homePropertySections'), rows);
+  byId('listingMapHolder').querySelectorAll('[data-province]').forEach(function (path) {
+    var province = publicState.provinces.find(function (item) {
+      return item.slug === path.dataset.province;
+    });
+    var provinceCount = rows.filter(function (property) {
+      return province && property.province_id === province.id;
+    }).length;
+    path.setAttribute(
+      'aria-label',
+      'View properties in ' + (province ? province.name : path.dataset.province) +
+        ' Province, ' + provinceCount + ' matching properties'
+    );
+  });
+}
+
+function readDiscoveryUrl() {
+  readListingUrl();
+  if (publicState.purpose === 'all') publicState.purpose = 'For Sale';
+  publicState.category = 'all';
+  publicState.search = '';
+  publicState.branch = 'all';
+  publicState.minPrice = '';
+  publicState.minBedrooms = '';
+  publicState.publicStatus = 'all';
+  if (publicState.maxPrice === '') publicState.currency = 'all';
+}
+
+function bindDiscoveryControls() {
+  if (!byId('discoveryForm')) return;
+  readDiscoveryUrl();
+  loadListingMap().then(function () {
+    if (publicState.listingsLoaded) applyDiscoveryFilters(false);
+  });
+  document.querySelectorAll('[data-discovery-purpose]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      publicState.purpose = button.dataset.discoveryPurpose;
+      applyDiscoveryFilters();
+    });
+  });
+  byId('discoveryLocation').addEventListener('change', function (event) {
+    var option = discoveryLocations().find(function (item) {
+      return item.value === event.target.value;
+    });
+    if (!option) return;
+    publicState.province = option.province;
+    publicState.city = option.city;
+    publicState.area = option.area;
+    publicState.locationText = option.text;
+    applyDiscoveryFilters();
+  });
+  byId('discoveryType').addEventListener('change', function (event) {
+    publicState.type = event.target.value;
+    applyDiscoveryFilters();
+  });
+  byId('discoveryPrice').addEventListener('change', function (event) {
+    var parts = event.target.value.split(':');
+    publicState.currency = parts[0] || 'all';
+    publicState.maxPrice = parts[1] || '';
+    applyDiscoveryFilters();
+  });
+  byId('discoveryForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    applyDiscoveryFilters();
+    var results = byId('homePropertySections');
+    results.setAttribute('tabindex', '-1');
+    results.focus({preventScroll: true});
+    results.scrollIntoView({
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+      block: 'start'
+    });
+  });
+  window.addEventListener('popstate', function () {
+    readDiscoveryUrl();
+    applyDiscoveryFilters(false);
+  });
+}
+
 function renderWebsite() {
   applySeoSettings();
   renderHero();
   configureWhyHeroVideo();
   renderFilters();
-  renderFeatured();
+  if (byId('discoveryForm')) applyDiscoveryFilters(false);
+  else if (byId('homePropertySections')) renderPropertySections(byId('homePropertySections'), publicState.properties);
   renderMoreProperties();
   renderProperties();
   renderAbout();
@@ -2354,7 +3074,8 @@ document.addEventListener('DOMContentLoaded', function () {
   bindEvents();
   if (byId('listingsGrid')) {
     loadListingsData();
-  } else if (byId('featuredGrid')) {
+  } else if (byId('homePropertySections')) {
+    bindDiscoveryControls();
     renderMorePropertiesLoading();
     loadPublicData();
   } else {

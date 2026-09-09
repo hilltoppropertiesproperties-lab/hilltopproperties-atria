@@ -1,0 +1,118 @@
+{
+  "results": [
+    {
+      "name": "Primary filters and closed defaults",
+      "result": "PASS"
+    },
+    {
+      "name": "Price panel, currency validation and range",
+      "result": "PASS"
+    },
+    {
+      "name": "More filters open, close, Escape and combined filters",
+      "result": "PASS"
+    },
+    {
+      "name": "All ten provinces, mouse/touch/Enter/Space and shared state",
+      "result": "PASS",
+      "detail": [
+        "northern",
+        "luapula",
+        "muchinga",
+        "north-western",
+        "eastern",
+        "central",
+        "copperbelt",
+        "western",
+        "lusaka",
+        "southern"
+      ]
+    },
+    {
+      "name": "Location to map, close/reopen persistence, All Zambia",
+      "result": "PASS"
+    },
+    {
+      "name": "Quick filters and chip removal preserve unrelated filters",
+      "result": "PASS"
+    },
+    {
+      "name": "No additional property requests during filtering",
+      "result": "PASS"
+    },
+    {
+      "name": "URL refresh, Back and Forward",
+      "result": "PASS"
+    },
+    {
+      "name": "Null area slugs, MAER/Prime and LFV unchanged",
+      "result": "PASS",
+      "detail": [
+        {
+          "ref": "LFV",
+          "area": "New Kasama",
+          "province": "d0708124-183e-4a8a-ac21-65b0b85bb5cf",
+          "city": "93568ccb-175b-4271-bacc-c5c00ea99845"
+        },
+        {
+          "ref": "MAER",
+          "area": "MACHA AVE",
+          "province": null,
+          "city": null
+        },
+        {
+          "ref": "HT-LS-34561",
+          "area": "LIVINGSTONE",
+          "province": "26700e17-4115-4997-b9a5-6ba39d5f6c1a",
+          "city": "2d1efd70-559f-4b05-9e69-a2c2318bea07"
+        },
+        {
+          "ref": "HT-LS-345651",
+          "area": "Near Baraka Gardens",
+          "province": "e483fc66-5f41-4320-bd15-d6c14881776e",
+          "city": "8cd8541e-0b87-4ef0-bdbf-1a107a9cdaa1"
+        },
+        {
+          "ref": "HT-LS-3440",
+          "area": "559 Mokambo Rd",
+          "province": "26700e17-4115-4997-b9a5-6ba39d5f6c1a",
+          "city": "2d1efd70-559f-4b05-9e69-a2c2318bea07"
+        },
+        {
+          "ref": "Prime",
+          "area": "700m off Kasama Road",
+          "province": null,
+          "city": null
+        }
+      ]
+    },
+    {
+      "name": "Public visibility and sorting",
+      "result": "PASS",
+      "detail": 10
+    },
+    {
+      "name": "Managing branch, result actions and map geometry",
+      "result": "PASS"
+    },
+    {
+      "name": "Listings console errors",
+      "result": "PASS"
+    },
+    {
+      "name": "Property cards and detail navigation",
+      "result": "PASS"
+    },
+    {
+      "name": "Detail navigation console",
+      "result": "PASS",
+      "detail": "Existing property-detail favicon.ico returns 404; no JavaScript exceptions"
+    }
+  ],
+  "errors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "source": "http://127.0.0.1:63277/favicon.ico"
+    }
+  ]
+}

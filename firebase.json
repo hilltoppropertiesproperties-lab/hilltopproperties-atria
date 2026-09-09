@@ -4,7 +4,11 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "construction/supabase/**",
+      "construction/scripts/**",
+      "construction/**/*.md",
+      "construction/supabase-env.example.js"
     ],
     "cleanUrls": true,
     "trailingSlash": false

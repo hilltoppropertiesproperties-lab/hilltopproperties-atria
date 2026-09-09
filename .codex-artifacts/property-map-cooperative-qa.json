@@ -1,0 +1,204 @@
+{
+  "desktop": [
+    {
+      "browser": "Chrome",
+      "configuration": {
+        "zoom": 16,
+        "center": {
+          "lat": -15.518776591647732,
+          "lng": 28.30136060714722
+        },
+        "scrollY": 0,
+        "wheelEnabled": false,
+        "draggingEnabled": true,
+        "touchZoomEnabled": true,
+        "markerCount": 1,
+        "zoomInCount": 1,
+        "zoomOutCount": 1,
+        "tileUsesExistingProvider": true
+      },
+      "normalWheel": {
+        "pass": true,
+        "scrollDelta": 140,
+        "zoomBefore": 16,
+        "zoomAfter": 16,
+        "overlayVisible": "Use Ctrl + scroll to zoom the map",
+        "overlayHidden": true
+      },
+      "ctrlZoomIn": {
+        "pass": true,
+        "zoomBefore": 16,
+        "zoomAfter": 17,
+        "scrollDelta": 0
+      },
+      "ctrlZoomOut": {
+        "pass": true,
+        "zoomBefore": 17,
+        "zoomAfter": 16,
+        "scrollDelta": 0
+      },
+      "dragPan": {
+        "pass": true,
+        "centerBefore": {
+          "lat": -15.518781760494164,
+          "lng": 28.30136060714722
+        },
+        "centerAfter": {
+          "lat": -15.517660122844253,
+          "lng": 28.298227802189526
+        }
+      },
+      "zoomControls": {
+        "pass": true,
+        "before": 16,
+        "afterPlus": 17,
+        "afterMinus": 16
+      },
+      "contentFlow": {
+        "pass": true,
+        "mapWheelScrollDelta": 700,
+        "zoomBefore": 16,
+        "zoomAfter": 16,
+        "final": {
+          "scrollY": 4000,
+          "contactTop": -247.5,
+          "similarTop": 259.59375
+        }
+      },
+      "consoleErrors": []
+    },
+    {
+      "browser": "Edge",
+      "configuration": {
+        "zoom": 16,
+        "center": {
+          "lat": -15.518776591647732,
+          "lng": 28.30136060714722
+        },
+        "scrollY": 0,
+        "wheelEnabled": false,
+        "draggingEnabled": true,
+        "touchZoomEnabled": true,
+        "markerCount": 1,
+        "zoomInCount": 1,
+        "zoomOutCount": 1,
+        "tileUsesExistingProvider": true
+      },
+      "normalWheel": {
+        "pass": true,
+        "scrollDelta": 652,
+        "zoomBefore": 16,
+        "zoomAfter": 16,
+        "overlayVisible": "Use Ctrl + scroll to zoom the map",
+        "overlayHidden": true
+      },
+      "ctrlZoomIn": {
+        "pass": true,
+        "zoomBefore": 16,
+        "zoomAfter": 17,
+        "scrollDelta": 0
+      },
+      "ctrlZoomOut": {
+        "pass": true,
+        "zoomBefore": 17,
+        "zoomAfter": 16,
+        "scrollDelta": 0
+      },
+      "dragPan": {
+        "pass": true,
+        "centerBefore": {
+          "lat": -15.518781760494164,
+          "lng": 28.30136060714722
+        },
+        "centerAfter": {
+          "lat": -15.517660122844253,
+          "lng": 28.298227802189526
+        }
+      },
+      "zoomControls": {
+        "pass": true,
+        "before": 16,
+        "afterPlus": 17,
+        "afterMinus": 16
+      },
+      "contentFlow": {
+        "pass": true,
+        "mapWheelScrollDelta": 700,
+        "zoomBefore": 16,
+        "zoomAfter": 16,
+        "final": {
+          "scrollY": 4000,
+          "contactTop": -247.5,
+          "similarTop": 259.59375
+        }
+      },
+      "consoleErrors": []
+    }
+  ],
+  "mobile": [
+    {
+      "viewport": "375x667",
+      "pass": true,
+      "scrollDelta": 90,
+      "zoomBefore": 16,
+      "zoomAfter": 16,
+      "centerBefore": {
+        "lat": -15.518776591647732,
+        "lng": 28.30136060714722
+      },
+      "centerAfter": {
+        "lat": -15.518776591647732,
+        "lng": 28.30136060714722
+      },
+      "draggingEnabled": false,
+      "touchZoomEnabled": true,
+      "touchAction": "pan-y pinch-zoom",
+      "zoomControlsUsable": true,
+      "consoleErrors": []
+    },
+    {
+      "viewport": "390x844",
+      "pass": true,
+      "scrollDelta": 109,
+      "zoomBefore": 16,
+      "zoomAfter": 16,
+      "centerBefore": {
+        "lat": -15.518776591647732,
+        "lng": 28.30134987831116
+      },
+      "centerAfter": {
+        "lat": -15.518776591647732,
+        "lng": 28.30134987831116
+      },
+      "draggingEnabled": false,
+      "touchZoomEnabled": true,
+      "touchAction": "pan-y pinch-zoom",
+      "zoomControlsUsable": true,
+      "consoleErrors": []
+    },
+    {
+      "viewport": "430x932",
+      "pass": true,
+      "scrollDelta": 157,
+      "zoomBefore": 16,
+      "zoomAfter": 16,
+      "centerBefore": {
+        "lat": -15.518776591647732,
+        "lng": 28.30134987831116
+      },
+      "centerAfter": {
+        "lat": -15.518776591647732,
+        "lng": 28.30134987831116
+      },
+      "draggingEnabled": false,
+      "touchZoomEnabled": true,
+      "touchAction": "pan-y pinch-zoom",
+      "zoomControlsUsable": true,
+      "consoleErrors": []
+    }
+  ],
+  "firefox": {
+    "available": false,
+    "note": "Firefox is not installed on this machine."
+  }
+}
