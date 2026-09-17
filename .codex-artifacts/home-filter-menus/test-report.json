@@ -1,0 +1,36 @@
+{
+  "checks": [
+    "typing opens the location menu",
+    "location menu presents the two RPC city records",
+    "trigger keeps its original edge radius",
+    "opened menu uses the sharper radius",
+    "opened menu uses the Concise font",
+    "opened menu is right aligned to its trigger",
+    "opened menu has a smooth transition",
+    "second city row stays clickable above the next field",
+    "property type uses the same opened-menu treatment",
+    "property type selection updates the trigger",
+    "maximum price uses the same opened-menu treatment",
+    "only one filter menu stays open",
+    "Zambia map remains present",
+    "no page errors",
+    "mobile typing opens the location menu",
+    "mobile menu matches the trigger width",
+    "mobile menu remains inside the viewport",
+    "mobile menu retains two city choices",
+    "mobile has no page errors"
+  ],
+  "geometry": {
+    "triggerRadius": "2px",
+    "menuRadius": "6px",
+    "menuFont": "Concise-RegularDemo, sans-serif",
+    "duration": "0.19s, 0.19s, 0s",
+    "rightAligned": true
+  },
+  "mobile": {
+    "triggerWidth": 308,
+    "menuWidth": 308,
+    "left": 41,
+    "right": 349
+  }
+}

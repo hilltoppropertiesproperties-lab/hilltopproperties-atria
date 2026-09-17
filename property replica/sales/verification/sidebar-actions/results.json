@@ -1,0 +1,86 @@
+{
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 700,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "height": 950,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "height": 1100,
+      "passed": true
+    },
+    {
+      "width": 1440,
+      "height": 600,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 700,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 950,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 1100,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "height": 600,
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "height": 700,
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "height": 950,
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "height": 1100,
+      "passed": true
+    },
+    {
+      "width": 1024,
+      "height": 600,
+      "passed": true
+    },
+    {
+      "width": 768,
+      "height": 850,
+      "passed": true
+    },
+    {
+      "width": 430,
+      "height": 850,
+      "passed": true
+    },
+    {
+      "width": 390,
+      "height": 850,
+      "passed": true
+    },
+    {
+      "width": 320,
+      "height": 850,
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "actions_and_filters": "passed"
+}

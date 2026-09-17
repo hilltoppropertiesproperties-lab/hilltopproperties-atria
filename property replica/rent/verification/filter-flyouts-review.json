@@ -1,0 +1,23 @@
+{
+  "placement": [
+    {
+      "width": 1468,
+      "height": 950,
+      "allPanelsFitToRight": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "allPanelsFitToRight": true
+    },
+    {
+      "width": 901,
+      "height": 600,
+      "allPanelsFitToRight": true
+    }
+  ],
+  "selectionAndSearch": true,
+  "keyboardAndDismissal": true,
+  "responsiveTransitions": true,
+  "errors": []
+}

@@ -1,0 +1,54 @@
+{
+  "dimensions": [
+    {
+      "width": 1600,
+      "visibleCount": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "visibleCount": 3,
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "visibleCount": 3,
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "visibleCount": 3,
+      "overflow": false
+    },
+    {
+      "width": 901,
+      "visibleCount": 2,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "visibleCount": 3,
+      "overflow": false
+    },
+    {
+      "width": 601,
+      "visibleCount": 3,
+      "overflow": false
+    },
+    {
+      "width": 430,
+      "visibleCount": 5,
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "visibleCount": 5,
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "sequence": "passed",
+  "filterState": "passed",
+  "sorting": "passed",
+  "reducedMotion": "passed"
+}

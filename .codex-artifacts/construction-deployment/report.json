@@ -1,0 +1,692 @@
+{
+  "assets": [
+    {
+      "path": "/construction/styles.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff2",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/fonts/uncmmn-nominee-light-normal.woff2",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/fonts/uncmmn-nominee-light-normal.woff",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/fonts/ywft-grotesk-regular-demo.woff2",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/fonts/ywft-grotesk-regular-demo.woff",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/assets/menu-white.svg",
+      "status": 200,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/construction/assets/hero-construction.jpg",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "path": "/construction/assets/expertise-building.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/assets/right-arrow-green.svg",
+      "status": 200,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/construction/script.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/discovery-bridge-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/supabase-client.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/supabase-env.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/assets/expertise-renovations.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/assets/expertise-civil.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/assets/expertise-management.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/shared/public-hero-loader.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/hero-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/homepage-media-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/public-featured-projects-loader.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/featured-projects-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/public-expertise-slides-loader.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/expertise-slides-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/public-logo-bridge-loader.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/logo-bridge-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/public-business-snapshot-loader.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/business-snapshot-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/public-news-foresight-loader.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/news-foresight-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/admin/admin.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff2",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/fonts/uncmmn-nominee-light-normal.woff2",
+      "status": 200,
+      "mime": "application/octet-stream"
+    },
+    {
+      "path": "/construction/admin/admin.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/admin/homepage-data-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/admin/mock-homepage-data.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/supabase-client.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/supabase-env.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/admin/auth-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/discovery-bridge-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/news-foresight-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/homepage-media-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/hero-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/business-snapshot-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/featured-projects-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/expertise-slides-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/shared/logo-bridge-service.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "path": "/construction/styles.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff",
+      "status": 200,
+      "mime": "font/woff"
+    },
+    {
+      "path": "/construction/fonts/uncmmn-nominee-light-normal.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "path": "/construction/fonts/uncmmn-nominee-light-normal.woff",
+      "status": 200,
+      "mime": "font/woff"
+    },
+    {
+      "path": "/construction/fonts/ywft-grotesk-regular-demo.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "path": "/construction/fonts/ywft-grotesk-regular-demo.woff",
+      "status": 200,
+      "mime": "font/woff"
+    },
+    {
+      "path": "/construction/assets/menu-white.svg",
+      "status": 200,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/construction/assets/hero-construction.jpg",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "path": "/construction/assets/expertise-building.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/assets/right-arrow-green.svg",
+      "status": 200,
+      "mime": "image/svg+xml"
+    },
+    {
+      "path": "/construction/script.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/discovery-bridge-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/supabase-client.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/supabase-env.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/assets/expertise-renovations.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/assets/expertise-civil.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/assets/expertise-management.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "path": "/construction/shared/public-hero-loader.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/hero-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/homepage-media-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/public-featured-projects-loader.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/featured-projects-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/public-expertise-slides-loader.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/expertise-slides-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/public-logo-bridge-loader.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/logo-bridge-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/public-business-snapshot-loader.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/business-snapshot-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/public-news-foresight-loader.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/news-foresight-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/admin/admin.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.css",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "path": "/construction/fonts/concise-regular-demo.woff",
+      "status": 200,
+      "mime": "font/woff"
+    },
+    {
+      "path": "/construction/fonts/uncmmn-nominee-light-normal.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "path": "/construction/admin/admin.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/admin/homepage-data-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/admin/mock-homepage-data.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/supabase-client.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/supabase-env.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/admin/auth-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/discovery-bridge-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/news-foresight-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/homepage-media-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/hero-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/business-snapshot-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/featured-projects-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/expertise-slides-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    },
+    {
+      "path": "/construction/shared/logo-bridge-service.js",
+      "status": 200,
+      "mime": "application/javascript"
+    }
+  ],
+  "routes": [
+    {
+      "url": "http://127.0.0.1:8765/",
+      "final": "http://127.0.0.1:8765/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8765/construction/",
+      "final": "http://127.0.0.1:8765/construction/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8765/construction/admin/",
+      "final": "http://127.0.0.1:8765/construction/admin/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5000/",
+      "final": "http://127.0.0.1:5000/",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5000/construction/",
+      "final": "http://127.0.0.1:5000/construction",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5000/construction/admin/",
+      "final": "http://127.0.0.1:5000/construction/admin",
+      "status": 200
+    },
+    {
+      "url": "/listings",
+      "final": "http://127.0.0.1:5000/listings",
+      "status": 200
+    },
+    {
+      "url": "/properties",
+      "final": "http://127.0.0.1:5000/properties",
+      "status": 200
+    },
+    {
+      "url": "/property-details",
+      "final": "http://127.0.0.1:5000/property-details",
+      "status": 200
+    },
+    {
+      "url": "/sales/",
+      "final": "http://127.0.0.1:5000/sales/",
+      "status": 404
+    },
+    {
+      "url": "/rent/",
+      "final": "http://127.0.0.1:5000/rent/",
+      "status": 404
+    },
+    {
+      "url": "/property%20replica/sales/listings",
+      "final": "http://127.0.0.1:5000/property%20replica/sales/listings",
+      "status": 200
+    },
+    {
+      "url": "/property%20replica/rent/listings",
+      "final": "http://127.0.0.1:5000/property%20replica/rent/listings",
+      "status": 200
+    }
+  ],
+  "views": [
+    {
+      "port": 8765,
+      "width": 1440,
+      "state": {
+        "header": "absolute",
+        "font": "Arial, Helvetica, sans-serif",
+        "fonts": [
+          "Concise-RegularDemo",
+          "Concise-RegularDemo",
+          "UNCMMNNominee-LightNormal",
+          "YWFTGrotesk-RegularDemo"
+        ],
+        "overflow": false,
+        "hero": "url(\"/construction/assets/hero-construction.jpg\")",
+        "brokenImages": []
+      },
+      "errors": [],
+      "failures": []
+    },
+    {
+      "port": 5000,
+      "width": 1440,
+      "state": {
+        "header": "absolute",
+        "font": "Arial, Helvetica, sans-serif",
+        "fonts": [
+          "Concise-RegularDemo",
+          "Concise-RegularDemo",
+          "UNCMMNNominee-LightNormal",
+          "YWFTGrotesk-RegularDemo"
+        ],
+        "overflow": false,
+        "hero": "url(\"/construction/assets/hero-construction.jpg\")",
+        "brokenImages": []
+      },
+      "errors": [],
+      "failures": []
+    },
+    {
+      "port": 8765,
+      "width": 390,
+      "state": {
+        "header": "absolute",
+        "font": "Arial, Helvetica, sans-serif",
+        "fonts": [
+          "Concise-RegularDemo",
+          "Concise-RegularDemo",
+          "UNCMMNNominee-LightNormal",
+          "YWFTGrotesk-RegularDemo"
+        ],
+        "overflow": false,
+        "hero": "url(\"/construction/assets/hero-construction.jpg\")",
+        "brokenImages": []
+      },
+      "errors": [],
+      "failures": []
+    },
+    {
+      "port": 5000,
+      "width": 390,
+      "state": {
+        "header": "absolute",
+        "font": "Arial, Helvetica, sans-serif",
+        "fonts": [
+          "Concise-RegularDemo",
+          "Concise-RegularDemo",
+          "UNCMMNNominee-LightNormal",
+          "YWFTGrotesk-RegularDemo"
+        ],
+        "overflow": false,
+        "hero": "url(\"/construction/assets/hero-construction.jpg\")",
+        "brokenImages": []
+      },
+      "errors": [],
+      "failures": []
+    },
+    {
+      "route": "/",
+      "width": 1440,
+      "external_content": true,
+      "overflow": false,
+      "errors": [],
+      "failures": []
+    },
+    {
+      "route": "/",
+      "width": 390,
+      "external_content": true,
+      "overflow": false,
+      "errors": [],
+      "failures": []
+    },
+    {
+      "route": "/construction/",
+      "width": 1440,
+      "external_content": true,
+      "overflow": false,
+      "errors": [],
+      "failures": []
+    },
+    {
+      "route": "/construction/",
+      "width": 390,
+      "external_content": true,
+      "overflow": false,
+      "errors": [],
+      "failures": []
+    }
+  ],
+  "optional_missing": []
+}

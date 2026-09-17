@@ -1,0 +1,86 @@
+{
+  "viewports": [
+    {
+      "width": 1600,
+      "headerHeight": 75,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 1440,
+      "headerHeight": 75,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 1280,
+      "headerHeight": 75,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 1200,
+      "headerHeight": 75,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 1100,
+      "headerHeight": 75,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 1024,
+      "headerHeight": 75,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 901,
+      "headerHeight": 75,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 900,
+      "headerHeight": 80,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 768,
+      "headerHeight": 80,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 430,
+      "headerHeight": 80,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 390,
+      "headerHeight": 80,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    },
+    {
+      "width": 320,
+      "headerHeight": 80,
+      "noGapsOrOverlap": true,
+      "belowHeaderGeometryUnchanged": true
+    }
+  ],
+  "sortAndNavigationPreserved": true,
+  "favouriteToggleAndSortPersistencePassed": true,
+  "whiteFavouriteBackgroundUnchanged": true,
+  "pageErrors": [],
+  "favouriteCircle": {
+    "size": 36,
+    "starSize": 23,
+    "whiteBackgroundPreserved": true,
+    "desktopAndMobileTogglePassed": true
+  }
+}

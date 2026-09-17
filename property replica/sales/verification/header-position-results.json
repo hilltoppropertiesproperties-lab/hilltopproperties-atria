@@ -1,0 +1,86 @@
+[
+  {
+    "width": 1600,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 1440,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 1280,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 1201,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 1200,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 1101,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 1100,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 1024,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 950,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 901,
+    "gridTop": 215.796875,
+    "sortLocation": "header",
+    "noOverlap": true
+  },
+  {
+    "width": 900,
+    "gridTop": 326.796875,
+    "sortLocation": "results",
+    "noOverlap": true
+  },
+  {
+    "width": 768,
+    "gridTop": 326.796875,
+    "sortLocation": "results",
+    "noOverlap": true
+  },
+  {
+    "width": 430,
+    "gridTop": 345.25,
+    "sortLocation": "results",
+    "noOverlap": true
+  },
+  {
+    "width": 390,
+    "gridTop": 345.25,
+    "sortLocation": "results",
+    "noOverlap": true
+  }
+]

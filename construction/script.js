@@ -33,10 +33,10 @@ document.addEventListener('DOMContentLoaded', function () {
   if (expertise) {
     var sectionLabel = 'OUR EXPERTISE';
     var slides = [
-      { heading: 'Building Construction', text: 'From foundations to finishes, Hilltop Construction delivers reliable building construction with careful planning, skilled coordination, and a focus on long-term value.', cta: 'Explore building work', ctaUrl:'#projects', image: 'assets/expertise-building.png', alt: 'Commercial building structure under construction', focalX:50, focalY:50, overlayOpacity:.45 },
-      { heading: 'Renovations & Extensions', text: 'We upgrade and extend existing spaces with practical solutions, safe execution, and attention to detail that respects both structure and use.', cta: 'Explore renovations', ctaUrl:'#projects', image: 'assets/expertise-renovations.png', alt: 'Contemporary extension being added to an existing building', focalX:50, focalY:50, overlayOpacity:.45 },
-      { heading: 'Civil Works', text: 'From site preparation to roadworks and drainage, Hilltop Construction delivers civil works with durability, coordination, and regulatory care.', cta: 'Explore civil works', ctaUrl:'#projects', image: 'assets/expertise-civil.png', alt: 'Road and drainage civil works in progress', focalX:50, focalY:50, overlayOpacity:.45 },
-      { heading: 'Project Management', text: 'We manage timelines, budgets, teams, and subcontractors with clear communication from planning through completion.', cta: 'Explore management', ctaUrl:'#projects', image: 'assets/expertise-management.png', alt: 'Project management team reviewing plans on a construction site', focalX:50, focalY:50, overlayOpacity:.45 }
+      { heading: 'Building Construction', text: 'From foundations to finishes, Hilltop Construction delivers reliable building construction with careful planning, skilled coordination, and a focus on long-term value.', cta: 'Explore building work', ctaUrl:'#projects', image: '/construction/assets/expertise-building.png', alt: 'Commercial building structure under construction', focalX:50, focalY:50, overlayOpacity:.45 },
+      { heading: 'Renovations & Extensions', text: 'We upgrade and extend existing spaces with practical solutions, safe execution, and attention to detail that respects both structure and use.', cta: 'Explore renovations', ctaUrl:'#projects', image: '/construction/assets/expertise-renovations.png', alt: 'Contemporary extension being added to an existing building', focalX:50, focalY:50, overlayOpacity:.45 },
+      { heading: 'Civil Works', text: 'From site preparation to roadworks and drainage, Hilltop Construction delivers civil works with durability, coordination, and regulatory care.', cta: 'Explore civil works', ctaUrl:'#projects', image: '/construction/assets/expertise-civil.png', alt: 'Road and drainage civil works in progress', focalX:50, focalY:50, overlayOpacity:.45 },
+      { heading: 'Project Management', text: 'We manage timelines, budgets, teams, and subcontractors with clear communication from planning through completion.', cta: 'Explore management', ctaUrl:'#projects', image: '/construction/assets/expertise-management.png', alt: 'Project management team reviewing plans on a construction site', focalX:50, focalY:50, overlayOpacity:.45 }
     ];
     var image = expertise.querySelector('.expertise-scroll__image');
     var overlay = expertise.querySelector('.expertise-scroll__overlay');
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
           mobileLinkText.className = 'expertise-scroll__link-text';
           mobileLinkText.textContent = slide.cta;
           var arrow = document.createElement('img');
-          arrow.src = 'assets/right-arrow-green.svg';
+          arrow.src = '/construction/assets/right-arrow-green.svg';
           arrow.alt = '';
           arrow.setAttribute('aria-hidden','true');
           mobileLink.append(mobileLinkText,arrow);

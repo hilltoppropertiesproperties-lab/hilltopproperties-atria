@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore current properties to rent in Zambia from Hilltop Properties.">
+  <title>Properties to Rent | Hilltop Properties</title>
+  <link rel="stylesheet" href="assets/fonts/concise-regular-demo/concise-regular-demo.css">
+  <link rel="stylesheet" href="listings.css?v=rounded-arrows-2">
+  <link rel="stylesheet" href="listings-filter.css?v=8ee2972dc1e6">
+</head>
+<body>
+  <svg class="icon-definitions" aria-hidden="true"><defs>
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="M8 4L16 12L8 20" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="m2 11 10-9 10 9M5 9v13h5v-7h4v7h5V9M17 3h3v5"/></symbol>
+    <symbol id="icon-favourite-star" viewBox="0 0 24 24"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.39 1.06 6.2L12 17.19l-5.56 2.93 1.06-6.2L3 9.53l6.22-.9Z"/></symbol>
+    <symbol id="icon-filter" viewBox="0 0 24 24"><path d="M5 2v4m0 4v12M12 2v10m0 4v6M19 2v2m0 4v14M2 6h6v4H2zm7 6h6v4H9zm7-8h6v4h-6z"/></symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24"><path d="M5 2 2 5c0 8 9 17 17 17l3-3-5-5-3 2c-3-1-5-3-6-6l2-3Z"/></symbol>
+    <symbol id="icon-area" viewBox="0 0 24 24"><path d="m2 8 10-6 10 6-10 6Zm0 4 10 6 10-6M2 16l10 6 10-6M7 5l10 6M7 11l10-6"/></symbol>
+    <symbol id="icon-whatsapp" viewBox="0 0 24 24"><path d="M20 4a10 10 0 0 0-16 12L2 22l6-2A10 10 0 0 0 20 4Z"/><path d="m8 6-2 2c0 4 6 10 10 10l2-2-3-3-2 2-4-4 1-2Z"/></symbol>
+    <symbol id="icon-star" viewBox="0 0 24 24"><path d="m12 2 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1Z"/></symbol>
+  </defs></svg>
+  <header class="site-header"><div class="header-inner">
+    <a class="logo-slot" href="listings.html"><img src="assets/images/hilltop-logo.png" alt="Hilltop Properties Zambia" width="204" height="192"></a>
+    <button class="menu-toggle" id="navToggle" aria-label="Open navigation" aria-controls="siteNav" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="site-nav" id="siteNav" aria-label="Main navigation"><button type="button" data-preview="For Sale">For Sale <span class="small-caret"><svg class="ui-arrow ui-arrow--down" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></button><button type="button" aria-current="page">To Rent <span class="small-caret"><svg class="ui-arrow ui-arrow--down" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></button></nav>
+  </div></header>
+  <main>
+
+    <div class="marketplace-layout container">
+      <aside class="listings-sidebar" aria-label="Property search and actions">
+      <div class="filter-scroll-boundary">
+      <div id="filterFormHome" class="filter-sidebar">
+      <form class="search-rail discovery-filter property-discovery" id="listingSearchForm" role="search">
+        <div class="discovery-header"><h2>Find a Property</h2><span class="discovery-badge" id="filterPropertyCount"></span></div>
+        <div id="purposeSlot" class="rail-purpose"><div id="purposeField">
+          <label class="native-purpose" hidden><span>Sale or rent</span><select id="listingPurposeFilter" form="listingSearchForm"><option value="For Sale">For Sale</option><option value="For Rent" selected>For Rent</option></select></label>
+          <div class="discovery-transactions" role="group" aria-label="Transaction type"><button type="button" data-listing-purpose="For Sale" aria-pressed="false">For Sale</button><button type="button" data-listing-purpose="For Rent" aria-pressed="true">For Rent</button></div>
+        </div></div>
+        <div class="discovery-field-group rail-location"><label class="field-label" for="listingLocationInput">Location</label><div class="discovery-control"><div class="field-row"><span class="field-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21L16.65 16.65"/></svg></span><input type="search" id="listingLocationInput" placeholder="All Zambia" list="listingLocations" autocomplete="off"><span class="field-chevron" aria-hidden="true"><svg class="ui-arrow ui-arrow--down" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></div></div><datalist id="listingLocations"></datalist></div>
+        <div id="typeSlot" class="rail-type discovery-field-group"><label class="field-label" id="typeLabel" for="listingTypeFilter">Property Type</label><label class="field discovery-control" id="typeField"><span class="field-row"><span class="field-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.5z"/><path d="M9 21V12h6v9"/></svg></span><select id="listingTypeFilter" form="listingSearchForm"><option value="all">All property types</option><option value="House">Houses</option><option value="Apartment">Flats &amp; Apartments</option><option value="Land">Stands &amp; Residential Land</option><option value="Commercial">Commercial Property</option></select><span class="field-chevron" aria-hidden="true"><svg class="ui-arrow ui-arrow--down" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></span></label></div>
+        <div id="priceSlot" class="rail-price discovery-field-group"><span class="field-label" id="priceLabel">Maximum Price</span><details class="price-field" id="priceField"><summary class="discovery-control" id="priceSummary" aria-labelledby="priceLabel priceValue"><span class="field-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span><span class="filter-value" id="priceValue">No maximum</span><span class="field-chevron" aria-hidden="true"><svg class="ui-arrow ui-arrow--down" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></summary><div class="price-popover"><h3>Price range</h3><label class="field"><span>Currency</span><select id="listingCurrencyFilter" form="listingSearchForm"><option value="all">All currencies</option><option value="ZMW">ZMW (K)</option><option value="USD">USD ($)</option></select></label><div class="two-columns"><label class="field"><span>Minimum price</span><input id="minPriceInput" type="number" min="0" placeholder="Min. Price" form="listingSearchForm"></label><label class="field"><span>Maximum price</span><input id="maxPriceInput" type="number" min="0" placeholder="Max. Price" form="listingSearchForm"></label></div><p id="priceFilterMessage" class="discovery-status" role="status">Choose ZMW or USD to apply price limits.</p><button class="button primary" id="priceDone" type="button">Done</button></div></details></div>
+        <div class="discovery-field-group"><span class="field-label" id="moreLabel">More Filters</span><button class="button more-button discovery-control" id="moreFiltersButton" type="button" aria-haspopup="dialog" aria-controls="listingFiltersDialog" aria-expanded="false"><span>More filters</span><span class="field-chevron" aria-hidden="true"><svg class="ui-arrow ui-arrow--down" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></button></div>
+        <button class="button primary search-button search-btn" type="submit">Search Properties</button>
+        <p class="discovery-status" id="filterMatchingCount" role="status" aria-live="polite"></p>
+      </form>
+      </div>
+      </div>
+      <div class="sidebar-actions" aria-label="Property actions">
+        <button class="sidebar-action" type="button" data-preview="List privately"><img src="assets/images/list-property-house.png" alt="" width="34" height="34"><span>List Property</span></button>
+        <button class="sidebar-action" type="button" data-preview="Property alerts"><img src="assets/images/email-alerts-supplied.png" alt="" width="34" height="34"><span>Get Email Alerts</span></button>
+      </div>
+      </aside>
+      <div class="listings-content">
+    <div class="page-context"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="listings.html">Property to Rent</a><span aria-hidden="true"><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span><span>Residential Property</span></nav></div>
+    <div class="results-layout">
+      <section class="listing-toolbar results-header" aria-labelledby="listingPageTitle">
+        <div class="results-header-left"><h1 id="listingPageTitle">Properties to Rent</h1><p id="listingsCount" role="status"></p></div>
+        <div class="results-header-tools">
+          <nav class="quick-filters" aria-label="Quick location filters"><span>Quick Filters:</span><div class="quick-filter-carousel"><button class="quick-filter-arrow" id="quickFilterPrevious" type="button" aria-label="Previous quick filter locations" aria-controls="quickFilterOptions" hidden><svg class="ui-arrow ui-arrow--left" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></button><div class="quick-filter-scroll" id="quickFilterOptions"></div><button class="quick-filter-arrow" id="quickFilterNext" type="button" aria-label="Next quick filter locations" aria-controls="quickFilterOptions" hidden><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></button></div></nav>
+          <label class="sort-control"><span class="sort-prefix">Sort:</span><select id="listingSortSelect" aria-label="Sort properties"><option value="default">Default</option><option value="price-high">Price: high to low</option><option value="price-low">Price: low to high</option><option value="newest">Newest first</option></select></label>
+        </div>
+      </section>
+    <div class="mobile-search-actions"><button id="mobileFiltersButton" type="button" aria-controls="listingFiltersDialog" aria-haspopup="dialog" aria-expanded="false"><svg aria-hidden="true"><use href="#icon-filter"/></svg>Change filters</button><button type="button" class="request-trigger"><svg aria-hidden="true"><use href="#icon-star"/></svg>Requests</button></div>
+      <section class="listing-results" aria-label="Property results"><div class="property-grid" id="listingsGrid"></div></section>
+      <div class="listings-lower">
+        <!-- All bundled results fit on one page; no new pagination behavior. -->
+        <nav class="listings-lower-pagination" id="listingPagination" aria-label="Property results pages">
+          <button type="button" aria-label="Previous page" disabled><svg class="ui-arrow ui-arrow--left" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></button>
+          <span class="listings-lower-current" aria-current="page" aria-label="Page 1">1</span>
+          <button type="button" aria-label="Next page" disabled><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></button>
+        </nav>
+        <p class="listings-lower-count" id="listingBottomCount"></p>
+
+        <section class="listings-lower-prices" aria-labelledby="averagePriceTitle">
+          <h2 id="averagePriceTitle">What is the average price of property <span data-lower-purpose>for rent</span> in Zambia?</h2>
+          <div class="listings-lower-table-wrap">
+            <table aria-labelledby="averagePriceTitle" aria-describedby="averagePriceNote">
+              <thead><tr><th scope="col">Type</th><th scope="col">Avg. price</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Overall</th><td><span aria-label="Not available">K —</span></td></tr>
+                <tr><th scope="row">Houses</th><td><span aria-label="Not available">K —</span></td></tr>
+                <tr><th scope="row">Land</th><td><span aria-label="Not available">K —</span></td></tr>
+                <tr><th scope="row">Commercial Property</th><td><span aria-label="Not available">K —</span></td></tr>
+                <tr><th scope="row">Flats &amp; Apartments</th><td><span aria-label="Not available">K —</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="listings-lower-note" id="averagePriceNote">Average prices are not available yet.</p>
+        </section>
+
+        <section class="listings-lower-articles" id="relatedPropertyArticles" aria-labelledby="relatedArticlesTitle" aria-roledescription="carousel">
+          <div class="article-carousel-heading">
+            <h2 id="relatedArticlesTitle">Articles relating to Property <span data-lower-article-purpose>for Rent</span> in Zambia</h2>
+            <div class="article-carousel-controls" role="group" aria-label="Article navigation" hidden>
+              <button class="article-carousel-arrow" type="button" data-article-step="-1" aria-label="Previous article" aria-controls="relatedArticlesTrack" disabled><span aria-hidden="true"><svg class="ui-arrow ui-arrow--left" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></button>
+              <button class="article-carousel-arrow" type="button" data-article-step="1" aria-label="Next article" aria-controls="relatedArticlesTrack"><span aria-hidden="true"><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></button>
+            </div>
+          </div>
+          <div class="article-carousel-track" id="relatedArticlesTrack" tabindex="0" role="group" aria-label="Property article previews">
+            <article class="editorial-card" aria-label="1 of 5">
+              <a class="editorial-card-link" href="#articlePreviewDialog" aria-haspopup="dialog" aria-labelledby="editorialTitle1">
+                <div class="editorial-card-media"><img class="editorial-card-image" src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="" width="240" height="190" loading="lazy" decoding="async"></div>
+                <div class="editorial-card-info">
+                  <span class="editorial-card-meta">Hilltop · Article preview</span>
+                  <h3 id="editorialTitle1">Finding a property that fits your next chapter</h3>
+                  <p>Explore homes, land and commercial spaces with your preferred location and priorities in mind.</p>
+                  <span class="editorial-card-read">Read article <span aria-hidden="true"><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></span>
+                </div>
+              </a>
+            </article>
+            <article class="editorial-card" aria-label="2 of 5">
+              <a class="editorial-card-link" href="#articlePreviewDialog" aria-haspopup="dialog" aria-labelledby="editorialTitle2">
+                <div class="editorial-card-media"><img class="editorial-card-image" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="" width="240" height="190" loading="lazy" decoding="async"></div>
+                <div class="editorial-card-info">
+                  <span class="editorial-card-meta">Hilltop · Article preview</span>
+                  <h3 id="editorialTitle2">Making the most of your property viewing</h3>
+                  <p>A closer look at the spaces, surroundings and everyday details that make a place feel right.</p>
+                  <span class="editorial-card-read">Read article <span aria-hidden="true"><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></span>
+                </div>
+              </a>
+            </article>
+            <article class="editorial-card" aria-label="3 of 5">
+              <a class="editorial-card-link" href="#articlePreviewDialog" aria-haspopup="dialog" aria-labelledby="editorialTitle3">
+                <div class="editorial-card-media"><img class="editorial-card-image" src="assets/images/hero-poster.png" alt="" width="240" height="190" loading="lazy" decoding="async"></div>
+                <div class="editorial-card-info">
+                  <span class="editorial-card-meta">Hilltop · Article preview</span>
+                  <h3 id="editorialTitle3">Getting to know your next neighbourhood</h3>
+                  <p>Discover what matters to you, from your daily commute to nearby shops and green spaces.</p>
+                  <span class="editorial-card-read">Read article <span aria-hidden="true"><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></span>
+                </div>
+              </a>
+            </article>
+            <article class="editorial-card" aria-label="4 of 5">
+              <a class="editorial-card-link" href="#articlePreviewDialog" aria-haspopup="dialog" aria-labelledby="editorialTitle4">
+                <div class="editorial-card-media"><img class="editorial-card-image" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="" width="240" height="190" loading="lazy" decoding="async"></div>
+                <div class="editorial-card-info">
+                  <span class="editorial-card-meta">Hilltop · Article preview</span>
+                  <h3 id="editorialTitle4">Presenting your property with Hilltop</h3>
+                  <p>Thoughtful photography and clear property details help prospective tenants picture their next move.</p>
+                  <span class="editorial-card-read">Read article <span aria-hidden="true"><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></span>
+                </div>
+              </a>
+            </article>
+            <article class="editorial-card" aria-label="5 of 5">
+              <a class="editorial-card-link" href="#articlePreviewDialog" aria-haspopup="dialog" aria-labelledby="editorialTitle5">
+                <div class="editorial-card-media"><img class="editorial-card-image" src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="" width="240" height="190" loading="lazy" decoding="async"></div>
+                <div class="editorial-card-info">
+                  <span class="editorial-card-meta">Hilltop · Article preview</span>
+                  <h3 id="editorialTitle5">From your first enquiry to a property viewing</h3>
+                  <p>Get to know Hilltop’s approach to property matching, viewing coordination and guided follow-up.</p>
+                  <span class="editorial-card-read">Read article <span aria-hidden="true"><svg class="ui-arrow ui-arrow--right" aria-hidden="true" focusable="false"><use href="#icon-chevron"/></svg></span></span>
+                </div>
+              </a>
+            </article>
+          </div>
+          <p class="listings-lower-note">Illustrative article previews.</p>
+          <span class="sr-only" id="articleCarouselStatus" role="status" aria-live="polite" aria-atomic="true"></span>
+          <!-- Replace preview links with published article URLs when available. -->
+          <dialog class="article-preview-dialog" id="articlePreviewDialog" aria-labelledby="articlePreviewTitle" aria-describedby="articlePreviewDescription">
+            <div class="dialog-heading"><h2 id="articlePreviewTitle"></h2><button class="dialog-close" type="button" aria-label="Close article preview">×</button></div>
+            <div class="dialog-body"><p id="articlePreviewDescription"></p><p class="listings-lower-note">Illustrative article preview. The full article is not available yet.</p></div>
+          </dialog>
+        </section>
+      </div>
+    </div>
+      </div>
+    </div>
+  </main>
+  <footer class="listings-footer">
+    <div class="container listings-footer-grid">
+      <nav aria-labelledby="listingsFooterAbout">
+        <h2 id="listingsFooterAbout">About us</h2>
+        <a href="index.html#contact">Contact us</a>
+        <a href="about.html">About Hilltop</a>
+        <a href="index.html">Home</a>
+      </nav>
+      <nav aria-labelledby="listingsFooterProperty">
+        <h2 id="listingsFooterProperty">Property</h2>
+        <a href="../sales/listings.html">Property for sale</a>
+        <button type="button"  aria-current="page">Property for rent</button>
+        <button type="button" class="request-trigger">Request a property</button>
+        <button type="button" data-preview="Projects">Projects</button>
+      </nav>
+      <nav aria-labelledby="listingsFooterServices">
+        <h2 id="listingsFooterServices">Services</h2>
+        <a href="services.html">Property sales</a>
+        <a href="services.html">Property management</a>
+        <a href="services.html">Property verification</a>
+        <a href="services.html">Property marketing</a>
+      </nav>
+      <nav aria-labelledby="listingsFooterResources">
+        <h2 id="listingsFooterResources">Resources</h2>
+        <a href="#relatedPropertyArticles">Property articles</a>
+        <button type="button" data-preview="Market insights">Market insights</button>
+        <a href="login.html">Admin login</a>
+        <p class="listings-footer-copyright">© 2026 Hilltop Properties Zambia</p>
+      </nav>
+    </div>
+    <p class="container listings-footer-note">Current properties to rent · Article previews and request tools are not yet connected</p>
+  </footer>
+  <dialog class="filter-dialog" id="listingFiltersDialog" aria-labelledby="filterDialogTitle">
+    <div class="dialog-heading"><h2 id="filterDialogTitle">More filters</h2><button class="dialog-close" id="closeFilters" type="button" aria-label="Close filters">×</button></div>
+    <div class="dialog-body"><div id="mobilePrimaryFilters"></div><label class="field mobile-location-field"><span>Location</span><input id="mobileLocationInput" type="search" placeholder="Enter a location" form="listingSearchForm"></label>
+      <div id="advancedFilters"><div class="two-columns"><label class="field"><span>Bedrooms</span><select id="bedroomsFilter" form="listingSearchForm"><option value="">Any</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5+</option></select></label><label class="field"><span>Bathrooms</span><select id="bathroomsFilter" form="listingSearchForm"><option value="">Any</option><option value="1">1 Bathroom</option><option value="2">2 Bathrooms</option><option value="3">3 Bathrooms</option><option value="4">4+ Bathrooms</option></select></label></div>
+      <div class="two-columns"><label class="field"><span>Reference</span><input id="referenceInput" placeholder="Reference" form="listingSearchForm"></label><label class="field"><span>Minimum size (m²)</span><input id="minSizeInput" type="number" min="0" placeholder="Min. Size" form="listingSearchForm"></label></div>
+      <label class="field"><span>Keywords</span><input id="keywordsInput" placeholder="Keywords" form="listingSearchForm"></label><fieldset class="features"><legend>General features</legend><label><input type="checkbox" name="feature" value="Borehole" form="listingSearchForm"> Borehole</label><label><input type="checkbox" name="feature" value="Garden" form="listingSearchForm"> Garden</label><label><input type="checkbox" name="feature" value="Parking" form="listingSearchForm"> Parking</label><label><input type="checkbox" name="feature" value="Pool" form="listingSearchForm"> Swimming pool</label></fieldset></div>
+    </div><div class="dialog-footer"><button class="text-button" type="button" id="resetFilters">Clear filters</button><button class="button primary" type="button" id="applyFilters">Search Properties</button></div>
+  </dialog>
+  <dialog class="request-dialog" id="requestDialog" aria-labelledby="requestTitle"><div class="dialog-heading"><h2 id="requestTitle">Request a property</h2><button class="dialog-close" type="button" aria-label="Close request">×</button></div><form id="requestForm"><div class="dialog-body"><p>Tell us about the property you’re looking for.</p><label class="field"><span>Your name</span><input autocomplete="name"></label><label class="field"><span>Email address</span><input type="email" autocomplete="email"></label><label class="field"><span>Property requirements</span><textarea rows="4" placeholder="Location, budget and property type"></textarea></label><p class="request-note">This is a UI preview. No request will be sent.</p></div><div class="dialog-footer"><button class="button primary" type="submit">Send request</button></div></form></dialog>
+  <div class="preview-toast" id="previewToast" role="status" hidden></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js"></script>
+  <script src="currency.js?v=33e92f7435df"></script>
+  <script src="/listings-data.js?v=20260912-geography-search"></script>
+  <script src="listings-ui.js?v=20260912-geography-search"></script>
+  <script src="listings-articles.js?v=2"></script>
+</body>
+</html>

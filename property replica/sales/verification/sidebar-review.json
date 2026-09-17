@@ -1,0 +1,57 @@
+{
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 950,
+      "noOverflow": true
+    },
+    {
+      "width": 1024,
+      "height": 768,
+      "noOverflow": true
+    },
+    {
+      "width": 901,
+      "height": 600,
+      "noOverflow": true
+    },
+    {
+      "width": 900,
+      "height": 800,
+      "noOverflow": true
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "noOverflow": true
+    },
+    {
+      "width": 360,
+      "height": 740,
+      "noOverflow": true
+    }
+  ],
+  "runtimeErrors": [],
+  "checked": [
+    "sale/rent",
+    "location",
+    "type and keyboard",
+    "price range",
+    "advanced bedrooms/features",
+    "search",
+    "counts 0/1/3",
+    "clear filters",
+    "responsive value preservation",
+    "mobile drawer",
+    "sorting",
+    "quick filters",
+    "sticky sidebar",
+    "unchanged results markup and CSS"
+  ],
+  "limitations": "Existing bundled-data preview has no URL filter restoration or Supabase integration."
+}

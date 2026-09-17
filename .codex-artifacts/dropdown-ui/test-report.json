@@ -1,0 +1,36 @@
+{
+  "checks": [
+    "dropdown offers only Lusaka and Livingstone",
+    "desktop alignment, gap and surface",
+    "typing filters to Livingstone",
+    "hover is pale blue",
+    "keyboard option is active",
+    "selection updates without filtering",
+    "Escape closes without clearing selection",
+    "submit navigates and applies search",
+    "no desktop errors",
+    "mobile width and touch targets",
+    "dropdown is topmost",
+    "no mobile errors"
+  ],
+  "desktop_geometry": {
+    "cw": 240,
+    "lw": 240,
+    "cl": 20,
+    "ll": 20,
+    "g": 3,
+    "bg": "rgb(255, 255, 255)",
+    "border": "1px",
+    "radius": "2px"
+  },
+  "mobile": {
+    "left": 16,
+    "right": 374,
+    "vw": 390,
+    "rows": [
+      54.125,
+      55.125
+    ],
+    "topmost": true
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "count": 5,
+  "fields": [
+    "amenities",
+    "area",
+    "area_slug",
+    "assigned_agent_id",
+    "bathrooms",
+    "bedrooms",
+    "branch_id",
+    "city_id",
+    "created_at",
+    "currency",
+    "currency_code",
+    "description",
+    "exclusive_property",
+    "featured",
+    "full_address",
+    "garages",
+    "id",
+    "latitude",
+    "location_label",
+    "longitude",
+    "map_address",
+    "price",
+    "property_type",
+    "province_id",
+    "purpose",
+    "reference_number",
+    "square_metres",
+    "status",
+    "title",
+    "updated_at",
+    "virtual_tour_link",
+    "youtube_link"
+  ],
+  "statuses": [
+    "Active"
+  ],
+  "currencies": [
+    "ZMW"
+  ],
+  "types": [
+    "Apartment",
+    "House"
+  ],
+  "locations": [
+    "Kingsland City",
+    "LIVINGSTONE",
+    "MACHA AVE",
+    "New Kasama",
+    "Olympia"
+  ],
+  "amenities": [
+    {
+      "area": "MACHA AVE",
+      "amenities": []
+    },
+    {
+      "area": "New Kasama",
+      "amenities": []
+    },
+    {
+      "area": "Kingsland City",
+      "amenities": []
+    },
+    {
+      "area": "LIVINGSTONE",
+      "amenities": []
+    },
+    {
+      "area": "Olympia",
+      "amenities": []
+    }
+  ],
+  "period_fields": {}
+}

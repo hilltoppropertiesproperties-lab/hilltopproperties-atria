@@ -1,0 +1,122 @@
+{
+  "widths": [
+    {
+      "width": 1600,
+      "pageWidth": 1600,
+      "marketplaceColumns": "240px 1172px",
+      "resultsColumns": "572px 572px",
+      "sidebarVisible": true,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 1440,
+      "pageWidth": 1440,
+      "marketplaceColumns": "240px 1132px",
+      "resultsColumns": "552px 552px",
+      "sidebarVisible": true,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 1280,
+      "pageWidth": 1280,
+      "marketplaceColumns": "240px 972px",
+      "resultsColumns": "472px 472px",
+      "sidebarVisible": true,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 1024,
+      "pageWidth": 1024,
+      "marketplaceColumns": "230px 730px",
+      "resultsColumns": "351px 351px",
+      "sidebarVisible": true,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 900,
+      "pageWidth": 900,
+      "marketplaceColumns": "minmax(220px, 240px) minmax(0px, 1fr)",
+      "resultsColumns": "423px 423px",
+      "sidebarVisible": false,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 820,
+      "pageWidth": 820,
+      "marketplaceColumns": "minmax(220px, 240px) minmax(0px, 1fr)",
+      "resultsColumns": "383px 383px",
+      "sidebarVisible": false,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 768,
+      "pageWidth": 768,
+      "marketplaceColumns": "minmax(220px, 240px) minmax(0px, 1fr)",
+      "resultsColumns": "357px 357px",
+      "sidebarVisible": false,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 600,
+      "pageWidth": 600,
+      "marketplaceColumns": "minmax(220px, 240px) minmax(0px, 1fr)",
+      "resultsColumns": "568px",
+      "sidebarVisible": false,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 430,
+      "pageWidth": 430,
+      "marketplaceColumns": "minmax(220px, 240px) minmax(0px, 1fr)",
+      "resultsColumns": "398px",
+      "sidebarVisible": false,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 390,
+      "pageWidth": 390,
+      "marketplaceColumns": "minmax(220px, 240px) minmax(0px, 1fr)",
+      "resultsColumns": "358px",
+      "sidebarVisible": false,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    },
+    {
+      "width": 360,
+      "pageWidth": 360,
+      "marketplaceColumns": "minmax(220px, 240px) minmax(0px, 1fr)",
+      "resultsColumns": "328px",
+      "sidebarVisible": false,
+      "horizontalSearchExists": false,
+      "rightSidebarExists": false
+    }
+  ],
+  "errors": [],
+  "font": {
+    "family": "Concise-RegularDemo, Arial, sans-serif",
+    "loaded": true
+  },
+  "backendRequests": 0,
+  "interactions": [
+    "filter drawer",
+    "Escape and focus restoration",
+    "mobile navigation",
+    "request preview only",
+    "price popover",
+    "save visual state",
+    "independent carousel, counter, wrap and keyboard",
+    "sort, quick filters, empty recovery, type, price, rent",
+    "native touch horizontal swipe and vertical scroll",
+    "detail URL",
+    "sticky filters"
+  ]
+}

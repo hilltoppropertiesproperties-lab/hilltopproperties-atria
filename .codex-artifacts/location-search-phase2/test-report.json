@@ -1,0 +1,25 @@
+{
+  "checks_passed": 19,
+  "checks": [
+    "olym calls the location RPC",
+    "RPC receives the debounced term and small limit",
+    "Olympia is presented with hierarchy context",
+    "Olympia selection is structured",
+    "selection closes the custom listbox",
+    "selection does not navigate",
+    "selection does not filter homepage inventory",
+    "manual input mutation clears Olympia",
+    "typed text remains separate from selection",
+    "empty and one-character terms send no RPC requests",
+    "Lusaka city and province are both presented",
+    "ArrowDown highlights the first result",
+    "a second ArrowDown advances the highlight",
+    "ArrowUp returns to the previous result",
+    "Enter selects the highlighted city",
+    "Lusaka city and province keep unique canonical identities",
+    "Escape closes the listbox",
+    "older RPC responses cannot replace newer results",
+    "no uncaught page errors"
+  ],
+  "artifacts": "C:\\Users\\Asus\\orca\\workspaces\\hilltop update\\timingila\\.codex-artifacts\\location-search-phase2"
+}

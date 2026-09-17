@@ -1,0 +1,27 @@
+{
+  "menuWidth": 240,
+  "triggerWidth": 240,
+  "border": "rgb(223, 228, 232)",
+  "shadow": "rgba(15, 30, 45, 0.08) 0px 10px 24px 0px, rgba(15, 30, 45, 0.04) 0px 2px 6px 0px",
+  "rows": [
+    {
+      "text": "Livingstone",
+      "height": 42,
+      "font": "14px",
+      "weight": "500"
+    },
+    {
+      "text": "Lusaka",
+      "height": 42,
+      "font": "14px",
+      "weight": "400"
+    }
+  ],
+  "selected": {
+    "text": "Livingstone",
+    "background": "rgb(237, 246, 251)",
+    "color": "rgb(11, 82, 127)",
+    "weight": "500"
+  },
+  "errors": []
+}

@@ -1,0 +1,57 @@
+{
+  "passed": 29,
+  "checks": [
+    "popover sits directly below its trigger",
+    "popover stays compact",
+    "price inputs remain side by side",
+    "popover uses a white background",
+    "popover uses the restrained radius",
+    "opening does not shift following controls",
+    "removed price UI is absent",
+    "only the compact currency and price controls remain",
+    "opening price does not alter the URL",
+    "opening the compact currency selector keeps Price open",
+    "opening Location closes Price",
+    "typing updates only the draft summary",
+    "typing defaults an unset draft currency to ZMW",
+    "draft typing does not alter the URL",
+    "draft typing does not filter cards",
+    "Escape closes Price",
+    "Escape preserves the draft value",
+    "Enter closes Price",
+    "Enter does not submit the form",
+    "clicking outside closes Price",
+    "Search commits the draft currency",
+    "Search commits the draft price",
+    "Search applies the price filter",
+    "the matching ZMW property remains",
+    "desktop has no page errors",
+    "narrow popover stays inside the viewport",
+    "narrow price fields still fit side by side",
+    "narrow opening causes no layout shift",
+    "mobile has no page errors"
+  ],
+  "desktop": {
+    "triggerBottom": 457.390625,
+    "popoverTop": 463.390625,
+    "popoverHeight": 66,
+    "popoverWidth": 330,
+    "fieldTops": [
+      474.390625,
+      474.390625
+    ],
+    "borderColor": "rgb(217, 222, 206)",
+    "radius": "6px",
+    "shadow": "rgba(13, 27, 42, 0.08) 0px 8px 24px 0px",
+    "background": "rgb(255, 255, 255)"
+  },
+  "mobile": {
+    "left": 16,
+    "right": 336,
+    "width": 320,
+    "tops": [
+      471.390625,
+      471.390625
+    ]
+  }
+}

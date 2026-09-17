@@ -1,0 +1,83 @@
+{
+  "widths": [
+    {
+      "width": 1600,
+      "cardsMovedUp": 76.5,
+      "chipRows": 1,
+      "gridTop": 215.796875,
+      "sortTop": 131.5,
+      "chipTop": 136.25
+    },
+    {
+      "width": 1440,
+      "cardsMovedUp": 76.5,
+      "chipRows": 1,
+      "gridTop": 215.796875,
+      "sortTop": 131.5,
+      "chipTop": 136.25
+    },
+    {
+      "width": 1280,
+      "cardsMovedUp": 61.3,
+      "chipRows": 1,
+      "gridTop": 231,
+      "sortTop": 170.5,
+      "chipTop": 131.5
+    },
+    {
+      "width": 1024,
+      "cardsMovedUp": 61.3,
+      "chipRows": 2,
+      "gridTop": 231,
+      "sortTop": 170.5,
+      "chipTop": 131.5
+    },
+    {
+      "width": 768,
+      "cardsMovedUp": 37.7,
+      "chipRows": 1,
+      "gridTop": 325.796875,
+      "sortTop": 140.390625,
+      "chipTop": 207.796875
+    },
+    {
+      "width": 430,
+      "cardsMovedUp": 44.2,
+      "chipRows": 1,
+      "gridTop": 347.25,
+      "sortTop": 137.125,
+      "chipTop": 229.25
+    },
+    {
+      "width": 390,
+      "cardsMovedUp": 44.2,
+      "chipRows": 1,
+      "gridTop": 347.25,
+      "sortTop": 137.125,
+      "chipTop": 229.25
+    }
+  ],
+  "sortOrders": {
+    "default": [
+      "K2,400,000",
+      "K980,000",
+      "K3,200,000"
+    ],
+    "price-low": [
+      "K980,000",
+      "K2,400,000",
+      "K3,200,000"
+    ],
+    "price-high": [
+      "K3,200,000",
+      "K2,400,000",
+      "K980,000"
+    ],
+    "newest": [
+      "K2,400,000",
+      "K980,000",
+      "K3,200,000"
+    ]
+  },
+  "errors": []
+}

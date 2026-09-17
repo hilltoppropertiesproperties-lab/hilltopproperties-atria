@@ -1,0 +1,350 @@
+{
+  "checks": [
+    "live page has only Sale badges",
+    "preview inventory and legacy website controller not loaded",
+    "main shared details links",
+    "no overflow at 1440",
+    "card columns at 1440",
+    "no overflow at 1024",
+    "card columns at 1024",
+    "no overflow at 900",
+    "card columns at 900",
+    "no overflow at 600",
+    "card columns at 600",
+    "no overflow at 390",
+    "card columns at 390",
+    "no overflow at 360",
+    "card columns at 360",
+    "no live JavaScript errors",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "images restricted to returned Sale IDs",
+    "Active and Under Offer shown; Rent and other statuses absent",
+    "URL purpose cannot change Sales",
+    "real dataset locations only",
+    "cover precedes display order",
+    "gallery advances to correct image",
+    "missing images show placeholder",
+    "transaction Rent control prepares Rent routing",
+    "filter listingLocationInput",
+    "filter keywordsInput",
+    "filter referenceInput",
+    "filter minSizeInput",
+    "filter listingTypeFilter",
+    "filter bedroomsFilter",
+    "filter bathroomsFilter",
+    "amenity filtering",
+    "quick location filters",
+    "price limits require currency",
+    "ZMW budget excludes USD",
+    "USD budget excludes ZMW",
+    "zero maximum is not unlimited",
+    "Clear filters retains fixed purpose",
+    "sort price-low",
+    "sort price-high",
+    "sort newest",
+    "averages separate currencies",
+    "mobile filter navigation",
+    "mobile advanced filters",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "empty has no fake inventory",
+    "empty skips image query",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "error has no fake inventory",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "images restricted to returned Sale IDs",
+    "retry recovers",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "image-error has no fake inventory",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "invalid-response has no fake inventory",
+    "Supabase unavailable has no fallback",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "images restricted to returned Sale IDs",
+    "all API pages loaded",
+    "image IDs batched",
+    "query enforces Sale",
+    "query enforces public statuses",
+    "images restricted to returned Sale IDs",
+    "layout 1440 .site-header",
+    "layout 1440 .marketplace-layout",
+    "layout 1440 .filter-sidebar",
+    "layout 1440 .results-header",
+    "layout 1440 .property-grid",
+    "layout 1440 .property-card",
+    "layout 1440 .property-gallery",
+    "layout 390 .site-header",
+    "layout 390 .marketplace-layout",
+    "layout 390 .filter-sidebar",
+    "layout 390 .results-header",
+    "layout 390 .property-grid",
+    "layout 390 .property-card",
+    "layout 390 .property-gallery",
+    "no JavaScript regressions"
+  ],
+  "live": {
+    "sale_count": 10,
+    "averages": "Overall\tZMW K7,490,000 / USD $1,200,000\nHouses\tZMW K8,326,000\nLand\tZMW K9,040,000\nCommercial Property\tZMW K1,200,000 / USD $1,200,000\nFlats & Apartments\tZMW K6,500,000"
+  },
+  "layout_comparison": {
+    "before": {
+      "1440": {
+        ".site-header": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 75,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".marketplace-layout": {
+          "x": 20,
+          "y": 75,
+          "width": 1400,
+          "height": 2184.4375,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".filter-sidebar": {
+          "x": 20,
+          "y": 103,
+          "width": 240,
+          "height": 557.5,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".results-header": {
+          "x": 288,
+          "y": 131.5,
+          "width": 1132,
+          "height": 64.296875,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-grid": {
+          "x": 288,
+          "y": 215.796875,
+          "width": 1132,
+          "height": 1126.25,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-card": {
+          "x": 288,
+          "y": 215.796875,
+          "width": 552,
+          "height": 544.125,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-gallery": {
+          "x": 288,
+          "y": 215.796875,
+          "width": 552,
+          "height": 414,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        }
+      },
+      "390": {
+        ".site-header": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 80,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".marketplace-layout": {
+          "x": 16,
+          "y": 80,
+          "width": 358,
+          "height": 3444.265625,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".filter-sidebar": {
+          "x": 16,
+          "y": 100,
+          "width": 358,
+          "height": 557.5,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".results-header": {
+          "x": 16,
+          "y": 866,
+          "width": 358,
+          "height": 132.75,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-grid": {
+          "x": 16,
+          "y": 1082.75,
+          "width": 358,
+          "height": 1259.875,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-card": {
+          "x": 16,
+          "y": 1082.75,
+          "width": 358,
+          "height": 398.625,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-gallery": {
+          "x": 16,
+          "y": 1082.75,
+          "width": 358,
+          "height": 268.5,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        }
+      }
+    },
+    "after": {
+      "1440": {
+        ".site-header": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 75,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".marketplace-layout": {
+          "x": 20,
+          "y": 75,
+          "width": 1400,
+          "height": 2184.4375,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".filter-sidebar": {
+          "x": 20,
+          "y": 103,
+          "width": 240,
+          "height": 557.5,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".results-header": {
+          "x": 288,
+          "y": 131.5,
+          "width": 1132,
+          "height": 64.296875,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-grid": {
+          "x": 288,
+          "y": 215.796875,
+          "width": 1132,
+          "height": 1126.25,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-card": {
+          "x": 288,
+          "y": 215.796875,
+          "width": 552,
+          "height": 544.125,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-gallery": {
+          "x": 288,
+          "y": 215.796875,
+          "width": 552,
+          "height": 414,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        }
+      },
+      "390": {
+        ".site-header": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 80,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".marketplace-layout": {
+          "x": 16,
+          "y": 80,
+          "width": 358,
+          "height": 3480.265625,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".filter-sidebar": {
+          "x": 16,
+          "y": 100,
+          "width": 358,
+          "height": 557.5,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".results-header": {
+          "x": 16,
+          "y": 866,
+          "width": 358,
+          "height": 132.75,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-grid": {
+          "x": 16,
+          "y": 1082.75,
+          "width": 358,
+          "height": 1259.875,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-card": {
+          "x": 16,
+          "y": 1082.75,
+          "width": 358,
+          "height": 398.625,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        },
+        ".property-gallery": {
+          "x": 16,
+          "y": 1082.75,
+          "width": 358,
+          "height": 268.5,
+          "font": "Concise-RegularDemo, Arial, sans-serif",
+          "fontSize": "15px"
+        }
+      }
+    }
+  }
+}

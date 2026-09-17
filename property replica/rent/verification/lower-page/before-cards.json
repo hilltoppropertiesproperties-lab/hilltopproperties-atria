@@ -1,0 +1,164 @@
+{
+  "1440": {
+    "html": "<article class=\"property-card\" aria-labelledby=\"property-title-0\"><div class=\"property-gallery\" data-images=\"[&quot;https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,&quot;https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,&quot;https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;]\" data-index=\"0\" data-title=\"4-Bedroom Executive House in Kabulonga\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000001\" class=\"gallery-main\"><img src=\"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&amp;fit=crop&amp;w=800&amp;q=80\" alt=\"4-Bedroom Executive House in Kabulonga \u2014 photo 1\" decoding=\"async\" fetchpriority=\"high\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000001\" aria-label=\"Save 4-Bedroom Executive House in Kabulonga\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span><button type=\"button\" class=\"gallery-arrow gallery-previous\" data-direction=\"-1\" aria-label=\"Previous image of 4-Bedroom Executive House in Kabulonga\">\u2039</button><button type=\"button\" class=\"gallery-arrow gallery-next\" data-direction=\"1\" aria-label=\"Next image of 4-Bedroom Executive House in Kabulonga\">\u203a</button><span class=\"gallery-counter\">1 / 3</span></div><div class=\"property-info\"><p class=\"property-price\">K2,400,000</p><h2 class=\"property-title\" id=\"property-title-0\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000001\">4-Bedroom Executive House in Kabulonga</a></h2><p class=\"property-location\">Kabulonga \u00b7 House</p><div class=\"property-specs\"><span>4 beds</span><span>3 baths</span><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>320 m\u00b2</span></div></div></article><article class=\"property-card\" aria-labelledby=\"property-title-1\"><div class=\"property-gallery\" data-images=\"[&quot;assets/sample-land.png&quot;]\" data-index=\"0\" data-title=\"1-Acre Residential Plot - Chalala\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000005\" class=\"gallery-main\"><img src=\"assets/sample-land.png\" alt=\"1-Acre Residential Plot - Chalala \u2014 photo 1\" decoding=\"async\" fetchpriority=\"high\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000005\" aria-label=\"Save 1-Acre Residential Plot - Chalala\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span></div><div class=\"property-info\"><p class=\"property-price\">K980,000</p><h2 class=\"property-title\" id=\"property-title-1\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000005\">1-Acre Residential Plot - Chalala</a></h2><p class=\"property-location\">Chalala \u00b7 Land</p><div class=\"property-specs\"><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>4,047 m\u00b2</span></div></div></article><article class=\"property-card\" aria-labelledby=\"property-title-2\"><div class=\"property-gallery\" data-images=\"[&quot;assets/sample-land.png&quot;]\" data-index=\"0\" data-title=\"Riverside Lodge Plot - Victoria Falls\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000008\" class=\"gallery-main\"><img src=\"assets/sample-land.png\" alt=\"Riverside Lodge Plot - Victoria Falls \u2014 photo 1\" decoding=\"async\" loading=\"lazy\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000008\" aria-label=\"Save Riverside Lodge Plot - Victoria Falls\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span></div><div class=\"property-info\"><p class=\"property-price\">K3,200,000</p><h2 class=\"property-title\" id=\"property-title-2\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000008\">Riverside Lodge Plot - Victoria Falls</a></h2><p class=\"property-location\">Victoria Falls \u00b7 Land</p><div class=\"property-specs\"><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>8,000 m\u00b2</span></div></div></article>",
+    "box": {
+      "x": 288,
+      "y": 215.796875,
+      "width": 1132,
+      "height": 1126.25,
+      "top": 215.796875,
+      "right": 1420,
+      "bottom": 1342.046875,
+      "left": 288
+    },
+    "cards": [
+      {
+        "box": {
+          "x": 288,
+          "y": 215.796875,
+          "width": 552,
+          "height": 544.125,
+          "top": 215.796875,
+          "right": 840,
+          "bottom": 759.921875,
+          "left": 288
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      },
+      {
+        "box": {
+          "x": 868,
+          "y": 215.796875,
+          "width": 552,
+          "height": 544.125,
+          "top": 215.796875,
+          "right": 1420,
+          "bottom": 759.921875,
+          "left": 868
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      },
+      {
+        "box": {
+          "x": 288,
+          "y": 797.921875,
+          "width": 552,
+          "height": 544.125,
+          "top": 797.921875,
+          "right": 840,
+          "bottom": 1342.046875,
+          "left": 288
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      }
+    ]
+  },
+  "768": {
+    "html": "<article class=\"property-card\" aria-labelledby=\"property-title-0\"><div class=\"property-gallery\" data-images=\"[&quot;https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,&quot;https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,&quot;https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;]\" data-index=\"0\" data-title=\"4-Bedroom Executive House in Kabulonga\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000001\" class=\"gallery-main\"><img src=\"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&amp;fit=crop&amp;w=800&amp;q=80\" alt=\"4-Bedroom Executive House in Kabulonga \u2014 photo 1\" decoding=\"async\" fetchpriority=\"high\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000001\" aria-label=\"Save 4-Bedroom Executive House in Kabulonga\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span><button type=\"button\" class=\"gallery-arrow gallery-previous\" data-direction=\"-1\" aria-label=\"Previous image of 4-Bedroom Executive House in Kabulonga\">\u2039</button><button type=\"button\" class=\"gallery-arrow gallery-next\" data-direction=\"1\" aria-label=\"Next image of 4-Bedroom Executive House in Kabulonga\">\u203a</button><span class=\"gallery-counter\">1 / 3</span></div><div class=\"property-info\"><p class=\"property-price\">K2,400,000</p><h2 class=\"property-title\" id=\"property-title-0\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000001\">4-Bedroom Executive House in Kabulonga</a></h2><p class=\"property-location\">Kabulonga \u00b7 House</p><div class=\"property-specs\"><span>4 beds</span><span>3 baths</span><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>320 m\u00b2</span></div></div></article><article class=\"property-card\" aria-labelledby=\"property-title-1\"><div class=\"property-gallery\" data-images=\"[&quot;assets/sample-land.png&quot;]\" data-index=\"0\" data-title=\"1-Acre Residential Plot - Chalala\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000005\" class=\"gallery-main\"><img src=\"assets/sample-land.png\" alt=\"1-Acre Residential Plot - Chalala \u2014 photo 1\" decoding=\"async\" fetchpriority=\"high\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000005\" aria-label=\"Save 1-Acre Residential Plot - Chalala\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span></div><div class=\"property-info\"><p class=\"property-price\">K980,000</p><h2 class=\"property-title\" id=\"property-title-1\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000005\">1-Acre Residential Plot - Chalala</a></h2><p class=\"property-location\">Chalala \u00b7 Land</p><div class=\"property-specs\"><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>4,047 m\u00b2</span></div></div></article><article class=\"property-card\" aria-labelledby=\"property-title-2\"><div class=\"property-gallery\" data-images=\"[&quot;assets/sample-land.png&quot;]\" data-index=\"0\" data-title=\"Riverside Lodge Plot - Victoria Falls\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000008\" class=\"gallery-main\"><img src=\"assets/sample-land.png\" alt=\"Riverside Lodge Plot - Victoria Falls \u2014 photo 1\" decoding=\"async\" loading=\"lazy\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000008\" aria-label=\"Save Riverside Lodge Plot - Victoria Falls\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span></div><div class=\"property-info\"><p class=\"property-price\">K3,200,000</p><h2 class=\"property-title\" id=\"property-title-2\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000008\">Riverside Lodge Plot - Victoria Falls</a></h2><p class=\"property-location\">Victoria Falls \u00b7 Land</p><div class=\"property-specs\"><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>8,000 m\u00b2</span></div></div></article>",
+    "box": {
+      "x": 16,
+      "y": 326.796875,
+      "width": 736,
+      "height": 833.75,
+      "top": 326.796875,
+      "right": 752,
+      "bottom": 1160.546875,
+      "left": 16
+    },
+    "cards": [
+      {
+        "box": {
+          "x": 16,
+          "y": 326.796875,
+          "width": 357,
+          "height": 397.875,
+          "top": 326.796875,
+          "right": 373,
+          "bottom": 724.671875,
+          "left": 16
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      },
+      {
+        "box": {
+          "x": 395,
+          "y": 326.796875,
+          "width": 357,
+          "height": 397.875,
+          "top": 326.796875,
+          "right": 752,
+          "bottom": 724.671875,
+          "left": 395
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      },
+      {
+        "box": {
+          "x": 16,
+          "y": 762.671875,
+          "width": 357,
+          "height": 397.875,
+          "top": 762.671875,
+          "right": 373,
+          "bottom": 1160.546875,
+          "left": 16
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      }
+    ]
+  },
+  "390": {
+    "html": "<article class=\"property-card\" aria-labelledby=\"property-title-0\"><div class=\"property-gallery\" data-images=\"[&quot;https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,&quot;https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,&quot;https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;]\" data-index=\"0\" data-title=\"4-Bedroom Executive House in Kabulonga\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000001\" class=\"gallery-main\"><img src=\"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&amp;fit=crop&amp;w=800&amp;q=80\" alt=\"4-Bedroom Executive House in Kabulonga \u2014 photo 1\" decoding=\"async\" fetchpriority=\"high\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000001\" aria-label=\"Save 4-Bedroom Executive House in Kabulonga\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span><button type=\"button\" class=\"gallery-arrow gallery-previous\" data-direction=\"-1\" aria-label=\"Previous image of 4-Bedroom Executive House in Kabulonga\">\u2039</button><button type=\"button\" class=\"gallery-arrow gallery-next\" data-direction=\"1\" aria-label=\"Next image of 4-Bedroom Executive House in Kabulonga\">\u203a</button><span class=\"gallery-counter\">1 / 3</span></div><div class=\"property-info\"><p class=\"property-price\">K2,400,000</p><h2 class=\"property-title\" id=\"property-title-0\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000001\">4-Bedroom Executive House in Kabulonga</a></h2><p class=\"property-location\">Kabulonga \u00b7 House</p><div class=\"property-specs\"><span>4 beds</span><span>3 baths</span><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>320 m\u00b2</span></div></div></article><article class=\"property-card\" aria-labelledby=\"property-title-1\"><div class=\"property-gallery\" data-images=\"[&quot;assets/sample-land.png&quot;]\" data-index=\"0\" data-title=\"1-Acre Residential Plot - Chalala\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000005\" class=\"gallery-main\"><img src=\"assets/sample-land.png\" alt=\"1-Acre Residential Plot - Chalala \u2014 photo 1\" decoding=\"async\" fetchpriority=\"high\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000005\" aria-label=\"Save 1-Acre Residential Plot - Chalala\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span></div><div class=\"property-info\"><p class=\"property-price\">K980,000</p><h2 class=\"property-title\" id=\"property-title-1\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000005\">1-Acre Residential Plot - Chalala</a></h2><p class=\"property-location\">Chalala \u00b7 Land</p><div class=\"property-specs\"><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>4,047 m\u00b2</span></div></div></article><article class=\"property-card\" aria-labelledby=\"property-title-2\"><div class=\"property-gallery\" data-images=\"[&quot;assets/sample-land.png&quot;]\" data-index=\"0\" data-title=\"Riverside Lodge Plot - Victoria Falls\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000008\" class=\"gallery-main\"><img src=\"assets/sample-land.png\" alt=\"Riverside Lodge Plot - Victoria Falls \u2014 photo 1\" decoding=\"async\" loading=\"lazy\"></a><span class=\"purpose-badge\">For Sale</span><button type=\"button\" class=\"save-property\" data-property-id=\"10000000-0000-0000-0000-000000000008\" aria-label=\"Save Riverside Lodge Plot - Victoria Falls\" aria-pressed=\"false\"><svg aria-hidden=\"true\"><use href=\"#icon-heart\"></use></svg></button><span class=\"property-card-verified\">HILLTOP.Verified</span></div><div class=\"property-info\"><p class=\"property-price\">K3,200,000</p><h2 class=\"property-title\" id=\"property-title-2\"><a href=\"property-details.html?id=10000000-0000-0000-0000-000000000008\">Riverside Lodge Plot - Victoria Falls</a></h2><p class=\"property-location\">Victoria Falls \u00b7 Land</p><div class=\"property-specs\"><span><svg aria-hidden=\"true\"><use href=\"#icon-area\"></use></svg>8,000 m\u00b2</span></div></div></article>",
+    "box": {
+      "x": 16,
+      "y": 345.25,
+      "width": 358,
+      "height": 1259.875,
+      "top": 345.25,
+      "right": 374,
+      "bottom": 1605.125,
+      "left": 16
+    },
+    "cards": [
+      {
+        "box": {
+          "x": 16,
+          "y": 345.25,
+          "width": 358,
+          "height": 398.625,
+          "top": 345.25,
+          "right": 374,
+          "bottom": 743.875,
+          "left": 16
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      },
+      {
+        "box": {
+          "x": 16,
+          "y": 775.875,
+          "width": 358,
+          "height": 398.625,
+          "top": 775.875,
+          "right": 374,
+          "bottom": 1174.5,
+          "left": 16
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      },
+      {
+        "box": {
+          "x": 16,
+          "y": 1206.5,
+          "width": 358,
+          "height": 398.625,
+          "top": 1206.5,
+          "right": 374,
+          "bottom": 1605.125,
+          "left": 16
+        },
+        "font": "15px / 22.5px Concise-RegularDemo, Arial, sans-serif"
+      }
+    ]
+  }
+}

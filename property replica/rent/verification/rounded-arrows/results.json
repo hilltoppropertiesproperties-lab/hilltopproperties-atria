@@ -1,0 +1,23 @@
+{
+  "viewports": [
+    {
+      "width": 1440,
+      "visibleArrows": 23,
+      "galleryAndArticles": "passed",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "visibleArrows": 17,
+      "galleryAndArticles": "passed",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "visibleArrows": 16,
+      "galleryAndArticles": "passed",
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

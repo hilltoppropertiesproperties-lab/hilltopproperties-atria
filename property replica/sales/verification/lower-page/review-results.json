@@ -1,0 +1,133 @@
+{
+  "viewports": [
+    {
+      "width": 1920,
+      "overflow": false,
+      "lowerWidth": 880,
+      "aligned": true,
+      "footerWidth": 1920,
+      "footerColumns": 4,
+      "alertDirection": "row",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "lowerWidth": 880,
+      "aligned": true,
+      "footerWidth": 1440,
+      "footerColumns": 4,
+      "alertDirection": "row",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 1280,
+      "overflow": false,
+      "lowerWidth": 880,
+      "aligned": true,
+      "footerWidth": 1280,
+      "footerColumns": 4,
+      "alertDirection": "row",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "lowerWidth": 730,
+      "aligned": true,
+      "footerWidth": 1024,
+      "footerColumns": 2,
+      "alertDirection": "row",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 900,
+      "overflow": false,
+      "lowerWidth": 868,
+      "aligned": true,
+      "footerWidth": 900,
+      "footerColumns": 2,
+      "alertDirection": "row",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "lowerWidth": 736,
+      "aligned": true,
+      "footerWidth": 768,
+      "footerColumns": 2,
+      "alertDirection": "row",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 600,
+      "overflow": false,
+      "lowerWidth": 568,
+      "aligned": true,
+      "footerWidth": 600,
+      "footerColumns": 2,
+      "alertDirection": "column",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "lowerWidth": 358,
+      "aligned": true,
+      "footerWidth": 390,
+      "footerColumns": 2,
+      "alertDirection": "column",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 360,
+      "overflow": false,
+      "lowerWidth": 328,
+      "aligned": true,
+      "footerWidth": 360,
+      "footerColumns": 1,
+      "alertDirection": "column",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "lowerWidth": 288,
+      "aligned": true,
+      "footerWidth": 320,
+      "footerColumns": 1,
+      "alertDirection": "column",
+      "paginationHeight": 32,
+      "tableInViewport": true,
+      "descriptionsTruncate": true
+    }
+  ],
+  "errors": [],
+  "backend_requests": [],
+  "changed_source_files": [
+    "listings-ui.js",
+    "listings.css",
+    "listings.html"
+  ],
+  "property_cards_unchanged": true,
+  "count_empty_rent_sort_alert_request_checks": "passed"
+}

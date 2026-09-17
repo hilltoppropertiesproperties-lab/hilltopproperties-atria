@@ -1,0 +1,72 @@
+{
+  "checks": [
+    "initial trigger is select location",
+    "left side opens full trigger",
+    "left side starts animated close",
+    "text area opens full trigger",
+    "text area starts animated close",
+    "empty centre opens full trigger",
+    "empty centre starts animated close",
+    "chevron side opens full trigger",
+    "chevron side starts animated close",
+    "only city names are shown",
+    "desktop menu is compact and attached",
+    "menu has edged floating treatment",
+    "opening animation is configured",
+    "Lusaka updates trigger",
+    "Lusaka remains draft only",
+    "Livingstone updates trigger",
+    "Livingstone remains draft only",
+    "outside click closes",
+    "Escape closes",
+    "Enter and Space toggle repeatedly",
+    "Arrow Down moves option focus",
+    "Search Properties applies Lusaka",
+    "Search Properties applies Livingstone",
+    "no desktop page errors",
+    "mobile menu matches trigger width",
+    "mobile stays in viewport with touch targets",
+    "no mobile page errors",
+    "menu can open upward when needed"
+  ],
+  "desktop": {
+    "trigger": {
+      "x": 20,
+      "y": 241.5,
+      "width": 240,
+      "height": 48,
+      "top": 241.5,
+      "right": 260,
+      "bottom": 289.5,
+      "left": 20
+    },
+    "menu": {
+      "x": 20,
+      "y": 297.5,
+      "width": 280,
+      "height": 106,
+      "top": 297.5,
+      "right": 300,
+      "bottom": 403.5,
+      "left": 20
+    },
+    "cssWidth": "280px",
+    "radius": "10px",
+    "padding": "6px",
+    "shadow": "rgba(15, 30, 45, 0.12) 0px 18px 40px 0px, rgba(15, 30, 45, 0.06) 0px 3px 10px 0px",
+    "origin": "0px 0px",
+    "duration": "0.18s, 0.18s, 0s"
+  },
+  "mobile": {
+    "tw": 358,
+    "mw": 358,
+    "left": 16,
+    "right": 374,
+    "vw": 390,
+    "rows": [
+      48,
+      48
+    ],
+    "topmost": true
+  }
+}

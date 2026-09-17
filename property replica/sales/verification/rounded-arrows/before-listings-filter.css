@@ -1,0 +1,255 @@
+/* Homepage discovery component rules from timingila/website.css.
+   Kept local because the reference is a separate workspace; homepage is unchanged. */
+.property-discovery { --border:#d9dece; --text:#1f2933; --army:#4a5e3a; --font-heading:"Concise-RegularDemo",sans-serif; --font-interface:"Concise-RegularDemo",sans-serif; }
+.property-discovery.discovery-filter {
+  --discovery-font: 'Concise-RegularDemo', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-family: var(--discovery-font);
+}
+
+.discovery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.discovery-header h2 {
+  margin: 0;
+  color: var(--navy);
+  font: 600 24px var(--font-heading);
+}
+
+.discovery-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.discovery-count:empty {
+  display: none;
+}
+
+.discovery-transactions {
+  display: flex;
+  gap: 0;
+  padding: 0;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--white);
+  overflow: hidden;
+}
+
+.discovery-transactions button {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 600 14px var(--font-interface);
+  cursor: pointer;
+}
+
+.discovery-transactions button + button {
+  border-left: 1px solid var(--border);
+}
+
+.discovery-transactions button:hover:not([aria-pressed="true"]) {
+  background: rgba(13, 27, 42, 0.04);
+  color: var(--text);
+}
+
+.discovery-transactions button[aria-pressed="true"] {
+  background: #e6f3fb;
+  color: #0b527f;
+  box-shadow: none;
+}
+
+.property-discovery .discovery-field-group {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 17px;
+}
+
+.property-discovery .field-label {
+  display: block;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.property-discovery .discovery-control {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--white);
+  transition: border-color 160ms ease, outline-color 160ms ease;
+}
+
+.property-discovery .discovery-control:focus-within {
+  border-color: var(--army);
+  outline: 3px solid rgba(74, 94, 58, 0.1);
+}
+
+.property-discovery .field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.property-discovery :is(.field-icon, .field-chevron) {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: #7b8796;
+  pointer-events: none;
+}
+
+.discovery-filter select {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: 400 14px var(--font-interface);
+  cursor: pointer;
+  appearance: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.discovery-fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.discovery-fields .discovery-field-group:last-child {
+  margin-bottom: 20px;
+}
+
+.discovery-filter .search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 20px;
+  margin: 0 0 9px;
+  border: 1px solid #bdddf1;
+  border-radius: 2px;
+  background: #e6f3fb;
+  color: #0b527f;
+  font: 600 16px var(--font-interface);
+  cursor: pointer;
+}
+
+.property-discovery.discovery-filter :is(h2, button, select, option) {
+  font-family: var(--discovery-font);
+}
+
+.discovery-filter .search-btn:hover {
+  border-color: #8fc5e5;
+  background: #cfe9f7;
+}
+
+.discovery-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: left;
+}
+
+/* Sidebar adapters only: keep the existing results column and card widths. */
+.search-rail.discovery-filter { display:flex; gap:0; }
+.discovery-header { flex-wrap:wrap; gap:4px 10px; }
+.discovery-header h2 { font-size:20px; }
+.discovery-badge { font-size:12px; }
+.discovery-filter .discovery-control { gap:10px; height:48px; min-height:48px; color:var(--text); text-align:left; }
+.discovery-filter .field-row { font-size:14px; }
+.discovery-filter .field-icon svg { width:18px; height:18px; stroke-width:2; }
+.discovery-filter .field-chevron svg { width:14px; height:14px; stroke-width:2.2; }
+.discovery-filter .field-chevron { margin-left:auto; }
+.discovery-filter .filter-value { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; }
+.discovery-filter .field-row input,.discovery-filter .field-row select { height:24px; min-height:0; padding:0; border:0; outline:0; background:transparent; width:100%; min-width:0; font-size:14px; color:var(--text); }
+.discovery-filter input::placeholder { color:var(--text); opacity:1; }
+.discovery-filter .button.search-btn { margin:3px 0 9px; height:48px; min-height:48px; background:#e6f3fb; border:1px solid #bdddf1; color:#0b527f; font-size:16px; font-weight:600; border-radius:2px; }
+.discovery-filter .button.search-btn:hover { border-color:#8fc5e5; background:#cfe9f7; }
+.discovery-filter :is(button,summary,input):focus-visible { outline:2px solid var(--army); outline-offset:2px; }
+.discovery-filter .field-row input:focus-visible { outline:0; }
+.discovery-filter .discovery-control:hover { border-color:#aab5bd; }
+.discovery-filter .discovery-control[aria-expanded="true"] { border-color:#bdddf1; color:var(--text); background:white; box-shadow:none; }
+.discovery-filter .price-popover .field input { height:48px; }
+#advancedFilters { display:grid; gap:20px; }
+#listingFiltersDialog .button.primary,#pricePanel .button.primary { background:#e6f3fb; border-color:#bdddf1; color:#0b527f; border-radius:2px; }
+#listingFiltersDialog .button.primary:hover,#pricePanel .button.primary:hover { background:#cfe9f7; border-color:#8fc5e5; }
+@media (min-width:901px) {
+  .discovery-filter .native-filter { display:none; }
+}
+@media (min-width:901px) and (max-height:650px) {
+  .filter-sidebar { position:static; }
+}
+@media (max-width:900px) {
+  #mobilePrimaryFilters .search-rail { display:flex; }
+  #mobilePrimaryFilters .filter-trigger { display:none; }
+  #mobilePrimaryFilters .price-field summary { display:flex; }
+  #mobilePrimaryFilters .price-popover { margin-top:12px; }
+  #mobilePrimaryFilters .price-popover h3 { display:none; }
+  #listingFiltersDialog .mobile-location-field { display:none; }
+  #listingFiltersDialog #applyFilters { display:none; }
+  #listingFiltersDialog .dialog-heading h2 { font-size:18px; }
+  #mobilePrimaryFilters .discovery-header h2 { font-size:22px; }
+  #mobilePrimaryFilters .field-row input,#mobilePrimaryFilters .field-row select { font-size:16px; }
+  #advancedFilters { margin-bottom:17px; }
+}
+
+/* The sticky containing block ends before the normal-flow action cards. */
+.listings-sidebar { display:grid; grid-template-rows:minmax(min-content,1fr) auto; align-self:stretch; min-width:0; gap:32px; padding-bottom:72px; }
+.filter-scroll-boundary { min-width:0; }
+.sidebar-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.sidebar-action { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; min-width:0; min-height:112px; padding:16px 8px; border:1px solid #d9dece; border-radius:2px; background:var(--white); color:#0b527f; text-align:center; font-size:14px; font-weight:500; line-height:1.4; transition:border-color 160ms,background-color 160ms,color 160ms; }
+.sidebar-action img { display:block; width:34px; height:34px; object-fit:contain; flex-shrink:0; }
+.sidebar-action > span { display:flex; align-items:center; justify-content:center; min-height:2.8em; }
+.sidebar-action:is(:hover,:focus-visible) { border-color:#bdddf1; background:#e6f3fb; color:#0b527f; }
+@media (min-width:901px) and (max-width:1100px) {
+  .header-actions { display:flex; gap:16px; }
+}
+@media (max-width:900px) {
+  .listings-sidebar { display:block; padding-bottom:28px; }
+  .listings-sidebar .filter-sidebar { display:block; position:static; }
+  .sidebar-actions { margin-top:32px; }
+  .sidebar-action { min-height:120px; }
+  #filterFormHome { scroll-margin-top:20px; }
+  #filterFormHome .filter-trigger { display:none; }
+  #filterFormHome .price-popover { position:static; width:100%; max-width:none; margin-top:12px; box-shadow:none; }
+  #filterFormHome .price-popover h3,#filterFormHome #priceDone { display:none; }
+  #filterFormHome .field-row input,#filterFormHome .field-row select { font-size:16px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .sidebar-action { transition:none; }
+}
+

@@ -130,7 +130,7 @@ whenDomReady().then(loadPublicHero).catch((error) => {
   console.error('[Hero] media loading failed:', error);
   if (heroElement) {
     const mediaElement = heroElement.querySelector('[data-hero-media]');
-    if (mediaElement) mediaElement.style.backgroundImage = 'none';
+    if (mediaElement) mediaElement.style.removeProperty('background-image');
     heroElement.classList.remove('hero--media-loading', 'hero--video-playing');
     heroElement.classList.add('hero--media-unavailable');
   }

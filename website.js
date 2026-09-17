@@ -25,12 +25,44 @@ var publicState = {
   appSettings: {},
   search: '',
   locationText: '',
+  routeLocationPath: '',
+  selectedLocation: null,
+  invalidLocationPath: false,
   purpose: 'all',
   type: 'all',
   branch: 'all',
   publicStatus: 'all',
   category: 'all',
   sort: 'newest'
+};
+
+// The homepage search is a draft form. It must never drive publicState because
+// publicState is also the source used to render the homepage inventory sections.
+var discoverySearchState = {
+  purpose: 'For Sale',
+  province: 'all',
+  city: 'all',
+  location: '',
+  locationQuery: '',
+  selectedLocation: null,
+  area: 'all',
+  type: 'all',
+  currency: 'all',
+  minPrice: '',
+  maxPrice: '',
+  minBedrooms: '',
+  minBathrooms: '',
+  minSize: '',
+  reference: '',
+  features: [],
+  search: ''
+};
+
+// The listings form is draft state too. Applied location state remains in
+// publicState and changes only when the URL is read or the form is submitted.
+var listingLocationDraft = {
+  locationQuery: '',
+  selectedLocation: null
 };
 
 var warnedExclusiveImageRefs = {};
@@ -80,15 +112,147 @@ function getCategoryConfigFromUrl() {
 }
 
 function normalizeListingPurpose(value) {
-  var purpose = String(value || '').trim().toLowerCase();
+  var purpose = String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, ' ');
   if (purpose === 'for rent' || purpose === 'rent') return 'For Rent';
   if (purpose === 'for sale' || purpose === 'sale') return 'For Sale';
   return 'all';
 }
 
+var LISTING_COLLECTION_ROUTES = {
+  'properties-for-sale': 'For Sale',
+  'properties-for-rent': 'For Rent',
+  'property-for-sale': 'For Sale',
+  'property-for-rent': 'For Rent'
+};
+
+function listingBasePathForPurpose(value) {
+  var purpose = normalizeListingPurpose(value);
+  if (purpose === 'For Sale') return '/properties-for-sale';
+  if (purpose === 'For Rent') return '/properties-for-rent';
+  return '/listings';
+}
+
+function parseListingRoute(pathname) {
+  var path = String(pathname || '').replace(/\/+$/, '') || '/';
+  var segments = path.split('/').filter(Boolean);
+  var routePurpose = LISTING_COLLECTION_ROUTES[String(segments[0] || '').toLowerCase()] || 'all';
+  if (routePurpose === 'all') {
+    return {isListingRoute: false, purpose: 'all', locationPath: '', invalid: false};
+  }
+
+  var rawLocationPath = segments.slice(1).join('/');
+  var locationPath = '';
+  try {
+    locationPath = decodeURIComponent(rawLocationPath).trim().toLowerCase();
+  } catch (error) {
+    return {isListingRoute: true, purpose: routePurpose, locationPath: '', invalid: true};
+  }
+  var invalid = segments.length > 3 || (locationPath && !/^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?$/.test(locationPath));
+  return {
+    isListingRoute: true,
+    purpose: routePurpose,
+    locationPath: locationPath,
+    invalid: invalid,
+    legacy: String(segments[0] || '').indexOf('properties-') !== 0
+  };
+}
+
+function listingPurposeFromPathname(pathname) {
+  return parseListingRoute(pathname).purpose;
+}
+
+function canonicalCollectionHref(value) {
+  var original = String(value || '').trim();
+  if (!original) return original;
+
+  var target;
+  try {
+    target = new URL(original, window.location.href);
+  } catch (error) {
+    return original;
+  }
+  if (target.origin !== window.location.origin) return original;
+
+  var pathname;
+  try {
+    pathname = decodeURIComponent(target.pathname).replace(/\/+$/, '').toLowerCase();
+  } catch (error) {
+    pathname = target.pathname.replace(/\/+$/, '').toLowerCase();
+  }
+  var purpose = 'all';
+  if (pathname.endsWith('/property replica/sales/listings.html')) purpose = 'For Sale';
+  if (pathname.endsWith('/property replica/rent/listings.html')) purpose = 'For Rent';
+  var collectionRoute = parseListingRoute(pathname);
+  if (collectionRoute.isListingRoute) purpose = collectionRoute.purpose;
+  if (pathname === '/listings' || pathname === '/listings.html') {
+    purpose = normalizeListingPurpose(target.searchParams.get('listingType') || target.searchParams.get('purpose'));
+  }
+  if (purpose === 'all') return original;
+
+  target.pathname = listingBasePathForPurpose(purpose) +
+    (collectionRoute.locationPath ? '/' + collectionRoute.locationPath : '');
+  target.searchParams.delete('listingType');
+  target.searchParams.delete('purpose');
+  return target.pathname + target.search + target.hash;
+}
+
+function navigateToDedicatedListings(value, searchParams, locationPath) {
+  var purpose = normalizeListingPurpose(value);
+  var path = purpose === 'all' ? '' : listingBasePathForPurpose(purpose);
+  if (!path) return false;
+  var normalizedPath = String(locationPath || '').trim().toLowerCase();
+  if (/^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?$/.test(normalizedPath)) {
+    path += '/' + normalizedPath;
+  }
+
+  var target = new URL(path, window.location.href);
+  target.search = searchParams instanceof URLSearchParams
+    ? searchParams.toString()
+    : window.location.search;
+  target.searchParams.delete('listingType');
+  target.searchParams.delete('purpose');
+  if (target.href === window.location.href) return false;
+  window.location.assign(target.href);
+  return true;
+}
+
+function discoverySearchParams(routeLocationPath) {
+  var params = new URLSearchParams();
+  var values = {
+    province: routeLocationPath ? '' : discoverySearchState.province,
+    city: routeLocationPath ? '' : discoverySearchState.city,
+    location: routeLocationPath ? '' : discoverySearchState.location,
+    area: routeLocationPath ? '' : discoverySearchState.area,
+    type: discoverySearchState.type === 'all' ? '' : discoverySearchState.type.toLowerCase(),
+    currency: discoverySearchState.currency,
+    minPrice: discoverySearchState.minPrice,
+    maxPrice: discoverySearchState.maxPrice,
+    minBedrooms: discoverySearchState.minBedrooms,
+    q: discoverySearchState.search
+  };
+  Object.keys(values).forEach(function (name) {
+    var value = String(values[name] == null ? '' : values[name]).trim();
+    if (value && value.toLowerCase() !== 'all') params.set(name, value);
+  });
+  return params;
+}
+
+function canonicalLocationPath(location) {
+  if (!location) return '';
+  if (location.type === 'province' && location.provinceSlug) return location.provinceSlug + '-province';
+  if (location.type === 'city' && location.citySlug) return location.citySlug;
+  if (location.type === 'suburb' && location.citySlug && location.suburbSlug) {
+    return location.citySlug + '/' + location.suburbSlug;
+  }
+  return '';
+}
+
 var categoryConfig = getCategoryConfigFromUrl();
 publicState.category = categoryConfig.key;
-publicState.purpose = normalizeListingPurpose(selectedPurpose);
+var initialListingRoute = parseListingRoute(window.location.pathname);
+publicState.purpose = initialListingRoute.purpose;
+publicState.routeLocationPath = initialListingRoute.locationPath;
+if (publicState.purpose === 'all') publicState.purpose = normalizeListingPurpose(selectedPurpose);
 
 var fallbackContact = {
   phone: '+260 979 972019',
@@ -268,20 +432,51 @@ async function safeSelect(label, queryBuilder, fallback) {
   }
 }
 
-var PUBLIC_PROPERTY_FIELDS = 'id, reference_number, title, description, price, currency_code, purpose, property_type, area, full_address, bedrooms, bathrooms, garages, square_metres, status, featured, branch_id, created_at';
-var LEGACY_PUBLIC_PROPERTY_FIELDS = 'id, reference_number, title, description, price, purpose, property_type, area, full_address, bedrooms, bathrooms, garages, square_metres, status, featured, branch_id, created_at';
+var PUBLIC_PROPERTY_FIELDS = 'id, reference_number, title, description, price, currency_code, purpose, property_type, area, full_address, bedrooms, bathrooms, garages, square_metres, status, featured, branch_id, created_at, amenities';
+var LEGACY_PUBLIC_PROPERTY_FIELDS = 'id, reference_number, title, description, price, purpose, property_type, area, full_address, bedrooms, bathrooms, garages, square_metres, status, featured, branch_id, created_at, amenities';
 
 function isMissingCurrencyColumnError(error) {
   var message = String(error && error.message || '').toLowerCase();
   return Boolean(error) && (error.code === '42703' || message.indexOf('currency_code') !== -1);
 }
 
-function buildPublicPropertyQuery(supabase, fields) {
-  return supabase
+function buildPublicPropertyQuery(supabase, fields, filters) {
+  var query = supabase
     .from('properties')
     .select(fields)
-    .in('status', ['Active', 'Under Offer'])
-    .order('created_at', { ascending: false });
+    .in('status', ['Active', 'Under Offer']);
+  if (filters && filters.purpose && filters.purpose !== 'all') {
+    query = query.eq('purpose', filters.purpose);
+  }
+  if (filters && filters.cityId) {
+    query = query.eq('city_id', filters.cityId);
+  }
+  if (filters && filters.provinceId) {
+    query = query.eq('province_id', filters.provinceId);
+  }
+  if (filters && filters.suburbId) {
+    query = query.eq('suburb_id', filters.suburbId);
+  }
+  return query.order('created_at', { ascending: false });
+}
+
+async function resolveListingLocationPath(supabase, locationPath) {
+  if (!locationPath) return null;
+  var response = await supabase.rpc('resolve_location_path', {
+    location_path: locationPath
+  });
+  if (response.error) throw response.error;
+  var rows = normalizeLocationSearchResults(response.data);
+  if (rows.length !== 1 || canonicalLocationPath(rows[0]) !== locationPath) return null;
+  return rows[0];
+}
+
+function propertyLocationQueryFilters(location) {
+  if (!location) return {};
+  if (location.type === 'province') return {provinceId: location.provinceId};
+  if (location.type === 'city') return {cityId: location.cityId};
+  if (location.type === 'suburb') return {suburbId: location.suburbId};
+  return {};
 }
 
 async function selectPublicPropertyRows(supabase) {
@@ -437,12 +632,7 @@ async function loadListingsData() {
   }
 
   try {
-    var results = await Promise.all([
-      buildPublicPropertyQuery(supabase, PUBLIC_PROPERTY_FIELDS + ', province_id, city_id, area_slug'),
-      supabase
-        .from('property_images')
-        .select('property_id, image_url, display_order, is_cover')
-        .order('display_order', { ascending: true }),
+    var metadata = await Promise.all([
       supabase
         .from('branches')
         .select('id, name, address, contact_number')
@@ -455,20 +645,44 @@ async function loadListingsData() {
       supabase.from('cities').select('id, province_id, name, slug').order('name')
     ]);
 
-    results.forEach(function (result) {
+    metadata.forEach(function (result) {
       if (result.error) throw result.error;
     });
 
-    publicState.properties = results[0].data || [];
-    publicState.images = results[1].data || [];
-    publicState.branches = results[2].data || [];
-    publicState.provinces = results[4].data || [];
-    publicState.cities = results[5].data || [];
+    publicState.branches = metadata[0].data || [];
+    publicState.provinces = metadata[2].data || [];
+    publicState.cities = metadata[3].data || [];
 
     publicState.appSettings = {};
-    (results[3].data || []).forEach(function (row) {
+    (metadata[1].data || []).forEach(function (row) {
       publicState.appSettings[row.setting_key] = row.setting_value || {};
     });
+
+    var route = parseListingRoute(window.location.pathname);
+    var routeLocation = route.invalid ? null : await resolveListingLocationPath(supabase, route.locationPath);
+    publicState.invalidLocationPath = Boolean(route.invalid || (route.locationPath && !routeLocation));
+    publicState.selectedLocation = routeLocation;
+    publicState.routeLocationPath = route.locationPath;
+    var locationFilters = propertyLocationQueryFilters(routeLocation);
+    locationFilters.purpose = route.purpose;
+    var inventory = await Promise.all([
+      publicState.invalidLocationPath
+        ? Promise.resolve({data: [], error: null})
+        : buildPublicPropertyQuery(
+          supabase,
+          PUBLIC_PROPERTY_FIELDS + ', province_id, city_id, suburb_id, area_slug',
+          locationFilters
+        ),
+      supabase
+        .from('property_images')
+        .select('property_id, image_url, display_order, is_cover')
+        .order('display_order', { ascending: true })
+    ]);
+    inventory.forEach(function (result) {
+      if (result.error) throw result.error;
+    });
+    publicState.properties = inventory[0].data || [];
+    publicState.images = inventory[1].data || [];
 
     publicState.listingsLoaded = true;
     readListingUrl();
@@ -669,7 +883,7 @@ function renderHero() {
   var title = homepage.hero_title || (banner && banner.title) || 'Find Verified Properties Across Zambia';
   var subtitle = homepage.hero_subtitle || (banner && banner.subtitle) || 'Buy, rent, and enquire about trusted properties through Hilltop Properties Zambia.';
   var buttonText = homepage.hero_button_text || (banner && banner.button_text) || 'View Listings';
-  var buttonLink = homepage.hero_button_link || (banner && banner.button_link) || 'listings.html';
+  var buttonLink = canonicalCollectionHref(homepage.hero_button_link || (banner && banner.button_link) || 'listings.html');
 
   var titleEl = byId('heroTitle');
   var subtitleEl = byId('heroSubtitle');
@@ -1105,6 +1319,7 @@ function compareListingPricesWithinCurrency(a, b, direction) {
 
 var listingControlFields = {
   listingSearchInput: 'search',
+  listingLocationInput: 'locationText',
   listingProvinceFilter: 'province',
   listingCityFilter: 'city',
   listingAreaFilter: 'area',
@@ -1115,15 +1330,45 @@ var listingControlFields = {
   listingMinPriceFilter: 'minPrice',
   listingMaxPriceFilter: 'maxPrice',
   listingBedroomsFilter: 'minBedrooms',
+  listingBathroomsFilter: 'minBathrooms',
+  listingMinSizeFilter: 'minSize',
+  listingReferenceFilter: 'reference',
   listingStatusFilter: 'publicStatus',
   listingSortSelect: 'sort'
 };
 
+function listingLocationDisplayName(location) {
+  if (!location) return '';
+  if (location.type === 'province' && !/\bprovince$/i.test(location.name)) {
+    return location.name + ' Province';
+  }
+  return location.name;
+}
+
+function applyRouteLocationState() {
+  var location = publicState.selectedLocation;
+  if (!location) return;
+  publicState.locationText = listingLocationDisplayName(location);
+  publicState.province = location.provinceSlug || 'all';
+  publicState.city = location.type === 'province' ? 'all' : location.citySlug || 'all';
+  publicState.area = location.type === 'suburb' ? location.suburbSlug || 'all' : 'all';
+}
+
 function readListingUrl() {
   var query = new URLSearchParams(window.location.search);
+  var route = parseListingRoute(window.location.pathname);
+  var routePurpose = route.purpose;
+  publicState.routeLocationPath = route.locationPath;
+  if (!route.locationPath) {
+    publicState.selectedLocation = null;
+    publicState.invalidLocationPath = false;
+  }
   publicState.category = normalizeListingCategory(query.get('category'));
-  publicState.purpose = normalizeListingPurpose(query.get('listingType') || query.get('purpose'));
-  publicState.search = query.get('q') || '';
+  publicState.purpose = routePurpose === 'all'
+    ? normalizeListingPurpose(query.get('listingType') || query.get('purpose'))
+    : routePurpose;
+  publicState.search = query.get('q') || query.get('keyword') || '';
+  publicState.reference = query.get('reference') || '';
   publicState.locationText = query.get('location') || '';
   ['province', 'city', 'area'].forEach(function (field) {
     publicState[field] = (query.get(field) || 'all').trim().toLowerCase();
@@ -1133,30 +1378,51 @@ function readListingUrl() {
   publicState.type = types[(query.get('type') || '').toLowerCase()] || 'all';
   publicState.currency = ['ZMW', 'USD'].indexOf((query.get('currency') || '').toUpperCase()) !== -1
     ? query.get('currency').toUpperCase() : 'all';
-  ['minPrice', 'maxPrice', 'minBedrooms'].forEach(function (field) {
-    publicState[field] = query.get(field) || '';
-  });
+  publicState.minPrice = query.get('minPrice') || '';
+  publicState.maxPrice = query.get('maxPrice') || '';
+  publicState.minBedrooms = query.get('minBedrooms') || query.get('bedrooms') || '';
+  publicState.minBathrooms = query.get('minBathrooms') || query.get('bathrooms') || '';
+  publicState.minSize = query.get('minSize') || '';
+  publicState.features = query.getAll('feature').map(function (value) {
+    return String(value || '').trim();
+  }).filter(Boolean);
   publicState.publicStatus = {active: 'Active', 'under-offer': 'Under Offer'}[query.get('status')] || 'all';
   publicState.sort = ['newest', 'price-low', 'price-high', 'featured'].indexOf(query.get('sort')) !== -1
     ? query.get('sort') : 'newest';
+  applyRouteLocationState();
+  listingLocationDraft.locationQuery = publicState.locationText;
+  listingLocationDraft.selectedLocation = publicState.selectedLocation;
 }
 
-function writeListingUrl() {
-  var url = new URL(window.location.href);
+function applyListingStateToUrl(url) {
+  var route = parseListingRoute(url.pathname);
+  var routePurpose = route.purpose;
+  if (routePurpose !== 'all') publicState.purpose = routePurpose;
+  if (route.isListingRoute) {
+    url.pathname = listingBasePathForPurpose(publicState.purpose) +
+      (publicState.routeLocationPath ? '/' + publicState.routeLocationPath : '');
+  }
+  var routeLocation = publicState.selectedLocation;
+  var locationText = String(publicState.locationText || '').trim();
   var values = {
     category: publicState.category,
-    purpose: publicState.purpose === 'For Sale' ? 'sale' : publicState.purpose === 'For Rent' ? 'rent' : 'all',
-    location: publicState.locationText,
+    purpose: routePurpose === 'all'
+      ? publicState.purpose === 'For Sale' ? 'sale' : publicState.purpose === 'For Rent' ? 'rent' : 'all'
+      : 'all',
+    location: routeLocation ? '' : locationText,
     q: publicState.search,
-    province: publicState.province,
-    city: publicState.city,
-    area: publicState.area,
+    province: routeLocation ? 'all' : publicState.province,
+    city: routeLocation ? 'all' : publicState.city,
+    area: routeLocation ? 'all' : publicState.area,
     branch: publicState.branch,
     type: publicState.type.toLowerCase(),
     currency: publicState.currency,
     minPrice: publicState.minPrice,
     maxPrice: publicState.maxPrice,
     minBedrooms: publicState.minBedrooms,
+    minBathrooms: publicState.minBathrooms,
+    minSize: publicState.minSize,
+    reference: publicState.reference,
     status: publicState.publicStatus.toLowerCase().replace(' ', '-'),
     sort: publicState.sort === 'newest' ? '' : publicState.sort
   };
@@ -1165,16 +1431,45 @@ function writeListingUrl() {
     if (values[key] === '' || values[key] === 'all') url.searchParams.delete(key);
     else url.searchParams.set(key, values[key]);
   });
-  if (url.href !== window.location.href) window.history.pushState(null, '', url.href);
+  url.searchParams.delete('feature');
+  publicState.features.forEach(function (feature) {
+    url.searchParams.append('feature', feature);
+  });
+  return url;
+}
+
+function writeListingUrl(historyMethod) {
+  var url = applyListingStateToUrl(new URL(window.location.href));
+  if (url.href !== window.location.href) {
+    if (url.pathname !== window.location.pathname) {
+      window.location.assign(url.href);
+      return true;
+    }
+    window.history[historyMethod === 'replace' ? 'replaceState' : 'pushState'](null, '', url.href);
+  }
+  return false;
 }
 
 function matchesListingLocation(property) {
+  var selected = publicState.selectedLocation;
+  if (selected) {
+    if (selected.type === 'province') return String(property.province_id) === String(selected.provinceId);
+    if (selected.type === 'city') return String(property.city_id) === String(selected.cityId);
+    if (selected.type === 'suburb') return String(property.suburb_id) === String(selected.suburbId);
+    return false;
+  }
   var province = publicState.provinces.find(function (row) { return row.id === property.province_id; });
   var city = publicState.cities.find(function (row) {
     return row.id === property.city_id && row.province_id === property.province_id;
   });
-  var matchesText = !publicState.locationText || [property.area, property.full_address].some(function (value) {
-    return String(value || '').toLowerCase() === publicState.locationText.toLowerCase();
+  var locationNeedle = String(publicState.locationText || '').trim().toLowerCase().replace(/[-_]+/g, ' ');
+  var matchesText = !locationNeedle || [
+    property.area,
+    property.full_address,
+    province && province.name,
+    city && city.name
+  ].some(function (value) {
+    return String(value || '').toLowerCase().replace(/[-_]+/g, ' ').indexOf(locationNeedle) !== -1;
   });
   return matchesText &&
     (publicState.province === 'all' || Boolean(province && province.slug === publicState.province)) &&
@@ -1188,6 +1483,7 @@ function listingAreaSources() {
 }
 
 function matchesListingArea(property) {
+  if (publicState.selectedLocation) return true;
   if (publicState.area === 'all') return true;
   if (property.area_slug) return property.area_slug === publicState.area;
   return listingAreaSources().some(function (source) {
@@ -1198,12 +1494,13 @@ function matchesListingArea(property) {
 }
 
 function listingFilterError() {
-  var invalid = ['minPrice', 'maxPrice', 'minBedrooms'].some(function (field) {
+  var integerFields = ['minBedrooms', 'minBathrooms'];
+  var invalid = ['minPrice', 'maxPrice', 'minBedrooms', 'minBathrooms', 'minSize'].some(function (field) {
     var value = publicState[field];
     return value !== '' && (!Number.isFinite(Number(value)) || Number(value) < 0 ||
-      (field === 'minBedrooms' && !Number.isInteger(Number(value))));
+      (integerFields.indexOf(field) !== -1 && !Number.isInteger(Number(value))));
   });
-  if (invalid) return 'Use non-negative numbers for price limits and a whole number for bedrooms.';
+  if (invalid) return 'Use non-negative numbers for price and size, and whole numbers for bedrooms and bathrooms.';
   if ((publicState.minPrice !== '' || publicState.maxPrice !== '') && publicState.currency === 'all') {
     return 'Choose ZMW or USD to apply your price limits.';
   }
@@ -1223,6 +1520,15 @@ function renderListingOptions(id, options, label, selected) {
     return '<option value="' + escapeHtml(option.value) + '">' + escapeHtml(option.label) + '</option>';
   }).join('');
   control.value = selected;
+  syncListingDropdownSelect(control);
+}
+
+function syncListingLocationAutocomplete() {
+  var input = byId('listingLocationInput');
+  if (!input) return;
+  input.value = listingLocationDraft.locationQuery;
+  var mobileInput = byId('mobileLocationInput');
+  if (mobileInput) mobileInput.value = listingLocationDraft.locationQuery;
 }
 
 function syncListingControls() {
@@ -1252,49 +1558,94 @@ function syncListingControls() {
     var control = byId(id);
     if (control) control.value = publicState[listingControlFields[id]];
   });
+  syncCanonicalListingDropdowns();
+  syncListingLocationAutocomplete();
   syncListingMap();
   syncListingSearchUI();
 }
 
+function currentListingPurpose() {
+  var routePurpose = listingPurposeFromPathname(window.location.pathname);
+  return routePurpose === 'all' ? publicState.purpose : routePurpose;
+}
+
+function updateQuickFilterNavigation() {
+  var track = byId('listingQuickFilters');
+  var previous = byId('quickFilterPrevious');
+  var next = byId('quickFilterNext');
+  if (!track || !previous || !next) return;
+  var maximum = Math.max(0, track.scrollWidth - track.clientWidth);
+  var overflow = maximum > 2;
+  previous.hidden = !overflow;
+  next.hidden = !overflow;
+  previous.disabled = !overflow || track.scrollLeft <= 2;
+  next.disabled = !overflow || track.scrollLeft >= maximum - 2;
+}
+
 function syncListingSearchUI() {
-  if (!byId('listingPriceSummary')) return;
+  var purpose = currentListingPurpose();
   document.querySelectorAll('[data-listing-purpose]').forEach(function (button) {
-    button.setAttribute('aria-pressed', String(button.dataset.listingPurpose === publicState.purpose));
+    var selected = button.dataset.listingPurpose === purpose;
+    button.setAttribute('aria-pressed', String(selected));
+    if (selected) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
   });
-  var hasLimits = publicState.minPrice !== '' || publicState.maxPrice !== '';
-  byId('listingPriceSummary').textContent = hasLimits
-    ? (publicState.currency === 'all' ? '' : publicState.currency + ' ') +
-      (publicState.minPrice === '' ? 'Any' : Number(publicState.minPrice).toLocaleString()) + ' – ' +
-      (publicState.maxPrice === '' ? 'Any' : Number(publicState.maxPrice).toLocaleString())
-    : publicState.currency === 'all' ? 'Any price' : 'Any price · ' + publicState.currency;
-  var advanced = ['city', 'area', 'minBedrooms', 'branch', 'publicStatus', 'search'].filter(function (field) {
-    return publicState[field] !== '' && publicState[field] !== 'all';
-  });
-  byId('listingMoreCount').textContent = advanced.length ? '(' + advanced.length + ')' : '';
-  var quickFilters = byId('listingQuickFilters');
-  var labels = {House: 'Houses', Apartment: 'Apartments', Land: 'Land', Commercial: 'Commercial', Farm: 'Farms'};
-  var types = Array.from(byId('listingTypeFilter').options).filter(function (option) {
-    return labels[option.value] && publicState.properties.some(function (property) {
-      return property.property_type === option.value;
+
+  var purposeSelect = byId('listingPurposeFilter');
+  if (purposeSelect && purpose !== 'all') purposeSelect.value = purpose;
+  var mobileLocation = byId('mobileLocationInput');
+  if (mobileLocation) mobileLocation.value = publicState.locationText;
+
+  var priceValue = byId('priceValue') || byId('listingPriceSummary');
+  if (priceValue) {
+    var hasLimits = publicState.minPrice !== '' || publicState.maxPrice !== '';
+    priceValue.textContent = hasLimits
+      ? (publicState.currency === 'all' ? '' : publicState.currency + ' · ') +
+        (publicState.maxPrice === '' ? 'No maximum' : Number(publicState.maxPrice).toLocaleString()) +
+        (publicState.minPrice === '' ? '' : ' (min. ' + Number(publicState.minPrice).toLocaleString() + ')')
+      : publicState.currency === 'all' ? 'No maximum' : publicState.currency + ' · No maximum';
+  }
+
+  document.querySelectorAll('input[name="feature"]').forEach(function (input) {
+    input.checked = publicState.features.some(function (feature) {
+      return feature.toLowerCase() === input.value.toLowerCase();
     });
   });
-  var signature = types.map(function (option) { return option.value; }).join('|');
-  if (quickFilters.dataset.types !== signature) {
-    quickFilters.dataset.types = signature;
-    quickFilters.innerHTML = '<span>Explore</span>' + types.map(function (option) {
-      return '<button type="button" data-listing-type="' + escapeHtml(option.value) + '">' + labels[option.value] + '</button>';
-    }).join('');
+
+  var quickFilters = byId('listingQuickFilters');
+  var typeFilter = byId('listingTypeFilter');
+  if (quickFilters && typeFilter) {
+    var labels = {House: 'Houses', Apartment: 'Apartments', Land: 'Land', Commercial: 'Commercial', Farm: 'Farms'};
+    var available = publicState.properties.filter(function (property) {
+      return purpose === 'all' || property.purpose === purpose;
+    });
+    var types = Array.from(typeFilter.options).filter(function (option) {
+      return labels[option.value] && available.some(function (property) {
+        return property.property_type === option.value;
+      });
+    });
+    var signature = types.map(function (option) { return option.value; }).join('|');
+    if (quickFilters.dataset.types !== signature) {
+      quickFilters.dataset.types = signature;
+      quickFilters.innerHTML = types.map(function (option) {
+        return '<button class="quick-filter" type="button" data-listing-type="' + escapeHtml(option.value) + '">' + labels[option.value] + '</button>';
+      }).join('');
+    }
+    quickFilters.hidden = !types.length;
+    quickFilters.querySelectorAll('button').forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.dataset.listingType === publicState.type));
+    });
+    window.requestAnimationFrame(updateQuickFilterNavigation);
   }
-  quickFilters.hidden = !types.length;
-  quickFilters.querySelectorAll('button').forEach(function (button) {
-    button.setAttribute('aria-pressed', String(button.dataset.listingType === publicState.type));
-  });
+
   var chips = byId('listingActiveFilters');
+  if (!chips) return;
   var active = Object.keys(listingControlFields).filter(function (id) {
     var field = listingControlFields[id];
-    return field !== 'sort' && publicState[field] !== '' && publicState[field] !== 'all';
+    if (publicState.routeLocationPath && (field === 'province' || field === 'city' || field === 'area')) return false;
+    return Boolean(byId(id)) && field !== 'sort' && field !== 'purpose' && publicState[field] !== '' && publicState[field] !== 'all';
   });
-  chips.hidden = !active.length && publicState.category === 'all';
+  chips.hidden = !active.length && !publicState.features.length && publicState.category === 'all';
   chips.innerHTML = active.map(function (id) {
     var control = byId(id);
     var field = listingControlFields[id];
@@ -1304,14 +1655,17 @@ function syncListingSearchUI() {
     if (field === 'minPrice') label = 'Min: ' + label;
     if (field === 'maxPrice') label = 'Max: ' + label;
     if (field === 'minBedrooms') label += ' bedrooms';
+    if (field === 'minBathrooms') label += ' bathrooms';
+    if (field === 'minSize') label += ' m² minimum';
+    if (field === 'reference') label = 'Reference: ' + label;
     if (field === 'search') label = 'Search: ' + label;
     return '<button type="button" data-clear-control="' + id + '" aria-label="Remove ' + escapeHtml(label) + '">' +
       escapeHtml(label) + ' <span aria-hidden="true">×</span></button>';
-  }).join('') +
-    (publicState.category !== 'all'
-      ? '<button type="button" data-clear-category>Category: ' + escapeHtml(publicState.category) + ' <span aria-hidden="true">×</span></button>'
-      : '') +
-    '<button type="button" class="listing-clear-all" data-clear-all>Clear all</button>';
+  }).join('') + publicState.features.map(function (feature) {
+    return '<button type="button" data-clear-feature="' + escapeHtml(feature) + '">' + escapeHtml(feature) + ' <span aria-hidden="true">×</span></button>';
+  }).join('') + (publicState.category !== 'all'
+    ? '<button type="button" data-clear-category>Category: ' + escapeHtml(publicState.category) + ' <span aria-hidden="true">×</span></button>'
+    : '') + '<button type="button" class="listing-clear-all" data-clear-all>Clear all</button>';
 }
 
 function setListingPanel(id, open, returnFocus) {
@@ -1356,7 +1710,20 @@ function bindListingSearchUI() {
   }
   document.querySelectorAll('[data-listing-purpose]').forEach(function (button) {
     button.addEventListener('click', function () {
-      changeControl('listingPurposeFilter', button.dataset.listingPurpose);
+      var purpose = normalizeListingPurpose(button.dataset.listingPurpose);
+      if (purpose !== 'all') {
+        navigateToDedicatedListings(purpose);
+        return;
+      }
+      if (listingPurposeFromPathname(window.location.pathname) !== 'all') {
+        var target = new URL('/listings', window.location.href);
+        target.search = window.location.search;
+        target.searchParams.delete('listingType');
+        target.searchParams.delete('purpose');
+        window.location.assign(target.href);
+        return;
+      }
+      changeControl('listingPurposeFilter', 'all');
     });
   });
   byId('listingQuickFilters').addEventListener('click', function (event) {
@@ -1392,6 +1759,7 @@ function bindListingSearchUI() {
     ['listingPricePanel', 'listingMorePanel', 'listingMapPanel'].forEach(function (id) {
       setListingPanel(id, false, false);
     });
+    if (navigateToDedicatedListings(publicState.purpose)) return;
     byId('listingResultsHeading').focus({preventScroll: true});
     byId('listingResultsHeading').scrollIntoView({
       block: 'start',
@@ -1402,32 +1770,840 @@ function bindListingSearchUI() {
   byId('listingMapView').addEventListener('click', showProperties);
 }
 
+function readCanonicalListingControls() {
+  Object.keys(listingControlFields).forEach(function (id) {
+    var control = byId(id);
+    if (!control) return;
+    publicState[listingControlFields[id]] = String(control.value || '').trim();
+  });
+  publicState.features = Array.from(document.querySelectorAll('input[name="feature"]:checked')).map(function (input) {
+    return input.value;
+  });
+  publicState.locationText = listingLocationDraft.locationQuery;
+  publicState.selectedLocation = listingLocationDraft.selectedLocation;
+  publicState.routeLocationPath = canonicalLocationPath(publicState.selectedLocation);
+  if (publicState.selectedLocation) {
+    applyRouteLocationState();
+  } else {
+    publicState.city = 'all';
+    publicState.province = 'all';
+    publicState.area = 'all';
+  }
+}
+
+function setCanonicalListingDialog(open, returnFocus) {
+  var dialog = byId('listingFiltersDialog');
+  if (!dialog) return;
+  var locationField = document.querySelector('.listing-location-field');
+  var mobilePrimaryFilters = byId('mobilePrimaryFilters');
+  var typeSlot = byId('typeSlot');
+  if (locationField) {
+    if (open && window.innerWidth <= 900 && mobilePrimaryFilters) {
+      mobilePrimaryFilters.appendChild(locationField);
+    } else if ((!open || window.innerWidth > 900) && typeSlot && typeSlot.parentNode) {
+      typeSlot.parentNode.insertBefore(locationField, typeSlot);
+    }
+  }
+  if (open && !dialog.open) {
+    dialog.showModal();
+    document.body.style.overflow = 'hidden';
+  } else if (!open && dialog.open) {
+    dialog.close();
+    document.body.style.overflow = '';
+    if (returnFocus) {
+      var trigger = window.innerWidth <= 900 ? byId('mobileFiltersButton') : byId('moreFiltersButton');
+      if (trigger) trigger.focus();
+    }
+  }
+  [byId('mobileFiltersButton'), byId('moreFiltersButton')].forEach(function (trigger) {
+    if (trigger) trigger.setAttribute('aria-expanded', String(open));
+  });
+}
+
+function showListingsPreviewToast(message) {
+  var toast = byId('previewToast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.hidden = false;
+  window.clearTimeout(showListingsPreviewToast.timer);
+  showListingsPreviewToast.timer = window.setTimeout(function () {
+    toast.hidden = true;
+  }, 3500);
+}
+
+var canonicalListingDropdowns = [];
+
+function listingDropdownChevronMarkup() {
+  return '<span class="listing-dropdown__chevron" aria-hidden="true"><svg class="ui-arrow ui-arrow--down" aria-hidden="true" focusable="false"><use href="#icon-chevron"></use></svg></span>';
+}
+
+function listingDropdownPropertyIconMarkup() {
+  return '<span class="listing-dropdown__icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.5z"></path><path d="M9 21V12h6v9"></path></svg></span>';
+}
+
+function syncListingDropdownSelect(select) {
+  if (select && typeof select._listingDropdownSync === 'function') select._listingDropdownSync();
+}
+
+function syncCanonicalListingDropdowns() {
+  document.querySelectorAll('select[data-listing-dropdown]').forEach(syncListingDropdownSelect);
+}
+
+function bindListingSelectDropdowns() {
+  document.querySelectorAll('select[data-listing-dropdown]').forEach(function (select) {
+    if (select.dataset.listingDropdownBound === 'true') return;
+    select.dataset.listingDropdownBound = 'true';
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'listing-dropdown ' + (select.dataset.dropdownClass || '');
+    select.parentNode.insertBefore(wrapper, select);
+    wrapper.appendChild(select);
+    select.hidden = true;
+
+    var trigger = document.createElement('button');
+    var menu = document.createElement('div');
+    var value = document.createElement('span');
+    var triggerId = select.id + 'Trigger';
+    var menuId = select.id + 'Menu';
+    var label = select.dataset.dropdownLabel || select.getAttribute('aria-label') || 'Choose an option';
+
+    trigger.className = 'listing-dropdown__trigger';
+    trigger.id = triggerId;
+    trigger.type = 'button';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-controls', menuId);
+    trigger.setAttribute('aria-expanded', 'false');
+    if (select.dataset.dropdownIcon === 'property') trigger.insertAdjacentHTML('beforeend', listingDropdownPropertyIconMarkup());
+    value.className = 'listing-dropdown__label';
+    trigger.appendChild(value);
+    trigger.insertAdjacentHTML('beforeend', listingDropdownChevronMarkup());
+
+    menu.className = 'listing-dropdown__menu';
+    menu.id = menuId;
+    menu.hidden = true;
+    menu.setAttribute('role', 'listbox');
+    menu.setAttribute('aria-label', label);
+    wrapper.appendChild(trigger);
+    wrapper.appendChild(menu);
+
+    var closeTimer = null;
+    var openFrame = null;
+
+    function selectedOption() {
+      return select.options[select.selectedIndex] || select.options[0] || null;
+    }
+
+    function sync() {
+      var option = selectedOption();
+      var text = option ? option.textContent : label;
+      value.textContent = text;
+      trigger.setAttribute('aria-label', label + ': ' + text);
+      menu.querySelectorAll('[role="option"]').forEach(function (button, index) {
+        button.setAttribute('aria-selected', String(index === select.selectedIndex));
+      });
+    }
+
+    function renderOptions() {
+      menu.innerHTML = Array.from(select.options).map(function (option, index) {
+        return '<button class="listing-dropdown__option" id="' + menuId + '-option-' + index + '" type="button" role="option" aria-selected="' + (index === select.selectedIndex) + '" data-listing-dropdown-index="' + index + '"' + (option.disabled ? ' disabled' : '') + '><span>' + escapeHtml(option.textContent) + '</span></button>';
+      }).join('');
+    }
+
+    function positionMenu() {
+      menu.classList.remove('opens-upward');
+      var triggerRect = trigger.getBoundingClientRect();
+      var menuRect = menu.getBoundingClientRect();
+      var roomBelow = window.innerHeight - triggerRect.bottom - 12;
+      var roomAbove = triggerRect.top - 12;
+      if (menuRect.height > roomBelow && roomAbove > roomBelow) menu.classList.add('opens-upward');
+    }
+
+    function finishClose() {
+      menu.hidden = true;
+      menu.classList.remove('is-open', 'is-closing', 'opens-upward');
+      wrapper.classList.remove('is-open');
+      closeTimer = null;
+    }
+
+    function closeMenu(returnFocus) {
+      if (trigger.getAttribute('aria-expanded') !== 'true' && menu.hidden) return;
+      window.clearTimeout(closeTimer);
+      if (openFrame) window.cancelAnimationFrame(openFrame);
+      trigger.setAttribute('aria-expanded', 'false');
+      wrapper.classList.remove('is-open');
+      menu.classList.remove('is-open');
+      menu.classList.add('is-closing');
+      if (returnFocus) trigger.focus();
+      if (prefersReducedMotion()) finishClose();
+      else closeTimer = window.setTimeout(finishClose, 140);
+    }
+
+    function openMenu(focusPosition) {
+      document.dispatchEvent(new CustomEvent('listing-dropdown-opening', {detail: menu.id}));
+      window.clearTimeout(closeTimer);
+      if (openFrame) window.cancelAnimationFrame(openFrame);
+      renderOptions();
+      menu.hidden = false;
+      menu.classList.remove('is-open', 'is-closing');
+      wrapper.classList.add('is-open');
+      positionMenu();
+      trigger.setAttribute('aria-expanded', 'true');
+      openFrame = window.requestAnimationFrame(function () {
+        menu.classList.add('is-open');
+        openFrame = null;
+      });
+      if (focusPosition) {
+        var buttons = menu.querySelectorAll('[role="option"]:not(:disabled)');
+        if (!buttons.length) return;
+        var selected = menu.querySelector('[aria-selected="true"]:not(:disabled)');
+        if (focusPosition === 'last') buttons[buttons.length - 1].focus();
+        else (selected || buttons[0]).focus();
+      }
+    }
+
+    function choose(index) {
+      var option = select.options[index];
+      if (!option || option.disabled) return;
+      select.value = option.value;
+      sync();
+      select.dispatchEvent(new Event('change', {bubbles: true}));
+      closeMenu(true);
+    }
+
+    trigger.addEventListener('click', function () {
+      if (trigger.getAttribute('aria-expanded') === 'true') closeMenu();
+      else openMenu();
+    });
+    trigger.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu();
+      } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        openMenu(event.key === 'ArrowUp' ? 'last' : 'selected');
+      }
+    });
+    menu.addEventListener('click', function (event) {
+      var option = event.target.closest('[data-listing-dropdown-index]');
+      if (option) choose(Number(option.dataset.listingDropdownIndex));
+    });
+    menu.addEventListener('keydown', function (event) {
+      var current = event.target.closest('[data-listing-dropdown-index]');
+      if (!current) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu(true);
+        return;
+      }
+      if (event.key === 'Tab') {
+        closeMenu();
+        return;
+      }
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        choose(Number(current.dataset.listingDropdownIndex));
+        return;
+      }
+      if (['ArrowDown', 'ArrowUp', 'Home', 'End'].indexOf(event.key) === -1) return;
+      event.preventDefault();
+      var buttons = Array.from(menu.querySelectorAll('[role="option"]:not(:disabled)'));
+      var currentIndex = buttons.indexOf(current);
+      var nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 :
+        event.key === 'ArrowDown' ? (currentIndex + 1) % buttons.length :
+          (currentIndex <= 0 ? buttons.length - 1 : currentIndex - 1);
+      buttons[nextIndex].focus();
+    });
+    document.addEventListener('listing-dropdown-opening', function (event) {
+      if (event.detail !== menu.id) closeMenu();
+    });
+    window.addEventListener('resize', function () {
+      if (trigger.getAttribute('aria-expanded') === 'true') positionMenu();
+    }, {passive: true});
+
+    select._listingDropdownSync = sync;
+    select.addEventListener('change', sync);
+    canonicalListingDropdowns.push({id: menu.id, wrapper: wrapper, close: closeMenu});
+    sync();
+  });
+
+  if (document.body.dataset.listingDropdownEventsBound !== 'true') {
+    document.body.dataset.listingDropdownEventsBound = 'true';
+    document.addEventListener('pointerdown', function (event) {
+      if (event.target.closest('.listing-dropdown')) return;
+      canonicalListingDropdowns.forEach(function (dropdown) { dropdown.close(); });
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      canonicalListingDropdowns.forEach(function (dropdown) { dropdown.close(true); });
+    });
+  }
+}
+
+function bindListingLocationAutocomplete() {
+  var input = byId('listingLocationInput');
+  var menu = byId('listingLocationResults');
+  var status = byId('listingLocationStatus');
+  var mobileInput = byId('mobileLocationInput');
+  if (!input || !menu || input.dataset.bound === 'true') return;
+
+  input.dataset.bound = 'true';
+  var field = input.closest('.listing-location-field');
+  var control = input.closest('.listing-location-control');
+  var closeTimer = null;
+  var openFrame = null;
+  var debounceTimer = null;
+  var requestSequence = 0;
+  var results = [];
+  var resultsTerm = '';
+  var activeIndex = -1;
+  var loading = false;
+  var resultMessage = '';
+
+  function setStatus(message) {
+    if (status) status.textContent = message;
+  }
+
+  function renderOptions() {
+    var items = results.map(function (location, index) {
+      return '<button class="listing-location-option" id="listing-location-option-' + index + '" type="button" role="option" tabindex="-1" aria-selected="' + (index === activeIndex) + '" data-listing-location-index="' + index + '" data-location-type="' + escapeHtml(location.type) + '">' +
+        '<span class="listing-location-option__text"><span class="listing-location-option__label">' + escapeHtml(listingLocationDisplayName(location)) + '</span>' +
+        '<span class="listing-location-option__context">' + escapeHtml(discoveryLocationContext(location)) + '</span></span></button>';
+    });
+    if (loading) items.push('<div class="listing-location-message">Searching locations…</div>');
+    else if (resultMessage) items.push('<div class="listing-location-message">' + escapeHtml(resultMessage) + '</div>');
+    menu.innerHTML = items.join('');
+    if (activeIndex >= 0 && results[activeIndex]) {
+      input.setAttribute('aria-activedescendant', 'listing-location-option-' + activeIndex);
+    } else {
+      input.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function positionMenu() {
+    menu.classList.remove('opens-upward');
+    var triggerRect = control.getBoundingClientRect();
+    var menuRect = menu.getBoundingClientRect();
+    var roomBelow = window.innerHeight - triggerRect.bottom - 8;
+    var roomAbove = triggerRect.top - 8;
+    if (menuRect.height > roomBelow && roomAbove > roomBelow) menu.classList.add('opens-upward');
+  }
+
+  function finishClose() {
+    menu.hidden = true;
+    menu.classList.remove('is-open', 'is-closing', 'opens-upward');
+    if (field) field.classList.remove('is-menu-open');
+    closeTimer = null;
+  }
+
+  function closeMenu(returnFocus) {
+    if (input.getAttribute('aria-expanded') !== 'true' && menu.hidden) return;
+    window.clearTimeout(closeTimer);
+    if (openFrame) window.cancelAnimationFrame(openFrame);
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+    if (field) field.classList.remove('is-menu-open');
+    menu.classList.remove('is-open');
+    menu.classList.add('is-closing');
+    if (returnFocus) input.focus();
+    if (prefersReducedMotion()) finishClose();
+    else closeTimer = window.setTimeout(finishClose, 150);
+  }
+
+  function openMenu() {
+    if (!loading && !results.length && !resultMessage) return;
+    document.dispatchEvent(new CustomEvent('listing-dropdown-opening', {detail: menu.id}));
+    window.clearTimeout(closeTimer);
+    if (openFrame) window.cancelAnimationFrame(openFrame);
+    renderOptions();
+    menu.hidden = false;
+    menu.classList.remove('is-open', 'is-closing');
+    if (field) field.classList.add('is-menu-open');
+    positionMenu();
+    input.setAttribute('aria-expanded', 'true');
+    openFrame = window.requestAnimationFrame(function () {
+      menu.classList.add('is-open');
+      openFrame = null;
+    });
+  }
+
+  function choose(index) {
+    var location = results[index];
+    if (!location) return;
+    window.clearTimeout(debounceTimer);
+    requestSequence += 1;
+    listingLocationDraft.selectedLocation = location;
+    listingLocationDraft.locationQuery = listingLocationDisplayName(location);
+    input.value = listingLocationDraft.locationQuery;
+    if (mobileInput) mobileInput.value = listingLocationDraft.locationQuery;
+    input.removeAttribute('aria-invalid');
+    setStatus(listingLocationDraft.locationQuery + ' selected.');
+    closeMenu(true);
+  }
+
+  function invalidatePendingSearch() {
+    window.clearTimeout(debounceTimer);
+    debounceTimer = null;
+    requestSequence += 1;
+  }
+
+  async function requestLocations(term, sequence) {
+    if (sequence !== requestSequence) return;
+    var supabase = getSupabaseClient();
+    if (!supabase || typeof supabase.rpc !== 'function') {
+      resultMessage = 'Location suggestions are unavailable.';
+      setStatus(resultMessage);
+      openMenu();
+      return;
+    }
+    loading = true;
+    resultMessage = '';
+    renderOptions();
+    openMenu();
+    try {
+      var response = await supabase.rpc('search_locations', {search_term: term, result_limit: 8});
+      if (sequence !== requestSequence || input.value.trim() !== term) return;
+      if (response.error) throw response.error;
+      results = normalizeLocationSearchResults(response.data);
+      resultsTerm = term;
+      activeIndex = -1;
+      loading = false;
+      resultMessage = results.length ? '' : 'No locations found.';
+      setStatus(results.length + ' location suggestion' + (results.length === 1 ? '' : 's') + ' available.');
+      renderOptions();
+      openMenu();
+    } catch (error) {
+      if (sequence !== requestSequence) return;
+      results = [];
+      resultsTerm = term;
+      activeIndex = -1;
+      loading = false;
+      resultMessage = 'Location suggestions are unavailable.';
+      setStatus(resultMessage);
+      renderOptions();
+      openMenu();
+    }
+  }
+
+  function scheduleSearch() {
+    var term = input.value.trim();
+    invalidatePendingSearch();
+    results = [];
+    resultsTerm = '';
+    activeIndex = -1;
+    loading = false;
+    resultMessage = '';
+    if (term.length < 2) {
+      closeMenu();
+      setStatus(term.length ? 'Type at least 2 characters for location suggestions.' : '');
+      return;
+    }
+    var sequence = requestSequence;
+    debounceTimer = window.setTimeout(function () {
+      debounceTimer = null;
+      requestLocations(term, sequence);
+    }, 250);
+  }
+
+  function moveActive(direction) {
+    if (!results.length) return;
+    if (menu.hidden || input.getAttribute('aria-expanded') !== 'true') openMenu();
+    if (activeIndex < 0) activeIndex = direction > 0 ? 0 : results.length - 1;
+    else activeIndex = (activeIndex + direction + results.length) % results.length;
+    renderOptions();
+  }
+
+  input.addEventListener('focus', function () {
+    if (listingLocationDraft.selectedLocation) return;
+    if (results.length && resultsTerm === input.value.trim()) openMenu();
+    else if (input.value.trim().length >= 2) scheduleSearch();
+  });
+  input.addEventListener('input', function () {
+    listingLocationDraft.locationQuery = input.value;
+    if (listingLocationDraft.selectedLocation && input.value !== listingLocationDisplayName(listingLocationDraft.selectedLocation)) {
+      listingLocationDraft.selectedLocation = null;
+    }
+    if (mobileInput) mobileInput.value = input.value;
+    input.removeAttribute('aria-invalid');
+    scheduleSearch();
+  });
+  input.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      invalidatePendingSearch();
+      closeMenu();
+      return;
+    }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (!results.length) return;
+      event.preventDefault();
+      moveActive(event.key === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+    if (event.key === 'Enter' && activeIndex >= 0 && input.getAttribute('aria-expanded') === 'true') {
+      event.preventDefault();
+      choose(activeIndex);
+    }
+  });
+  menu.addEventListener('click', function (event) {
+    var option = event.target.closest('[data-listing-location-index]');
+    if (option) choose(Number(option.dataset.listingLocationIndex));
+  });
+  document.addEventListener('pointerdown', function (event) {
+    if (!event.target.closest('.listing-location-field')) {
+      invalidatePendingSearch();
+      closeMenu();
+    }
+  });
+  document.addEventListener('listing-dropdown-opening', function (event) {
+    if (event.detail !== menu.id) {
+      invalidatePendingSearch();
+      closeMenu();
+    }
+  });
+  window.addEventListener('resize', function () {
+    if (input.getAttribute('aria-expanded') === 'true') positionMenu();
+  }, {passive: true});
+}
+
+function bindCanonicalListingsPresentation() {
+  if (!document.body.classList.contains('listings-page-v2') || !byId('listingSearchForm')) return;
+  bindCanonicalListingGalleries();
+  var form = byId('listingSearchForm');
+  var dialog = byId('listingFiltersDialog');
+  var requestDialog = byId('requestDialog');
+  var requestOpener = null;
+  bindListingSelectDropdowns();
+  bindListingLocationAutocomplete();
+
+  function applyDraft(options) {
+    var locationInput = byId('listingLocationInput');
+    if (listingLocationDraft.locationQuery.trim() && !listingLocationDraft.selectedLocation) {
+      locationInput.setAttribute('aria-invalid', 'true');
+      byId('listingLocationStatus').textContent = 'Select a location from the suggestions.';
+      var message = byId('listingFilterMessage');
+      if (message) message.textContent = 'Select a location from the suggestions.';
+      locationInput.focus();
+      return;
+    }
+    readCanonicalListingControls();
+    var target = applyListingStateToUrl(new URL(
+      listingBasePathForPurpose(publicState.purpose) + (publicState.routeLocationPath ? '/' + publicState.routeLocationPath : ''),
+      window.location.href
+    ));
+    if (target.pathname !== window.location.pathname) {
+      window.location.assign(target.href);
+      return;
+    }
+    if (target.href !== window.location.href) window.history.pushState(null, '', target.href);
+    renderListingsPage();
+    if (options && options.closeFilters) setCanonicalListingDialog(false, true);
+    if (options && options.scroll) {
+      var heading = byId('listingPageTitle');
+      if (heading) heading.scrollIntoView({block: 'start', behavior: prefersReducedMotion() ? 'auto' : 'smooth'});
+    }
+  }
+
+  function updateDraftPriceLabel() {
+    var minimum = byId('listingMinPriceFilter').value;
+    var maximum = byId('listingMaxPriceFilter').value;
+    var currency = byId('listingCurrencyFilter').value;
+    var priceValue = byId('priceValue');
+    if (!priceValue) return;
+    var prefix = currency === 'ZMW' ? 'K' : currency === 'USD' ? '$' : '';
+    var formatAmount = function (value) {
+      return prefix + Number(value).toLocaleString('en-ZM');
+    };
+    if (minimum && maximum) priceValue.textContent = formatAmount(minimum) + ' – ' + formatAmount(maximum);
+    else if (maximum) priceValue.textContent = 'Up to ' + formatAmount(maximum);
+    else if (minimum) priceValue.textContent = 'From ' + formatAmount(minimum);
+    else priceValue.textContent = currency === 'all' ? 'No maximum' : currency + ' · No maximum';
+  }
+
+  function ensureDraftPriceCurrency() {
+    var currency = byId('listingCurrencyFilter');
+    var hasPrice = byId('listingMinPriceFilter').value || byId('listingMaxPriceFilter').value;
+    if (!hasPrice || currency.value !== 'all') return;
+    currency.value = 'ZMW';
+    syncListingDropdownSelect(currency);
+  }
+
+  document.querySelectorAll('.discovery-transactions [data-listing-purpose]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var purpose = normalizeListingPurpose(button.dataset.listingPurpose);
+      if (purpose === 'all') return;
+      byId('listingPurposeFilter').value = purpose;
+      document.querySelectorAll('.discovery-transactions [data-listing-purpose]').forEach(function (choice) {
+        choice.setAttribute('aria-pressed', String(choice === button));
+      });
+    });
+  });
+  document.querySelectorAll('.site-nav [data-listing-purpose]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var purpose = normalizeListingPurpose(button.dataset.listingPurpose);
+      if (purpose !== 'all') window.location.assign(listingBasePathForPurpose(purpose));
+    });
+  });
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    applyDraft({scroll: true});
+  });
+  byId('applyFilters').addEventListener('click', function () {
+    applyDraft({closeFilters: true, scroll: true});
+  });
+  byId('listingSortSelect').addEventListener('change', function () {
+    publicState.sort = byId('listingSortSelect').value;
+    writeListingUrl();
+    renderListingsPage();
+  });
+  byId('listingQuickFilters').addEventListener('click', function (event) {
+    var button = event.target.closest('[data-listing-type]');
+    if (!button) return;
+    publicState.type = publicState.type === button.dataset.listingType ? 'all' : button.dataset.listingType;
+    byId('listingTypeFilter').value = publicState.type;
+    syncListingDropdownSelect(byId('listingTypeFilter'));
+    writeListingUrl();
+    renderListingsPage();
+  });
+
+  byId('listingActiveFilters').addEventListener('click', function (event) {
+    var button = event.target.closest('button');
+    if (!button) return;
+    if (button.hasAttribute('data-clear-all')) {
+      form.reset();
+      listingLocationDraft.locationQuery = '';
+      listingLocationDraft.selectedLocation = null;
+      publicState.category = 'all';
+      document.querySelectorAll('input[name="feature"]').forEach(function (input) { input.checked = false; });
+    } else if (button.hasAttribute('data-clear-category')) {
+      publicState.category = 'all';
+    } else if (button.hasAttribute('data-clear-feature')) {
+      document.querySelectorAll('input[name="feature"]').forEach(function (input) {
+        if (input.value === button.dataset.clearFeature) input.checked = false;
+      });
+    } else {
+      var control = byId(button.dataset.clearControl);
+      if (control) control.value = control.tagName === 'SELECT' ? (control.querySelector('option[value="all"]') ? 'all' : '') : '';
+      if (button.dataset.clearControl === 'listingLocationInput') {
+        listingLocationDraft.locationQuery = '';
+        listingLocationDraft.selectedLocation = null;
+      }
+    }
+    applyDraft();
+  });
+
+  byId('resetFilters').addEventListener('click', function () {
+    form.reset();
+    listingLocationDraft.locationQuery = '';
+    listingLocationDraft.selectedLocation = null;
+    publicState.category = 'all';
+    document.querySelectorAll('input[name="feature"]').forEach(function (input) { input.checked = false; });
+    applyDraft({closeFilters: true});
+  });
+  [byId('moreFiltersButton'), byId('mobileFiltersButton')].forEach(function (button) {
+    if (button) button.addEventListener('click', function () {
+      document.dispatchEvent(new CustomEvent('listing-dropdown-opening', {detail: 'listingFiltersDialog'}));
+      byId('priceField').open = false;
+      setCanonicalListingDialog(true);
+    });
+  });
+  byId('closeFilters').addEventListener('click', function () { setCanonicalListingDialog(false, true); });
+  dialog.addEventListener('close', function () {
+    document.body.style.overflow = '';
+    [byId('mobileFiltersButton'), byId('moreFiltersButton')].forEach(function (trigger) {
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    });
+  });
+  dialog.addEventListener('click', function (event) {
+    var rect = dialog.getBoundingClientRect();
+    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) {
+      setCanonicalListingDialog(false, true);
+    }
+  });
+
+  byId('mobileLocationInput').addEventListener('input', function (event) {
+    byId('listingLocationInput').value = event.target.value;
+    listingLocationDraft.locationQuery = event.target.value;
+    if (listingLocationDraft.selectedLocation && event.target.value !== listingLocationDisplayName(listingLocationDraft.selectedLocation)) {
+      listingLocationDraft.selectedLocation = null;
+    }
+  });
+  byId('listingCityFilter').addEventListener('change', function (event) {
+    var option = event.target.options[event.target.selectedIndex];
+    var value = event.target.value === 'all' ? '' : option.text;
+    byId('listingLocationInput').value = value;
+    byId('mobileLocationInput').value = value;
+    listingLocationDraft.locationQuery = value;
+    var city = publicState.cities.find(function (row) { return row.slug === event.target.value; });
+    var province = city && publicState.provinces.find(function (row) { return String(row.id) === String(city.province_id); });
+    listingLocationDraft.selectedLocation = city ? normalizeLocationSearchResult({
+      id: city.id,
+      type: 'city',
+      name: city.name,
+      slug: city.slug,
+      province_id: province && province.id,
+      province_name: province && province.name,
+      province_slug: province && province.slug,
+      city_id: city.id,
+      city_name: city.name,
+      city_slug: city.slug,
+      canonical_path: city.slug
+    }) : null;
+  });
+  ['listingMinPriceFilter', 'listingMaxPriceFilter'].forEach(function (id) {
+    byId(id).addEventListener('input', function () {
+      ensureDraftPriceCurrency();
+      updateDraftPriceLabel();
+    });
+  });
+  byId('listingCurrencyFilter').addEventListener('change', updateDraftPriceLabel);
+  byId('priceField').addEventListener('toggle', function () {
+    var open = byId('priceField').open;
+    byId('priceSummary').setAttribute('aria-expanded', String(open));
+    if (open) document.dispatchEvent(new CustomEvent('listing-dropdown-opening', {detail: 'priceField'}));
+  });
+  byId('priceField').addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      byId('priceField').open = false;
+      byId('priceSummary').focus();
+    } else if (event.key === 'Enter' && event.target.matches('input')) {
+      event.preventDefault();
+      byId('priceField').open = false;
+      byId('priceSummary').focus();
+    }
+  });
+  document.addEventListener('listing-dropdown-opening', function (event) {
+    var openingMenu = byId(event.detail);
+    if (event.detail !== 'priceField' && (!openingMenu || !byId('priceField').contains(openingMenu))) {
+      byId('priceField').open = false;
+    }
+  });
+  document.addEventListener('pointerdown', function (event) {
+    if (!event.target.closest('#priceField')) byId('priceField').open = false;
+  });
+
+  document.addEventListener('click', function (event) {
+    var requestTrigger = event.target.closest('.request-trigger');
+    if (requestTrigger && requestDialog) {
+      requestOpener = requestTrigger;
+      requestDialog.showModal();
+      document.body.style.overflow = 'hidden';
+    }
+    var preview = event.target.closest('[data-preview]');
+    if (preview) showListingsPreviewToast(preview.dataset.preview + ' is not connected yet.');
+    var save = event.target.closest('.save-property');
+    if (save) {
+      event.preventDefault();
+      event.stopPropagation();
+      save.setAttribute('aria-pressed', String(save.getAttribute('aria-pressed') !== 'true'));
+    }
+  });
+  if (requestDialog) {
+    requestDialog.querySelector('.dialog-close').addEventListener('click', function () { requestDialog.close(); });
+    requestDialog.addEventListener('close', function () {
+      document.body.style.overflow = '';
+      if (requestOpener) requestOpener.focus();
+    });
+    byId('requestForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      requestDialog.close();
+      showListingsPreviewToast('Preview only — no request has been sent.');
+    });
+  }
+
+  var nav = byId('siteNav');
+  var navToggle = byId('navToggle');
+  if (nav && navToggle) {
+    navToggle.addEventListener('click', function () {
+      var open = nav.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', String(open));
+      navToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    });
+  }
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    if (dialog.open) setCanonicalListingDialog(false, true);
+    if (requestDialog && requestDialog.open) requestDialog.close();
+    if (nav && nav.classList.contains('open')) {
+      nav.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.focus();
+    }
+  });
+
+  var sortControl = byId('listingSortSelect').closest('.sort-control');
+  var resultsTools = document.querySelector('.results-header-tools');
+  var headerInner = document.querySelector('.header-inner');
+  function positionSortControl() {
+    (window.innerWidth <= 900 ? resultsTools : headerInner).appendChild(sortControl);
+  }
+  positionSortControl();
+  window.addEventListener('resize', positionSortControl, {passive: true});
+
+  [
+    [byId('quickFilterPrevious'), -1],
+    [byId('quickFilterNext'), 1]
+  ].forEach(function (entry) {
+    entry[0].addEventListener('click', function () {
+      byId('listingQuickFilters').scrollBy({left: entry[1] * 180, behavior: prefersReducedMotion() ? 'auto' : 'smooth'});
+      window.requestAnimationFrame(updateQuickFilterNavigation);
+    });
+  });
+  byId('listingQuickFilters').addEventListener('scroll', updateQuickFilterNavigation, {passive: true});
+  window.addEventListener('resize', updateQuickFilterNavigation, {passive: true});
+}
+
 function syncListingMap() {
   var holder = byId('listingMapHolder');
   if (!holder) return;
+  var selectedProvince = byId('discoveryForm') ? discoverySearchState.province : publicState.province;
   holder.querySelectorAll('[data-province]').forEach(function (path) {
-    path.setAttribute('aria-pressed', String(path.dataset.province === publicState.province));
+    path.setAttribute('aria-pressed', String(path.dataset.province === selectedProvince));
   });
   var province = publicState.provinces.find(function (item) {
-    return item.slug === publicState.province;
+    return item.slug === selectedProvince;
   });
   var selection = byId('listingMapSelection');
   if (selection) {
-    selection.textContent = publicState.province === 'all'
+    selection.textContent = selectedProvince === 'all'
       ? 'All Zambia'
-      : province ? province.name : publicState.province;
+      : province ? province.name : selectedProvince;
   }
 }
 
 function selectListingProvince(slug) {
+  if (byId('discoveryForm')) {
+    discoverySearchState.province = slug;
+    discoverySearchState.city = 'all';
+    discoverySearchState.area = 'all';
+    discoverySearchState.location = '';
+    syncDiscoveryControls();
+    return;
+  }
+  if (document.body.classList.contains('listings-page-v2')) {
+    var province = publicState.provinces.find(function (row) { return row.slug === slug; });
+    listingLocationDraft.selectedLocation = province ? normalizeLocationSearchResult({
+      id: province.id,
+      type: 'province',
+      name: province.name,
+      slug: province.slug,
+      province_id: province.id,
+      province_name: province.name,
+      province_slug: province.slug,
+      canonical_path: province.slug + '-province'
+    }) : null;
+    listingLocationDraft.locationQuery = listingLocationDisplayName(listingLocationDraft.selectedLocation);
+    syncListingLocationAutocomplete();
+    byId('listingProvinceFilter').value = slug;
+    byId('listingCityFilter').value = 'all';
+    byId('listingAreaFilter').value = 'all';
+    return;
+  }
   publicState.province = slug;
   publicState.city = 'all';
   publicState.area = 'all';
   publicState.locationText = '';
-  if (byId('discoveryForm')) {
-    applyDiscoveryFilters();
-    return;
-  }
   writeListingUrl();
   syncListingControls();
   renderListings();
@@ -1487,34 +2663,52 @@ async function loadListingMap() {
 function bindListingControls() {
   if (!byId('listingsGrid')) return;
   readListingUrl();
-  bindListingSearchUI();
-  byId('listingAllZambia').addEventListener('click', function () {
-    selectListingProvince('all');
-  });
-  loadListingMap();
-  Object.keys(listingControlFields).forEach(function (id) {
-    var control = byId(id);
-    if (!control) return;
-    control.addEventListener(control.type === 'search' ? 'input' : 'change', function () {
-      publicState[listingControlFields[id]] = control.type === 'search' ? control.value : control.value.trim();
-      writeListingUrl();
-      syncListingControls();
-      renderListings();
+  if (document.body.classList.contains('listings-page-v2')) {
+    bindCanonicalListingsPresentation();
+    applyCategoryPageContent(listingCategoryContent[publicState.category]);
+    var loading = byId('listingsLoading');
+    var purpose = currentListingPurpose();
+    if (loading) loading.textContent = 'Loading properties ' + (purpose === 'For Rent' ? 'for rent' : purpose === 'For Sale' ? 'for sale' : '') + '…';
+  } else {
+    bindListingSearchUI();
+    var allZambia = byId('listingAllZambia');
+    if (allZambia) allZambia.addEventListener('click', function () {
+      selectListingProvince('all');
     });
-  });
+    if (byId('listingMapHolder')) loadListingMap();
+    Object.keys(listingControlFields).forEach(function (id) {
+      var control = byId(id);
+      if (!control) return;
+      control.addEventListener(control.type === 'search' ? 'input' : 'change', function () {
+        publicState[listingControlFields[id]] = control.type === 'search' ? control.value : control.value.trim();
+        writeListingUrl();
+        syncListingControls();
+        renderListings();
+      });
+    });
+  }
   window.addEventListener('popstate', function () {
+    var nextRoute = parseListingRoute(window.location.pathname);
+    if (nextRoute.locationPath !== publicState.routeLocationPath) {
+      window.location.reload();
+      return;
+    }
     readListingUrl();
     renderListingsPage();
   });
 }
 
-function filteredListings() {
-  if (listingFilterError()) return [];
+function filteredListings(options) {
+  if (listingFilterError() || publicState.invalidLocationPath) return [];
+  var ignorePurpose = Boolean(options && options.ignorePurpose);
+  var routePurpose = listingPurposeFromPathname(window.location.pathname);
+  var effectivePurpose = routePurpose === 'all' ? publicState.purpose : routePurpose;
   var categoryRows = filterPropertiesByCategory(publicState.properties, publicState.category);
   var rows = categoryRows.filter(function (property) {
     var search = publicState.search.trim().toLowerCase();
     var matchesSearch = !search || listingSearchBlob(property).indexOf(search) !== -1;
-    var matchesPurpose = publicState.purpose === 'all' || property.purpose === publicState.purpose;
+    var matchesReference = !publicState.reference || String(property.reference_number || '').toLowerCase().indexOf(publicState.reference.toLowerCase()) !== -1;
+    var matchesPurpose = ignorePurpose || effectivePurpose === 'all' || property.purpose === effectivePurpose;
     var matchesType = publicState.type === 'all' || property.property_type === publicState.type;
     var matchesStatus = publicState.publicStatus === 'all' || property.status === publicState.publicStatus;
     var isPublic = property.status === 'Active' || property.status === 'Under Offer';
@@ -1526,8 +2720,19 @@ function filteredListings() {
       (publicState.maxPrice === '' || (property.price != null && Number.isFinite(price) && price <= Number(publicState.maxPrice)));
     var matchesBedrooms = publicState.minBedrooms === '' ||
       (property.bedrooms != null && Number(property.bedrooms) >= Number(publicState.minBedrooms));
-    return isPublic && matchesSearch && matchesPurpose && matchesType && matchesStatus && matchesBranch &&
-      matchesListingLocation(property) && matchesListingArea(property) && matchesCurrency && matchesPrice && matchesBedrooms;
+    var matchesBathrooms = publicState.minBathrooms === '' ||
+      (property.bathrooms != null && Number(property.bathrooms) >= Number(publicState.minBathrooms));
+    var matchesSize = publicState.minSize === '' ||
+      (property.square_metres != null && Number(property.square_metres) >= Number(publicState.minSize));
+    var amenities = Array.isArray(property.amenities) ? property.amenities.map(function (item) {
+      return String(item).toLowerCase();
+    }) : [];
+    var matchesFeatures = publicState.features.every(function (feature) {
+      return amenities.indexOf(String(feature).toLowerCase()) !== -1;
+    });
+    return isPublic && matchesSearch && matchesReference && matchesPurpose && matchesType && matchesStatus && matchesBranch &&
+      matchesListingLocation(property) && matchesListingArea(property) && matchesCurrency && matchesPrice &&
+      matchesBedrooms && matchesBathrooms && matchesSize && matchesFeatures;
   });
 
   return rows.sort(function (a, b) {
@@ -1578,15 +2783,22 @@ function setListingsViewState(state, message) {
   error.classList.toggle('is-active', state === 'error');
   empty.classList.toggle('is-active', state === 'empty');
   grid.classList.toggle('is-active', state === 'ready' || state === 'empty');
+  grid.dataset.state = state;
 
-  if (state === 'error') error.textContent = message || 'Property listings could not be loaded.';
+  loading.hidden = state !== 'loading';
+  error.hidden = state !== 'error';
+  empty.hidden = state !== 'empty';
+  grid.hidden = state !== 'ready';
+
+  if (state === 'error') error.innerHTML = '<h2>Properties could not be loaded</h2><p>' +
+    escapeHtml(message || 'Property listings could not be loaded.') + '</p>';
   if (count) count.hidden = state === 'loading' || state === 'error';
   if (results) results.setAttribute('aria-busy', state === 'loading' ? 'true' : 'false');
 }
 
 var propertySectionDefinitions = [
-  {key: 'sale', title: 'Property for Sale', purpose: 'For Sale', href: 'listings.html?purpose=sale'},
-  {key: 'rent', title: 'Property for Rent', purpose: 'For Rent', href: 'listings.html?purpose=rent'},
+  {key: 'sale', title: 'Property for Sale', purpose: 'For Sale', href: '/properties-for-sale'},
+  {key: 'rent', title: 'Property for Rent', purpose: 'For Rent', href: '/properties-for-rent'},
   {key: 'developments', title: 'New Developments', purpose: null, href: null}
 ];
 
@@ -1693,6 +2905,34 @@ function renderPropertySections(container, rows) {
   });
 }
 
+function renderCanonicalListingAverages() {
+  if (!document.body.classList.contains('listings-page-v2')) return;
+  var purpose = currentListingPurpose();
+  var inventory = publicState.properties.filter(function (property) {
+    return (purpose === 'all' || property.purpose === purpose) &&
+      (property.status === 'Active' || property.status === 'Under Offer');
+  });
+  var types = [null, 'House', 'Land', 'Commercial', 'Apartment'];
+  document.querySelectorAll('.listings-lower-prices tbody tr').forEach(function (row, index) {
+    var prices = ['ZMW', 'USD'].map(function (currency) {
+      var matches = inventory.filter(function (property) {
+        return (!types[index] || property.property_type === types[index]) &&
+          property.currency_code === currency && property.price != null;
+      });
+      if (!matches.length) return '';
+      var average = matches.reduce(function (sum, property) { return sum + Number(property.price); }, 0) / matches.length;
+      return currency + ' ' + window.HilltopCurrency.formatPropertyPrice(Math.round(average * 100) / 100, currency, purpose);
+    }).filter(Boolean);
+    row.querySelector('td').textContent = prices.join(' / ') || 'Not available';
+  });
+  var note = byId('averagePriceNote');
+  if (note) {
+    note.textContent = inventory.length
+      ? 'Average asking prices across current ' + (purpose === 'For Rent' ? 'Rent' : purpose === 'For Sale' ? 'Sale' : 'public') + ' listings, shown separately by currency. Search filters do not change these averages.'
+      : 'Average prices are not available yet.';
+  }
+}
+
 function renderListings() {
   if (!publicState.listingsLoaded) return;
   var grid = byId('listingsGrid');
@@ -1705,27 +2945,49 @@ function renderListings() {
   if (filterMessage) filterMessage.textContent = listingFilterError();
   var categoryRows = filterPropertiesByCategory(publicState.properties, publicState.category);
   var categoryContent = listingCategoryContent[publicState.category];
-  grid.innerHTML = rows.map(propertyCard).join('');
+  grid.innerHTML = rows.map(function (property, index) {
+    return document.body.classList.contains('listings-page-v2')
+      ? canonicalListingCard(property, index)
+      : propertyCard(property);
+  }).join('');
   if (!rows.length) {
-    if (!categoryRows.length) {
-      empty.innerHTML = categoryEmptyStateMarkup(categoryContent);
-    } else {
-      empty.textContent = 'No ' + categoryContent.title.toLowerCase() + ' match your current filters.';
-    }
+    var purpose = currentListingPurpose();
+    var hasPurposeInventory = publicState.properties.some(function (property) {
+      return (purpose === 'all' || property.purpose === purpose) &&
+        (property.status === 'Active' || property.status === 'Under Offer');
+    });
+    empty.innerHTML = publicState.invalidLocationPath
+      ? '<h2>Location not found</h2><p>This listing URL does not match a known province, city or suburb.</p>'
+      : '<h2>' + (hasPurposeInventory ? 'No properties found' : 'No properties ' +
+        (purpose === 'For Rent' ? 'for rent' : purpose === 'For Sale' ? 'for sale' : 'available') + ' yet') + '</h2><p>' +
+        (hasPurposeInventory ? 'Try clearing one or more filters.' : 'Please check back soon for new listings.') + '</p>';
   }
   if (count) {
     var province = publicState.provinces.find(function (item) {
       return item.slug === publicState.province;
     });
-    count.textContent = rows.length + ' propert' + (rows.length === 1 ? 'y' : 'ies') +
-      (province ? ' in ' + province.name : '');
+    count.textContent = rows.length ? '1 - ' + rows.length + ' of ' + rows.length + ' propert' +
+      (rows.length === 1 ? 'y' : 'ies') + (province ? ' in ' + province.name : '') : '0 properties';
   }
+  var purposeInventory = publicState.properties.filter(function (property) {
+    return (currentListingPurpose() === 'all' || property.purpose === currentListingPurpose()) &&
+      (property.status === 'Active' || property.status === 'Under Offer');
+  });
+  if (byId('filterPropertyCount')) {
+    byId('filterPropertyCount').textContent = purposeInventory.length + ' propert' + (purposeInventory.length === 1 ? 'y' : 'ies');
+  }
+  if (byId('filterMatchingCount')) {
+    byId('filterMatchingCount').textContent = listingFilterError() || rows.length + ' matching propert' + (rows.length === 1 ? 'y' : 'ies');
+  }
+  if (byId('listingBottomCount')) byId('listingBottomCount').textContent = count ? count.textContent : '';
+  if (byId('listingPagination')) byId('listingPagination').hidden = !rows.length;
   if (byId('listingMapCount')) {
     byId('listingMapCount').textContent = listingFilterError() ||
       rows.length + ' matching propert' + (rows.length === 1 ? 'y' : 'ies');
     byId('listingMapView').textContent = 'View ' + rows.length + ' propert' + (rows.length === 1 ? 'y' : 'ies');
   }
   setListingsViewState(rows.length ? 'ready' : 'empty');
+  renderCanonicalListingAverages();
 }
 
 function applyCategoryPageContent(config) {
@@ -1737,14 +2999,40 @@ function applyCategoryPageContent(config) {
 
   if (!page || !page.classList.contains('listings-page')) return;
 
+  var purpose = currentListingPurpose();
+  var purposeSuffix = purpose === 'For Sale' ? 'for Sale' : purpose === 'For Rent' ? 'for Rent' : '';
+  var displayTitle = config.key === 'all' && purposeSuffix
+    ? 'Properties ' + purposeSuffix
+    : config.title + (purposeSuffix ? ' ' + purposeSuffix : '');
+  var displayDescription = purpose === 'For Rent'
+    ? 'Browse current properties for rent in Zambia with Hilltop Properties.'
+    : purpose === 'For Sale'
+      ? 'Browse current properties for sale in Zambia with Hilltop Properties.'
+      : config.description;
   if (eyebrow) eyebrow.textContent = config.eyebrow;
-  if (title) title.textContent = config.title;
-  if (descriptionText) descriptionText.textContent = config.description;
+  if (title) title.textContent = displayTitle;
+  if (descriptionText) descriptionText.textContent = displayDescription;
   if (empty) empty.innerHTML = categoryEmptyStateMarkup(config);
 
-  document.title = config.title + ' | Hilltop Properties Zambia';
+  document.title = displayTitle + ' | Hilltop Properties Zambia';
   var description = document.querySelector('meta[name="description"]');
-  if (description) description.setAttribute('content', config.description);
+  if (description) description.setAttribute('content', displayDescription);
+
+  var breadcrumb = byId('listingBreadcrumbLink');
+  if (breadcrumb) {
+    breadcrumb.href = purpose === 'For Rent' ? '/properties-for-rent' : purpose === 'For Sale' ? '/properties-for-sale' : '/listings';
+    breadcrumb.textContent = purpose === 'For Rent' ? 'Property for Rent' : purpose === 'For Sale' ? 'Property for Sale' : 'Property Listings';
+  }
+  if (byId('listingBreadcrumbCurrent')) byId('listingBreadcrumbCurrent').textContent = config.key === 'all' ? 'All Property' : config.title;
+  document.querySelectorAll('[data-lower-purpose]').forEach(function (label) {
+    label.textContent = purpose === 'For Rent' ? 'for rent' : purpose === 'For Sale' ? 'for sale' : 'available';
+  });
+  document.querySelectorAll('[data-lower-article-purpose]').forEach(function (label) {
+    label.textContent = purpose === 'For Rent' ? 'for Rent' : purpose === 'For Sale' ? 'for Sale' : 'Listings';
+  });
+  if (byId('listingFooterNote')) {
+    byId('listingFooterNote').textContent = 'Current properties ' + (purpose === 'For Rent' ? 'for rent' : purpose === 'For Sale' ? 'for sale' : '') + ' · Article previews and request tools are not yet connected';
+  }
 
   page.classList.remove('category-pending');
   page.classList.add('category-ready');
@@ -2759,14 +4047,17 @@ function propertyServiceImageSources(card) {
 }
 
 function propertyServiceAction(card) {
-  if (card.action_type === 'rental_listings') {
-    return { href: 'listings.html?category=all&purpose=For%20Rent', enquiryType: '' };
+  if (card.slug === 'buy-property') {
+    return { href: '/properties-for-sale', enquiryType: '' };
+  }
+  if (card.slug === 'rent-property' || card.action_type === 'rental_listings') {
+    return { href: '/properties-for-rent', enquiryType: '' };
   }
   if (card.action_type === 'list_property_enquiry') {
     return { href: '#contact', enquiryType: 'List a Property' };
   }
   if (card.action_type === 'internal_page' && isSafePropertyServicesInternalPath(card.action_value)) {
-    return { href: String(card.action_value).trim(), enquiryType: '' };
+    return { href: canonicalCollectionHref(card.action_value), enquiryType: '' };
   }
   return { href: 'listings.html?category=all', enquiryType: '' };
 }
@@ -2844,76 +4135,122 @@ function renderPropertyServices() {
   grid.replaceChildren(fragment);
 }
 
-function discoveryLocations() {
-  var options = [{value: 'all', label: 'All Zambia', province: 'all', city: 'all', area: 'all', text: ''}];
-  function add(label, province, city, area, text) {
-    var value = JSON.stringify([province, city, area, text]);
-    if (!options.some(function (option) { return option.value === value; })) {
-      options.push({value: value, label: label, province: province, city: city, area: area, text: text});
-    }
+function normalizeLocationSearchResult(row) {
+  if (!row || row.id == null || !row.type || !row.name) return null;
+  var type = String(row.type).trim().toLowerCase();
+  if (['province', 'city', 'suburb'].indexOf(type) === -1) return null;
+  function optional(value) {
+    return value == null || String(value).trim() === '' ? null : String(value);
   }
-  publicState.provinces.forEach(function (province) {
-    add(province.name + ' Province', province.slug, 'all', 'all', '');
+  return {
+    id: String(row.id),
+    type: type,
+    name: String(row.name),
+    slug: optional(row.slug),
+    canonicalPath: optional(row.canonical_path != null ? row.canonical_path : row.canonicalPath),
+    provinceId: optional(row.province_id != null ? row.province_id : row.provinceId),
+    provinceName: optional(row.province_name != null ? row.province_name : row.provinceName),
+    provinceSlug: optional(row.province_slug != null ? row.province_slug : row.provinceSlug),
+    cityId: optional(row.city_id != null ? row.city_id : row.cityId),
+    cityName: optional(row.city_name != null ? row.city_name : row.cityName),
+    citySlug: optional(row.city_slug != null ? row.city_slug : row.citySlug),
+    suburbId: optional(row.suburb_id != null ? row.suburb_id : row.suburbId),
+    suburbName: optional(row.suburb_name != null ? row.suburb_name : row.suburbName),
+    suburbSlug: optional(row.suburb_slug != null ? row.suburb_slug : row.suburbSlug)
+  };
+}
+
+function locationIdentity(location) {
+  return location ? location.type + ':' + location.id : '';
+}
+
+function normalizeLocationSearchResults(rows) {
+  var identities = new Set();
+  return (Array.isArray(rows) ? rows : []).map(normalizeLocationSearchResult).filter(function (location) {
+    if (!location) return false;
+    var identity = locationIdentity(location);
+    if (identities.has(identity)) return false;
+    identities.add(identity);
+    return true;
   });
-  publicState.cities.forEach(function (city) {
-    var province = publicState.provinces.find(function (item) {
-      return item.id === city.province_id;
-    });
-    if (province) add(city.name + ' · ' + province.name, province.slug, city.slug, 'all', '');
-  });
-  publicState.properties.forEach(function (property) {
-    var province = publicState.provinces.find(function (item) {
-      return item.id === property.province_id;
-    });
-    var city = publicState.cities.find(function (item) {
-      return item.id === property.city_id && item.province_id === property.province_id;
-    });
-    [property.area, property.full_address].forEach(function (label, index) {
-      if (!label) return;
-      var area = index === 0 && property.area_slug ? property.area_slug : 'all';
-      add(
-        label + (city ? ' · ' + city.name : ''),
-        province ? province.slug : 'all',
-        city ? city.slug : 'all',
-        area,
-        area === 'all' ? label : ''
-      );
-    });
-  });
-  return options;
+}
+
+function discoveryLocationContext(location) {
+  if (location.type === 'province') return 'Province';
+  if (location.type === 'city') {
+    return location.provinceName && location.provinceName.toLowerCase() === location.name.toLowerCase()
+      ? 'City · ' + location.provinceName + ' Province'
+      : location.provinceName || 'City';
+  }
+  return [location.cityName, location.provinceName].filter(Boolean).join(', ') || 'Suburb';
+}
+
+function syncDiscoveryLocationMenu() {
+  var hiddenInput = byId('discoveryLocation');
+  var textInput = byId('discoveryLocationTrigger');
+  if (!hiddenInput || !textInput) return;
+  var selected = discoverySearchState.selectedLocation;
+  hiddenInput.value = locationIdentity(selected);
+  if (selected) {
+    hiddenInput.dataset.locationType = selected.type;
+    hiddenInput.dataset.locationId = selected.id;
+    textInput.value = selected.name;
+  } else {
+    delete hiddenInput.dataset.locationType;
+    delete hiddenInput.dataset.locationId;
+    textInput.value = discoverySearchState.locationQuery;
+  }
+}
+
+function clearDiscoverySelectedLocation() {
+  discoverySearchState.selectedLocation = null;
+  discoverySearchState.province = 'all';
+  discoverySearchState.city = 'all';
+  discoverySearchState.area = 'all';
+  discoverySearchState.location = '';
+  var input = byId('discoveryLocationTrigger');
+  if (input) input.removeAttribute('aria-invalid');
+  syncDiscoveryLocationMenu();
+}
+
+function setDiscoverySelectedLocation(location) {
+  var normalized = normalizeLocationSearchResult(location);
+  if (!normalized) return false;
+  discoverySearchState.selectedLocation = normalized;
+  discoverySearchState.locationQuery = normalized.name;
+  discoverySearchState.province = normalized.provinceSlug || 'all';
+  discoverySearchState.city = normalized.type === 'province' ? 'all' : normalized.citySlug || 'all';
+  discoverySearchState.area = normalized.type === 'suburb' ? normalized.suburbSlug || 'all' : 'all';
+  discoverySearchState.location = normalized.name;
+  var input = byId('discoveryLocationTrigger');
+  if (input) input.removeAttribute('aria-invalid');
+  syncDiscoveryLocationMenu();
+  syncListingMap();
+  return true;
+}
+
+function syncDiscoverySelectMenu(selectId) {
+  var select = byId(selectId);
+  var value = byId(selectId + 'Value');
+  if (!select || !value) return;
+  var selected = select.options[select.selectedIndex];
+  value.textContent = selected ? selected.textContent : '';
 }
 
 function syncDiscoveryControls() {
-  var locations = discoveryLocations();
-  var selected = locations.find(function (option) {
-    return option.province === publicState.province &&
-      option.city === publicState.city &&
-      option.area === publicState.area &&
-      option.text === publicState.locationText;
-  });
-  renderListingOptions(
-    'discoveryLocation',
-    locations.slice(1),
-    'All Zambia',
-    selected ? selected.value : JSON.stringify([
-      publicState.province,
-      publicState.city,
-      publicState.area,
-      publicState.locationText
-    ])
-  );
+  syncDiscoveryLocationMenu();
   var types = Array.from(new Set(publicState.properties.map(function (property) {
     return property.property_type;
   }).filter(Boolean))).sort();
   renderListingOptions('discoveryType', types.map(function (type) {
     return {value: type, label: type};
-  }), 'All property types', publicState.type);
+  }), 'All property types', discoverySearchState.type);
 
   var price = byId('discoveryPrice');
   var limits = [];
   ['ZMW', 'USD'].forEach(function (currency) {
     var amounts = Array.from(new Set(publicState.properties.filter(function (property) {
-      return property.purpose === publicState.purpose &&
+      return property.purpose === discoverySearchState.purpose &&
         window.HilltopCurrency.normalizeCurrencyCode(property.currency_code) === currency &&
         property.price != null &&
         Number.isFinite(Number(property.price));
@@ -2934,32 +4271,143 @@ function syncDiscoveryControls() {
       });
     });
   });
-  var current = publicState.maxPrice === '' ? '' : publicState.currency + ':' + publicState.maxPrice;
+  var current = discoverySearchState.maxPrice === ''
+    ? ''
+    : discoverySearchState.currency + ':' + discoverySearchState.maxPrice;
   if (current && !limits.some(function (limit) { return limit.value === current; })) {
     limits.push({
       value: current,
-      label: publicState.currency + ' ' + Number(publicState.maxPrice).toLocaleString()
+      label: discoverySearchState.currency + ' ' + Number(discoverySearchState.maxPrice).toLocaleString()
     });
   }
   price.innerHTML = '<option value="">No maximum</option>' + limits.map(function (limit) {
     return '<option value="' + escapeHtml(limit.value) + '">' + escapeHtml(limit.label) + '</option>';
   }).join('');
   price.value = current;
+  syncDiscoverySelectMenu('discoveryType');
+  syncDiscoverySelectMenu('discoveryPrice');
   document.querySelectorAll('[data-discovery-purpose]').forEach(function (button) {
-    button.setAttribute('aria-pressed', String(button.dataset.discoveryPurpose === publicState.purpose));
+    button.setAttribute('aria-pressed', String(button.dataset.discoveryPurpose === discoverySearchState.purpose));
   });
   syncListingMap();
 }
 
-function applyDiscoveryFilters(updateUrl) {
-  if (updateUrl !== false) writeListingUrl();
+function canonicalListingImages(propertyId) {
+  return publicState.images.filter(function (image) {
+    return String(image.property_id) === String(propertyId) && typeof image.image_url === 'string' && image.image_url.trim();
+  }).sort(function (first, second) {
+    return Number(Boolean(second.is_cover)) - Number(Boolean(first.is_cover)) ||
+      Number(first.display_order || 0) - Number(second.display_order || 0);
+  }).map(function (image) {
+    return image.image_url.trim();
+  }).filter(function (url, index, urls) {
+    return urls.indexOf(url) === index;
+  });
+}
+
+function canonicalListingCard(property, index) {
+  var images = canonicalListingImages(property.id);
+  var rawTitle = propertyTitleForDisplay(property.title || property.reference_number || 'Hilltop property');
+  var title = escapeHtml(rawTitle);
+  var url = '/property-details?id=' + encodeURIComponent(property.id);
+  var main = images.length
+    ? '<img src="' + escapeHtml(images[0]) + '" alt="' + title + ' — photo 1" decoding="async" ' +
+      (index > 1 ? 'loading="lazy"' : 'fetchpriority="high"') + '>'
+    : '<div class="gallery-placeholder"><svg aria-hidden="true"><use href="#icon-home"/></svg><span>Photo unavailable</span></div>';
+  var controls = images.length > 1
+    ? '<button type="button" class="gallery-arrow gallery-previous" data-direction="-1" aria-label="Previous image of ' + title + '"><svg class="ui-arrow ui-arrow--left" aria-hidden="true"><use href="#icon-chevron"/></svg></button>' +
+      '<button type="button" class="gallery-arrow gallery-next" data-direction="1" aria-label="Next image of ' + title + '"><svg class="ui-arrow ui-arrow--right" aria-hidden="true"><use href="#icon-chevron"/></svg></button>' +
+      '<span class="gallery-counter">1 / ' + images.length + '</span>'
+    : '';
+  var specifications = [];
+  function positive(value) { return Number.isFinite(Number(value)) && Number(value) > 0; }
+  if (String(property.property_type || '').toLowerCase() !== 'land') {
+    if (positive(property.bedrooms)) specifications.push('<span>' + Number(property.bedrooms) + ' beds</span>');
+    if (positive(property.bathrooms)) specifications.push('<span>' + Number(property.bathrooms) + ' baths</span>');
+  }
+  if (positive(property.square_metres)) {
+    specifications.push('<span><svg aria-hidden="true"><use href="#icon-area"/></svg>' + Number(property.square_metres).toLocaleString('en-ZM') + ' m²</span>');
+  }
+  return '<article class="property-card" aria-labelledby="property-title-' + index + '">' +
+    '<div class="property-gallery" data-images="' + escapeHtml(JSON.stringify(images)) + '" data-index="0" data-title="' + title + '">' +
+    '<a href="' + url + '" class="gallery-main">' + main + '</a>' +
+    '<span class="purpose-badge">' + escapeHtml(property.purpose) + '</span>' +
+    '<button type="button" class="save-property" data-property-id="' + escapeHtml(property.id) + '" aria-label="Save ' + title + '" aria-pressed="false"><svg aria-hidden="true"><use href="#icon-favourite-star"/></svg></button>' +
+    '<span class="property-card-verified">HILLTOP.Verified</span>' + controls + '</div>' +
+    '<div class="property-info"><p class="property-price">' + formatPrice(property.price, property.purpose, property.currency_code, property.billing_period) + '</p>' +
+    '<h2 class="property-title" id="property-title-' + index + '"><a href="' + url + '">' + title + '</a></h2>' +
+    '<p class="property-location">' + [property.area, property.property_type].filter(Boolean).map(escapeHtml).join(' · ') + '</p>' +
+    (specifications.length ? '<div class="property-specs">' + specifications.join('') + '</div>' : '') + '</div></article>';
+}
+
+function bindCanonicalListingGalleries() {
+  var grid = byId('listingsGrid');
+  if (!grid || grid.dataset.galleryBound === 'true') return;
+  grid.dataset.galleryBound = 'true';
+  var gesture = null;
+  var suppressClickUntil = 0;
+
+  function stepGallery(gallery, direction) {
+    var images = JSON.parse(gallery.dataset.images || '[]');
+    if (images.length < 2) return;
+    var index = (Number(gallery.dataset.index) + direction + images.length) % images.length;
+    gallery.dataset.index = String(index);
+    var image = gallery.querySelector('img');
+    if (!image) {
+      image = document.createElement('img');
+      gallery.querySelector('.gallery-main').replaceChildren(image);
+    }
+    image.src = images[index];
+    image.alt = gallery.dataset.title + ' — photo ' + (index + 1);
+    gallery.querySelector('.gallery-counter').textContent = (index + 1) + ' / ' + images.length;
+  }
+
+  grid.addEventListener('error', function (event) {
+    if (event.target.tagName !== 'IMG') return;
+    var main = event.target.closest('.gallery-main');
+    if (main) main.innerHTML = '<div class="gallery-placeholder"><svg aria-hidden="true"><use href="#icon-home"/></svg><span>Photo unavailable</span></div>';
+  }, true);
+  grid.addEventListener('click', function (event) {
+    var arrow = event.target.closest('.gallery-arrow');
+    if (arrow) {
+      event.preventDefault();
+      event.stopPropagation();
+      stepGallery(arrow.closest('.property-gallery'), Number(arrow.dataset.direction));
+      return;
+    }
+    if (Date.now() < suppressClickUntil && event.target.closest('.property-gallery') && !event.target.closest('button')) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }, true);
+  grid.addEventListener('touchstart', function (event) {
+    var gallery = event.target.closest('.property-gallery');
+    gesture = gallery && !event.target.closest('button') && event.touches.length === 1
+      ? {gallery: gallery, x: event.touches[0].clientX, y: event.touches[0].clientY}
+      : null;
+  }, {passive: true});
+  grid.addEventListener('touchend', function (event) {
+    if (!gesture) return;
+    var dx = event.changedTouches[0].clientX - gesture.x;
+    var dy = event.changedTouches[0].clientY - gesture.y;
+    if (Math.abs(dx) >= 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      stepGallery(gesture.gallery, dx < 0 ? 1 : -1);
+      suppressClickUntil = Date.now() + 700;
+    }
+    gesture = null;
+  }, {passive: true});
+  grid.addEventListener('touchcancel', function () { gesture = null; }, {passive: true});
+}
+
+function renderHomepageInventory() {
   syncDiscoveryControls();
-  var rows = filteredListings();
-  byId('discoveryStatus').textContent = listingFilterError() || (publicState.listingsLoaded
+  // Homepage inventory is deliberately independent from discoverySearchState.
+  var rows = publicState.properties.slice();
+  byId('discoveryStatus').textContent = publicState.listingsLoaded
     ? rows.length
-      ? rows.length + ' matching propert' + (rows.length === 1 ? 'y' : 'ies')
-      : 'No properties match. Try another location, type or price.'
-    : 'Properties could not be loaded. Please refresh to try again.');
+      ? rows.length + ' available propert' + (rows.length === 1 ? 'y' : 'ies')
+      : 'No properties are currently available.'
+    : 'Properties could not be loaded. Please refresh to try again.';
   var count = byId('discoveryCount');
   if (count) {
     count.textContent = publicState.listingsLoaded
@@ -2982,66 +4430,409 @@ function applyDiscoveryFilters(updateUrl) {
   });
 }
 
-function readDiscoveryUrl() {
-  readListingUrl();
-  if (publicState.purpose === 'all') publicState.purpose = 'For Sale';
-  publicState.category = 'all';
-  publicState.search = '';
-  publicState.branch = 'all';
-  publicState.minPrice = '';
-  publicState.minBedrooms = '';
-  publicState.publicStatus = 'all';
-  if (publicState.maxPrice === '') publicState.currency = 'all';
-}
-
 function bindDiscoveryControls() {
   if (!byId('discoveryForm')) return;
-  readDiscoveryUrl();
-  loadListingMap().then(function () {
-    if (publicState.listingsLoaded) applyDiscoveryFilters(false);
-  });
+  loadListingMap();
+  bindDiscoveryLocationMenu();
+  bindDiscoverySelectMenu('discoveryType');
+  bindDiscoverySelectMenu('discoveryPrice');
   document.querySelectorAll('[data-discovery-purpose]').forEach(function (button) {
     button.addEventListener('click', function () {
-      publicState.purpose = button.dataset.discoveryPurpose;
-      applyDiscoveryFilters();
+      discoverySearchState.purpose = button.dataset.discoveryPurpose;
+      syncDiscoveryControls();
     });
-  });
-  byId('discoveryLocation').addEventListener('change', function (event) {
-    var option = discoveryLocations().find(function (item) {
-      return item.value === event.target.value;
-    });
-    if (!option) return;
-    publicState.province = option.province;
-    publicState.city = option.city;
-    publicState.area = option.area;
-    publicState.locationText = option.text;
-    applyDiscoveryFilters();
   });
   byId('discoveryType').addEventListener('change', function (event) {
-    publicState.type = event.target.value;
-    applyDiscoveryFilters();
+    discoverySearchState.type = event.target.value;
   });
   byId('discoveryPrice').addEventListener('change', function (event) {
     var parts = event.target.value.split(':');
-    publicState.currency = parts[0] || 'all';
-    publicState.maxPrice = parts[1] || '';
-    applyDiscoveryFilters();
+    discoverySearchState.currency = parts[0] || 'all';
+    discoverySearchState.maxPrice = parts[1] || '';
   });
   byId('discoveryForm').addEventListener('submit', function (event) {
     event.preventDefault();
-    applyDiscoveryFilters();
-    var results = byId('homePropertySections');
-    results.setAttribute('tabindex', '-1');
-    results.focus({preventScroll: true});
-    results.scrollIntoView({
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-      block: 'start'
+    var locationInput = byId('discoveryLocationTrigger');
+    if (discoverySearchState.locationQuery.trim() && !discoverySearchState.selectedLocation) {
+      locationInput.setAttribute('aria-invalid', 'true');
+      byId('discoveryLocationStatus').textContent = 'Select a location from the suggestions.';
+      byId('discoveryStatus').textContent = 'Select a location from the suggestions.';
+      locationInput.focus();
+      return;
+    }
+    var locationPath = canonicalLocationPath(discoverySearchState.selectedLocation);
+    navigateToDedicatedListings(
+      discoverySearchState.purpose,
+      discoverySearchParams(locationPath),
+      locationPath
+    );
+  });
+}
+
+function bindDiscoverySelectMenu(selectId) {
+  var select = byId(selectId);
+  var trigger = byId(selectId + 'Trigger');
+  var menu = byId(selectId + 'Menu');
+  if (!select || !trigger || !menu || trigger.dataset.bound === 'true') return;
+  var field = trigger.closest('.discovery-popup-field');
+  trigger.dataset.bound = 'true';
+  var closeTimer = null;
+  var openFrame = null;
+
+  function renderOptions() {
+    menu.innerHTML = Array.from(select.options).map(function (option, index) {
+      return '<button class="discovery-popup-option" id="' + selectId + '-option-' + index + '" type="button" role="option" aria-selected="' + (option.value === select.value) + '" data-discovery-select-index="' + index + '">' +
+        '<span class="discovery-popup-option__label">' + escapeHtml(option.textContent) + '</span>' +
+        '<svg class="discovery-popup-option__chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+    }).join('');
+  }
+
+  function positionMenu() {
+    menu.classList.remove('opens-upward');
+    var triggerRect = trigger.getBoundingClientRect();
+    var menuRect = menu.getBoundingClientRect();
+    var roomBelow = window.innerHeight - triggerRect.bottom - 8;
+    var roomAbove = triggerRect.top - 8;
+    if (menuRect.height > roomBelow && roomAbove > roomBelow) menu.classList.add('opens-upward');
+  }
+
+  function finishClose() {
+    menu.hidden = true;
+    menu.classList.remove('is-open', 'is-closing', 'opens-upward');
+    if (field) field.classList.remove('is-menu-open');
+    closeTimer = null;
+  }
+
+  function closeMenu(returnFocus) {
+    if (trigger.getAttribute('aria-expanded') !== 'true' && menu.hidden) return;
+    window.clearTimeout(closeTimer);
+    if (openFrame) window.cancelAnimationFrame(openFrame);
+    trigger.setAttribute('aria-expanded', 'false');
+    if (field) field.classList.remove('is-menu-open');
+    menu.classList.remove('is-open');
+    menu.classList.add('is-closing');
+    if (returnFocus) trigger.focus();
+    if (prefersReducedMotion()) finishClose();
+    else closeTimer = window.setTimeout(finishClose, 150);
+  }
+
+  function openMenu(focusPosition) {
+    document.dispatchEvent(new CustomEvent('discovery-menu-opening', {detail: menu.id}));
+    window.clearTimeout(closeTimer);
+    if (openFrame) window.cancelAnimationFrame(openFrame);
+    renderOptions();
+    menu.hidden = false;
+    menu.classList.remove('is-open', 'is-closing');
+    if (field) field.classList.add('is-menu-open');
+    positionMenu();
+    trigger.setAttribute('aria-expanded', 'true');
+    openFrame = window.requestAnimationFrame(function () {
+      menu.classList.add('is-open');
+      openFrame = null;
     });
+    if (focusPosition) {
+      var buttons = menu.querySelectorAll('[role="option"]');
+      if (!buttons.length) return;
+      var selected = menu.querySelector('[aria-selected="true"]');
+      if (focusPosition === 'last') buttons[buttons.length - 1].focus();
+      else (selected || buttons[0]).focus();
+    }
+  }
+
+  function choose(index) {
+    var option = select.options[index];
+    if (!option) return;
+    select.value = option.value;
+    syncDiscoverySelectMenu(selectId);
+    select.dispatchEvent(new Event('change', {bubbles: true}));
+    closeMenu(true);
+  }
+
+  trigger.addEventListener('click', function () {
+    if (trigger.getAttribute('aria-expanded') === 'true') closeMenu();
+    else openMenu();
   });
-  window.addEventListener('popstate', function () {
-    readDiscoveryUrl();
-    applyDiscoveryFilters(false);
+  trigger.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeMenu();
+      return;
+    }
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    event.preventDefault();
+    openMenu(event.key === 'ArrowUp' ? 'last' : 'selected');
   });
+  menu.addEventListener('click', function (event) {
+    var option = event.target.closest('[data-discovery-select-index]');
+    if (option) choose(Number(option.dataset.discoverySelectIndex));
+  });
+  menu.addEventListener('keydown', function (event) {
+    var current = event.target.closest('[data-discovery-select-index]');
+    if (!current) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeMenu(true);
+      return;
+    }
+    if (event.key === 'Tab') {
+      closeMenu();
+      return;
+    }
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      choose(Number(current.dataset.discoverySelectIndex));
+      return;
+    }
+    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].indexOf(event.key) === -1) return;
+    event.preventDefault();
+    var buttons = Array.from(menu.querySelectorAll('[role="option"]'));
+    var currentIndex = buttons.indexOf(current);
+    var nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 :
+      event.key === 'ArrowDown' ? (currentIndex + 1) % buttons.length :
+        (currentIndex <= 0 ? buttons.length - 1 : currentIndex - 1);
+    buttons[nextIndex].focus();
+  });
+  document.addEventListener('pointerdown', function (event) {
+    if (!event.target.closest('.discovery-popup-field')) closeMenu();
+  });
+  document.addEventListener('discovery-menu-opening', function (event) {
+    if (event.detail !== menu.id) closeMenu();
+  });
+  window.addEventListener('resize', function () {
+    if (trigger.getAttribute('aria-expanded') === 'true') positionMenu();
+  }, {passive: true});
+  syncDiscoverySelectMenu(selectId);
+}
+
+function bindDiscoveryLocationMenu() {
+  var hiddenInput = byId('discoveryLocation');
+  var input = byId('discoveryLocationTrigger');
+  var menu = byId('discoveryLocationMenu');
+  var status = byId('discoveryLocationStatus');
+  if (!hiddenInput || !input || !menu || input.dataset.bound === 'true') return;
+  var field = input.closest('.discovery-location-field');
+  var control = input.closest('.discovery-location-trigger');
+  input.dataset.bound = 'true';
+  var closeTimer = null;
+  var openFrame = null;
+  var debounceTimer = null;
+  var requestSequence = 0;
+  var results = [];
+  var resultsTerm = '';
+  var activeIndex = -1;
+  var loading = false;
+  var resultMessage = '';
+
+  function setStatus(message) {
+    if (status) status.textContent = message;
+  }
+
+  function renderOptions() {
+    var items = results.map(function (location, index) {
+      return '<button class="discovery-location-option" id="discovery-location-option-' + index + '" type="button" role="option" tabindex="-1" aria-selected="' + (index === activeIndex) + '" data-discovery-location-index="' + index + '" data-location-type="' + escapeHtml(location.type) + '">' +
+        '<span class="discovery-location-option__text"><span class="discovery-location-option__label">' + escapeHtml(location.name) + '</span>' +
+        '<span class="discovery-location-option__context">' + escapeHtml(discoveryLocationContext(location)) + '</span></span>' +
+        '<svg class="discovery-location-option__chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+    });
+    if (loading) {
+      items.push('<div class="discovery-location-message" role="presentation">Searching locations…</div>');
+    } else if (resultMessage) {
+      items.push('<div class="discovery-location-message" role="presentation">' + escapeHtml(resultMessage) + '</div>');
+    }
+    menu.innerHTML = items.join('');
+    if (activeIndex >= 0 && results[activeIndex]) {
+      input.setAttribute('aria-activedescendant', 'discovery-location-option-' + activeIndex);
+    } else {
+      input.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function positionMenu() {
+    menu.classList.remove('opens-upward');
+    var triggerRect = control.getBoundingClientRect();
+    var menuRect = menu.getBoundingClientRect();
+    var roomBelow = window.innerHeight - triggerRect.bottom - 8;
+    var roomAbove = triggerRect.top - 8;
+    if (menuRect.height > roomBelow && roomAbove > roomBelow) menu.classList.add('opens-upward');
+  }
+
+  function finishClose() {
+    menu.hidden = true;
+    menu.classList.remove('is-open', 'is-closing', 'opens-upward');
+    if (field) field.classList.remove('is-menu-open');
+    closeTimer = null;
+  }
+
+  function closeMenu(returnFocus) {
+    if (input.getAttribute('aria-expanded') !== 'true' && menu.hidden) return;
+    window.clearTimeout(closeTimer);
+    if (openFrame) window.cancelAnimationFrame(openFrame);
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+    if (field) field.classList.remove('is-menu-open');
+    menu.classList.remove('is-open');
+    menu.classList.add('is-closing');
+    if (returnFocus) input.focus();
+    if (prefersReducedMotion()) finishClose();
+    else closeTimer = window.setTimeout(finishClose, 150);
+  }
+
+  function openMenu() {
+    if (!loading && !results.length && !resultMessage) return;
+    document.dispatchEvent(new CustomEvent('discovery-menu-opening', {detail: menu.id}));
+    window.clearTimeout(closeTimer);
+    if (openFrame) window.cancelAnimationFrame(openFrame);
+    renderOptions();
+    menu.hidden = false;
+    menu.classList.remove('is-open', 'is-closing');
+    if (field) field.classList.add('is-menu-open');
+    positionMenu();
+    input.setAttribute('aria-expanded', 'true');
+    openFrame = window.requestAnimationFrame(function () {
+      menu.classList.add('is-open');
+      openFrame = null;
+    });
+  }
+
+  function choose(index) {
+    var location = results[index];
+    if (!location) return;
+    window.clearTimeout(debounceTimer);
+    requestSequence += 1;
+    setDiscoverySelectedLocation(location);
+    setStatus(location.name + ' selected.');
+    closeMenu(true);
+  }
+
+  function invalidatePendingSearch() {
+    window.clearTimeout(debounceTimer);
+    debounceTimer = null;
+    requestSequence += 1;
+  }
+
+  async function requestLocations(term, sequence) {
+    if (sequence !== requestSequence) return;
+    var supabase = getSupabaseClient();
+    if (!supabase || typeof supabase.rpc !== 'function') {
+      resultMessage = 'Location suggestions are unavailable.';
+      setStatus(resultMessage);
+      openMenu();
+      console.warn('[Hilltop] Location suggestions are unavailable because Supabase is not configured.');
+      return;
+    }
+    loading = true;
+    resultMessage = '';
+    renderOptions();
+    openMenu();
+    try {
+      var response = await supabase.rpc('search_locations', {
+        search_term: term,
+        result_limit: 8
+      });
+      if (sequence !== requestSequence || input.value.trim() !== term) return;
+      if (response.error) throw response.error;
+      results = normalizeLocationSearchResults(response.data);
+      resultsTerm = term;
+      activeIndex = -1;
+      loading = false;
+      resultMessage = results.length ? '' : 'No locations found.';
+      setStatus(results.length + ' location suggestion' + (results.length === 1 ? '' : 's') + ' available.');
+      renderOptions();
+      openMenu();
+    } catch (error) {
+      if (sequence !== requestSequence) return;
+      results = [];
+      resultsTerm = term;
+      activeIndex = -1;
+      loading = false;
+      resultMessage = 'Location suggestions are unavailable.';
+      setStatus(resultMessage);
+      renderOptions();
+      openMenu();
+      console.warn('[Hilltop] Location suggestion request failed.', error);
+    }
+  }
+
+  function scheduleSearch() {
+    var term = input.value.trim();
+    invalidatePendingSearch();
+    results = [];
+    resultsTerm = '';
+    activeIndex = -1;
+    loading = false;
+    resultMessage = '';
+    if (term.length < 2) {
+      closeMenu();
+      setStatus(term.length ? 'Type at least 2 characters for location suggestions.' : '');
+      return;
+    }
+    var sequence = requestSequence;
+    debounceTimer = window.setTimeout(function () {
+      debounceTimer = null;
+      requestLocations(term, sequence);
+    }, 250);
+  }
+
+  function moveActive(direction) {
+    if (!results.length) return;
+    if (menu.hidden || input.getAttribute('aria-expanded') !== 'true') openMenu();
+    if (activeIndex < 0) activeIndex = direction > 0 ? 0 : results.length - 1;
+    else activeIndex = (activeIndex + direction + results.length) % results.length;
+    renderOptions();
+  }
+
+  input.addEventListener('focus', function () {
+    if (discoverySearchState.selectedLocation) return;
+    if (results.length && resultsTerm === input.value.trim()) openMenu();
+    else if (input.value.trim().length >= 2) scheduleSearch();
+  });
+  input.addEventListener('input', function () {
+    discoverySearchState.locationQuery = input.value;
+    input.removeAttribute('aria-invalid');
+    if (discoverySearchState.selectedLocation && input.value !== discoverySearchState.selectedLocation.name) {
+      clearDiscoverySelectedLocation();
+      discoverySearchState.locationQuery = input.value;
+    }
+    scheduleSearch();
+  });
+  input.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      invalidatePendingSearch();
+      closeMenu();
+      return;
+    }
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (!results.length) return;
+      event.preventDefault();
+      moveActive(event.key === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+    if (event.key === 'Enter' && activeIndex >= 0 && input.getAttribute('aria-expanded') === 'true') {
+      event.preventDefault();
+      choose(activeIndex);
+    }
+  });
+  menu.addEventListener('click', function (event) {
+    var option = event.target.closest('[data-discovery-location-index]');
+    if (option) choose(Number(option.dataset.discoveryLocationIndex));
+  });
+  document.addEventListener('pointerdown', function (event) {
+    if (!event.target.closest('.discovery-location-field')) {
+      invalidatePendingSearch();
+      closeMenu();
+    }
+  });
+  document.addEventListener('discovery-menu-opening', function (event) {
+    if (event.detail !== menu.id) {
+      invalidatePendingSearch();
+      closeMenu();
+    }
+  });
+  window.addEventListener('resize', function () {
+    if (input.getAttribute('aria-expanded') === 'true') positionMenu();
+  }, {passive: true});
+  syncDiscoveryLocationMenu();
 }
 
 function renderWebsite() {
@@ -3049,7 +4840,7 @@ function renderWebsite() {
   renderHero();
   configureWhyHeroVideo();
   renderFilters();
-  if (byId('discoveryForm')) applyDiscoveryFilters(false);
+  if (byId('discoveryForm')) renderHomepageInventory();
   else if (byId('homePropertySections')) renderPropertySections(byId('homePropertySections'), publicState.properties);
   renderMoreProperties();
   renderProperties();

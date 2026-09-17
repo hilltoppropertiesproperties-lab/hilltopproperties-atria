@@ -1,0 +1,86 @@
+{
+  "checks_passed": 43,
+  "checks": [
+    "reference page HTTP 200",
+    "Sale route HTTP 200",
+    "Sale canonical URL retained",
+    "Sale heading",
+    "Sale tab active",
+    "Sale inventory only",
+    "Sale result count",
+    "approved layout present",
+    "canonical detail URLs",
+    "no replica links",
+    "Quick Filters stay in Sale",
+    "Back restores unfiltered Sale",
+    "Forward restores Quick Filter",
+    "Property Type selector",
+    "Sort order",
+    "Location filter",
+    "Currency and maximum price",
+    "More Filters",
+    "Sort uses URL state",
+    "Sale to Rent canonical switch",
+    "switch preserves compatible filters",
+    "Rent heading and tab",
+    "Rent inventory only",
+    "Rent route HTTP/render",
+    "Rent to Sale canonical switch",
+    "legacy routes",
+    "responsive 1440 no overflow",
+    "responsive 1440 controls",
+    "responsive 1440 filters usable",
+    "responsive 1024 no overflow",
+    "responsive 1024 controls",
+    "responsive 1024 filters usable",
+    "responsive 768 no overflow",
+    "responsive 768 controls",
+    "responsive 768 filters usable",
+    "responsive 430 no overflow",
+    "responsive 430 controls",
+    "responsive 430 filters usable",
+    "responsive 390 no overflow",
+    "responsive 390 controls",
+    "responsive 390 filters usable",
+    "desktop sidebar sticky",
+    "no JavaScript errors"
+  ],
+  "responsive": [
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "cards": "552px 552px",
+      "sortVisible": true,
+      "quickVisible": true
+    },
+    {
+      "width": 1024,
+      "scrollWidth": 1024,
+      "cards": "351px 351px",
+      "sortVisible": true,
+      "quickVisible": true
+    },
+    {
+      "width": 768,
+      "scrollWidth": 768,
+      "cards": "357px 357px",
+      "sortVisible": true,
+      "quickVisible": true
+    },
+    {
+      "width": 430,
+      "scrollWidth": 430,
+      "cards": "398px",
+      "sortVisible": true,
+      "quickVisible": true
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "cards": "358px",
+      "sortVisible": true,
+      "quickVisible": true
+    }
+  ],
+  "page_errors": []
+}

@@ -10,6 +10,40 @@
       "construction/**/*.md",
       "construction/supabase-env.example.js"
     ],
+    "rewrites": [
+      {
+        "source": "/property-for-sale",
+        "destination": "/listings.html"
+      },
+      {
+        "source": "/property-for-sale/**",
+        "destination": "/listings.html"
+      },
+      {
+        "source": "/property-for-rent",
+        "destination": "/listings.html"
+      },
+      {
+        "source": "/property-for-rent/**",
+        "destination": "/listings.html"
+      },
+      {
+        "source": "/properties-for-sale",
+        "destination": "/listings.html"
+      },
+      {
+        "source": "/properties-for-sale/**",
+        "destination": "/listings.html"
+      },
+      {
+        "source": "/properties-for-rent",
+        "destination": "/listings.html"
+      },
+      {
+        "source": "/properties-for-rent/**",
+        "destination": "/listings.html"
+      }
+    ],
     "cleanUrls": true,
     "trailingSlash": false
   }

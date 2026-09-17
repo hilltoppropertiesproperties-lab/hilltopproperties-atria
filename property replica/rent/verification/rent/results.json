@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "viewports": [
+    1440,
+    1024,
+    901,
+    900,
+    768,
+    390,
+    360
+  ],
+  "checks": [
+    "rental-only default and conflicting URLs",
+    "mixed dataset defense",
+    "billing periods",
+    "rental locations",
+    "empty state and reset",
+    "type and price filters",
+    "sorting and save",
+    "Sales navigation",
+    "Rent self navigation",
+    "detail URL"
+  ],
+  "runtimeErrors": [],
+  "backendRequests": []
+}
