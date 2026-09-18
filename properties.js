@@ -310,8 +310,8 @@ var marketStatusTimer = null;
 var marketStatusRequestToken = 0;
 var marketStatusContext = null;
 var marketStatusCache = new Map();
-var PROPERTY_ADMIN_FIELDS = 'id, reference_number, title, description, price, currency_code, purpose, property_type, branch_id, area, full_address, latitude, longitude, location_label, map_address, bedrooms, bathrooms, garages, square_metres, status, featured, exclusive_property, amenities, virtual_tour_link, youtube_link, assigned_agent_id, created_at, updated_at';
-var LEGACY_PROPERTY_ADMIN_FIELDS = 'id, reference_number, title, description, price, currency_code, purpose, property_type, branch_id, area, full_address, bedrooms, bathrooms, garages, square_metres, status, featured, exclusive_property, amenities, virtual_tour_link, youtube_link, assigned_agent_id, created_at, updated_at';
+var PROPERTY_ADMIN_FIELDS = 'id, reference_number, title, description, price, currency_code, purpose, property_type, branch_id, area, full_address, latitude, longitude, location_label, map_address, province_id, city_id, suburb_id, bedrooms, bathrooms, garages, square_metres, status, featured, exclusive_property, amenities, virtual_tour_link, youtube_link, assigned_agent_id, created_at, updated_at';
+var LEGACY_PROPERTY_ADMIN_FIELDS = 'id, reference_number, title, description, price, currency_code, purpose, property_type, branch_id, area, full_address, province_id, city_id, suburb_id, bedrooms, bathrooms, garages, square_metres, status, featured, exclusive_property, amenities, virtual_tour_link, youtube_link, assigned_agent_id, created_at, updated_at';
 
 var PROPERTY_CATEGORY_CONFIG = {
   all: {
@@ -921,6 +921,9 @@ function mapSupabaseProperty(record, branchLookup, staffLookup, imagesByProperty
     agent: agent ? agent.full_name : 'Unassigned',
     agentId: record.assigned_agent_id || null,
     area: record.area || '',
+    provinceId: record.province_id || null,
+    cityId: record.city_id || null,
+    suburbId: record.suburb_id || null,
     address: record.full_address || '',
     latitude: record.latitude == null ? null : Number(record.latitude),
     longitude: record.longitude == null ? null : Number(record.longitude),
@@ -1164,6 +1167,7 @@ function getPropertyPayloadFromForm() {
   var status = document.getElementById('fStatus').value;
   var assignedAgentId = document.getElementById('fAgent') ? document.getElementById('fAgent').value : '';
   var propertyLocation = getPropertyLocationValuesFromForm();
+  var geography = window.HilltopAdminLocation.getSaveValues();
 
   if (!title) throw new Error('Property title is required.');
   if (!referenceNumber) throw new Error('Reference number is required.');
@@ -1187,7 +1191,6 @@ function getPropertyPayloadFromForm() {
     throw new Error('Please select a supported property type.');
   }
   if (!branchId) throw new Error('Branch is required.');
-  if (!document.getElementById('fArea').value.trim()) throw new Error('Area is required.');
   if (!status) throw new Error('Status is required.');
 
   return {
@@ -1199,7 +1202,10 @@ function getPropertyPayloadFromForm() {
     purpose: purpose,
     property_type: propertyType,
     branch_id: branchId,
-    area: document.getElementById('fArea').value.trim(),
+    area: geography.area,
+    province_id: geography.province_id,
+    city_id: geography.city_id,
+    suburb_id: geography.suburb_id,
     full_address: document.getElementById('fAddress').value.trim() || null,
     latitude: propertyLocation.latitude,
     longitude: propertyLocation.longitude,
@@ -2133,7 +2139,7 @@ window.addEventListener('hilltop:market-insights-updated', function() {
    11. MODAL — OPEN / CLOSE
 ══════════════════════════════════════════════════════════════ */
 
-function openModal(mode, id) {
+async function openModal(mode, id) {
   mode = mode || 'add';
 
   var existingProperty = id
@@ -2187,6 +2193,8 @@ function openModal(mode, id) {
     document.getElementById('fYoutube').value  = p.youtube;
     document.getElementById('fStatus').value   = p.status;
 
+    await window.HilltopAdminLocation.hydrate(p);
+
     highlightWorkflowStep(p.status);
 
   } else {
@@ -2202,6 +2210,7 @@ function openModal(mode, id) {
       document.getElementById('fBranch').value = window.hilltopCurrentUser.branch_id;
     }
     populatePropertyAgentSelect();
+    window.HilltopAdminLocation.clear();
     highlightWorkflowStep('Draft');
   }
 
@@ -2312,7 +2321,7 @@ propForm.addEventListener('submit', async function(e) {
   if (isPropertySavePending) return;
 
   // Basic validation
-  var required = ['fTitle', 'fRef', 'fCurrency', 'fPrice', 'fPurpose', 'fType', 'fBranch', 'fArea', 'fStatus'];
+  var required = ['fTitle', 'fRef', 'fCurrency', 'fPrice', 'fPurpose', 'fType', 'fBranch', 'fStatus'];
   var valid = true;
   required.forEach(function(fieldId) {
     var el = document.getElementById(fieldId);
@@ -2324,9 +2333,21 @@ propForm.addEventListener('submit', async function(e) {
     }
   });
 
-  if (!valid) {
+  var geographyValidation = window.HilltopAdminLocation
+    ? window.HilltopAdminLocation.validateForSave()
+    : { valid: false, message: 'Location suggestions are unavailable.' };
+
+  if (!valid || !geographyValidation.valid) {
     switchTab('details');
-    showToast('Please fill in all required fields', 'error');
+
+    if (!geographyValidation.valid) {
+      var locationInput = document.getElementById('fPropertyLocation');
+      if (locationInput) locationInput.focus();
+      showToast(geographyValidation.message, 'error');
+    } else {
+      showToast('Please fill in all required fields', 'error');
+    }
+
     return;
   }
 

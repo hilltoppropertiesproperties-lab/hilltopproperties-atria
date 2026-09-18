@@ -484,7 +484,8 @@
             </div>
           </div>
 
-          <div class="form-section-label">Location</div>
+          <div class="form-section-label">Property Geography</div>
+
           <div class="form-row">
             <div class="form-group half">
               <label for="fBranch">Branch <span class="req">*</span></label>
@@ -494,23 +495,80 @@
                 <option value="Livingstone">Livingstone</option>
               </select>
             </div>
+
             <div class="form-group half">
-              <label for="fArea">Neighbourhood / Area <span class="req">*</span></label>
-              <input type="text" id="fArea" placeholder="e.g. Kabulonga" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group full">
-              <label for="fAddress">Full Address</label>
-              <input type="text" id="fAddress" placeholder="e.g. Plot 42, Addis Ababa Drive, Lusaka" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group full">
               <label for="fAgent">Assigned Agent</label>
               <select id="fAgent">
                 <option value="">Unassigned</option>
               </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full property-location-field">
+
+              <label for="fPropertyLocation">
+                Property Location <span class="req">*</span>
+              </label>
+
+              <div class="property-location-control">
+                <input
+                  type="text"
+                  id="fPropertyLocation"
+                  placeholder="Search province, city or suburb..."
+                  autocomplete="off"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-expanded="false"
+                  aria-controls="fPropertyLocationResults"
+                  aria-describedby="fPropertyLocationSummary propertyLocationValidationMessage"
+                />
+
+                <button
+                  type="button"
+                  class="property-location-clear"
+                  id="fPropertyLocationClear"
+                  aria-label="Clear property location"
+                  hidden
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div
+                class="property-location-results"
+                id="fPropertyLocationResults"
+                role="listbox"
+                hidden
+              ></div>
+
+              <p class="form-help" id="fPropertyLocationSummary">
+                Search and select a city or suburb from the normalized location list.
+              </p>
+
+              <p class="form-help property-location-not-listed">
+                Location not listed? A controlled location-management flow will be added later.
+              </p>
+
+              <p
+                class="property-location-validation-message"
+                id="propertyLocationValidationMessage"
+                role="alert"
+                hidden
+              ></p>
+
+              <input type="hidden" id="fArea" value="" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="fAddress">Full Address</label>
+              <input
+                type="text"
+                id="fAddress"
+                placeholder="e.g. Plot 42, Addis Ababa Drive, Lusaka"
+              />
             </div>
           </div>
 
@@ -856,6 +914,7 @@
   <script src="currency.js"></script>
   <script src="market-insights.js"></script>
   <script src="market-insights-admin.js"></script>
+  <script src="property-location-admin.js"></script>
   <script src="properties.js"></script>
 </body>
 </html>

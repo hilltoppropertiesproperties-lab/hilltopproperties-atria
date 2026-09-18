@@ -1222,3 +1222,123 @@
   .property-market-status__prices { flex-direction: column; align-items: stretch; }
   .property-market-price { justify-content: space-between; }
 }
+
+/* ============================================================
+   PHASE 4: ADMIN PROPERTY LOCATION SEARCH
+   ============================================================ */
+
+.property-location-field {
+  position: relative;
+}
+
+.property-location-control {
+  position: relative;
+}
+
+.property-location-control input {
+  padding-right: 40px;
+}
+
+.property-location-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-light);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.property-location-clear:hover,
+.property-location-clear:focus-visible {
+  background: var(--surface);
+  color: var(--text-dark);
+}
+
+.property-location-clear[hidden] {
+  display: none;
+}
+
+.property-location-results {
+  position: absolute;
+  z-index: 40;
+  top: 68px;
+  left: 0;
+  right: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--white);
+  box-shadow: 0 14px 32px rgba(13, 27, 42, 0.14);
+}
+
+.property-location-results[hidden] {
+  display: none;
+}
+
+.property-location-option {
+  width: 100%;
+  padding: 11px 13px;
+  border: 0;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: var(--white);
+  color: var(--text-dark);
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.property-location-option:last-child {
+  border-bottom: 0;
+}
+
+.property-location-option:hover,
+.property-location-option[aria-selected="true"] {
+  background: var(--surface);
+}
+
+.property-location-option__label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.property-location-option__context {
+  color: var(--text-light);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.property-location-message {
+  padding: 12px 13px;
+  color: var(--text-light);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.property-location-not-listed {
+  margin-top: 3px;
+}
+
+.property-location-validation-message {
+  margin: 6px 0 0;
+  color: #C0392B;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.property-location-validation-message[hidden] {
+  display: none;
+}
