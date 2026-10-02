@@ -257,7 +257,7 @@ if (publicState.purpose === 'all') publicState.purpose = normalizeListingPurpose
 var fallbackContact = {
   phone: '+260 979 972019',
   office: '+260 213 322 035',
-  email: 'PROBRYMALYANGO@GMAIL.COM',
+  email: 'probbymalyango@gmail.com',
   address: 'Kabulonga, Lusaka, Zambia'
 };
 
@@ -902,10 +902,18 @@ function renderHero() {
     heroMedia.className = 'hero-overlay';
     heroMedia.style.backgroundImage = '';
   }
+  var websitePreferences =
+    publicState.appSettings.website_preferences || {};
+
+  var configuredHeroFallback =
+    safeCssUrl(
+      websitePreferences.heroFallbackImageUrl || ''
+    );
+
   configureHeroVideo(
     settingUrl('homepage_hero_video_url'),
     settingUrl('homepage_hero_poster_url'),
-    imageUrl
+    imageUrl || configuredHeroFallback
   );
 }
 
