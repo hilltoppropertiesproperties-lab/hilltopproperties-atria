@@ -67,9 +67,9 @@ var settingsData = {
     properties: ['New property added', 'Property approved', 'Property marked sold/rented', 'Property expiring soon'],
     channels: ['Email', 'WhatsApp placeholder', 'Admin dashboard alert'],
     recipients: {
-      notifyLusaka: 'PROBRYMALYANGO@GMAIL.COM',
-      notifyLivingstone: 'PROBRYMALYANGO@GMAIL.COM',
-      notifyHeadOffice: 'PROBRYMALYANGO@GMAIL.COM'
+      notifyLusaka: 'probbymalyango@gmail.com',
+      notifyLivingstone: 'probbymalyango@gmail.com',
+      notifyHeadOffice: 'probbymalyango@gmail.com'
     }
   },
   seo: {

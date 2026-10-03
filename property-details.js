@@ -20,7 +20,7 @@ var propertyLocationInteractionCleanup = null;
 
 var fallbackContact = {
   phone: '+260 979 972019',
-  email: 'PROBRYMALYANGO@GMAIL.COM',
+  email: 'probbymalyango@gmail.com',
   address: 'Kabulonga, Lusaka, Zambia'
 };
 
@@ -894,6 +894,13 @@ function renderSimilar() {
 
 function renderDetails() {
   var property = detailsState.property;
+
+  if (window.HilltopWhatsAppCTA) {
+    window.HilltopWhatsAppCTA.setProperty({
+      title: property.title,
+      url: window.location.href
+    });
+  }
 
   updateSeo(property);
   renderGallery();

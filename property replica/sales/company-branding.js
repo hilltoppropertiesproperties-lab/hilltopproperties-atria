@@ -2,8 +2,8 @@
 (function (window, document) {
   'use strict';
 
-  var DEFAULT_COMPANY_NAME = '';
-  var DEFAULT_TRADING_NAME = '';
+  var DEFAULT_COMPANY_NAME = 'Luxurious Real Estate Zambia';
+  var DEFAULT_TRADING_NAME = 'Luxurious Real Estate';
 
   function clean(value) {
     return String(value || '').trim();

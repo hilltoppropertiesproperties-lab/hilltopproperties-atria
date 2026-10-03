@@ -8,8 +8,8 @@
    <script src="login.js"></script>
    ============================================================ */
 
-const SUPABASE_URL = "";
-const SUPABASE_PUBLISHABLE_KEY = "";
+const SUPABASE_URL = "https://xtilvxfojambyzxcroya.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_-uQR6sCP5MzFsDGmWkiNoQ_GBiXrE32";
 
 function setupHilltopSupabaseClient() {
   if (!window.supabase) {
@@ -173,4 +173,3 @@ function getMockPropertyImages() {
     { property_id: '10000000-0000-0000-0000-000000000008', image_url: 'https://example.com/broken-land-image.jpg', display_order: 1, is_cover: true }
   ];
 }
-

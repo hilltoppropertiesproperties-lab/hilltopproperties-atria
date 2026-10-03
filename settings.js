@@ -11,7 +11,7 @@ var settingsData = {
     registrationNumber: 'TPIN / PACRA placeholder',
     mainPhone: '+260 213 322 035',
     mainWhatsapp: '+260 979 972019',
-    mainEmail: 'PROBRYMALYANGO@GMAIL.COM',
+    mainEmail: 'probbymalyango@gmail.com',
     websiteUrl: 'https://hilltopproperties.co.zm',
     businessAddress: 'Kabulonga, Lusaka, Zambia',
     aboutCompany: 'Hilltop Properties Zambia helps clients buy, rent, sell, and manage quality real estate across Lusaka and Livingstone.',
@@ -25,7 +25,7 @@ var settingsData = {
       address: 'Kabulonga, Lusaka, Zambia',
       phone: '+260 979 972019',
       whatsapp: '+260 979 972019',
-      email: 'PROBRYMALYANGO@GMAIL.COM',
+      email: 'probbymalyango@gmail.com',
       manager: 'John Phiri',
       hours: 'Mon-Fri, 08:00-17:00',
       mapLink: 'https://www.google.com/maps/search/?api=1&query=Kabulonga%2C%20Lusaka%2C%20Zambia',
@@ -38,7 +38,7 @@ var settingsData = {
       address: 'Mosi-oa-Tunya Road, Livingstone, Zambia',
       phone: '+260 979 328 997',
       whatsapp: '+260 979 328 997',
-      email: 'PROBRYMALYANGO@GMAIL.COM',
+      email: 'probbymalyango@gmail.com',
       manager: 'David Mwale',
       hours: 'Mon-Fri, 08:00-17:00',
       mapLink: 'https://www.google.com/maps/search/?api=1&query=Mosi-oa-Tunya%20Road%2C%20Livingstone%2C%20Zambia',
@@ -65,9 +65,9 @@ var settingsData = {
     properties: ['New property added', 'Property approved', 'Property marked sold/rented', 'Property expiring soon'],
     channels: ['Email', 'WhatsApp placeholder', 'Admin dashboard alert'],
     recipients: {
-      notifyLusaka: 'PROBRYMALYANGO@GMAIL.COM',
-      notifyLivingstone: 'PROBRYMALYANGO@GMAIL.COM',
-      notifyHeadOffice: 'PROBRYMALYANGO@GMAIL.COM'
+      notifyLusaka: 'probbymalyango@gmail.com',
+      notifyLivingstone: 'probbymalyango@gmail.com',
+      notifyHeadOffice: 'probbymalyango@gmail.com'
     }
   },
   seo: {

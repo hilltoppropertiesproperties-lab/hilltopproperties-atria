@@ -113,15 +113,16 @@
     "no JavaScript regressions"
   ],
   "live": {
-    "rent_count": 5,
+    "rent_count": 6,
     "quick_filters": [
+      "Nehru Way",
       "MACHA AVE",
       "New Kasama",
       "Kingsland City",
       "LIVINGSTONE",
       "Olympia"
     ],
-    "averages": "Overall\tZMW K8,480 / month\nHouses\tZMW K4,850 / month\nLand\tNot available\nCommercial Property\tNot available\nFlats & Apartments\tZMW K23,000 / month"
+    "averages": "Overall\tZMW K13,566.67 / month\nHouses\tZMW K4,850 / month\nLand\tNot available\nCommercial Property\tNot available\nFlats & Apartments\tZMW K31,000 / month"
   },
   "layout_comparison": {
     "before": {

@@ -17,7 +17,7 @@ var homepageContent = {
   ctaText:        'Browse Properties',
   ctaLink:        'https://hilltopzambia.com/properties',
   aboutText:      'Hilltop Properties Zambia has been a trusted name in the Zambian real estate market for over a decade, offering personalised service across both residential and commercial sectors.',
-  servicesText:   '+260 979 972019\nPROBRYMALYANGO@GMAIL.COM\nKabulonga, Lusaka, Zambia',
+  servicesText:   '+260 979 972019\nprobbymalyango@gmail.com\nKabulonga, Lusaka, Zambia',
   heroVideoUrl:   '',
   heroPosterUrl:  '',
   heroVideoUpdatedAt: ''

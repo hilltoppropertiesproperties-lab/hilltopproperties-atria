@@ -1,0 +1,200 @@
+{
+  "checks": [
+    "desktop starts fully visible",
+    "desktop starts fully inside viewport",
+    "desktop touch target is 56px",
+    "CTA uses the supplied PNG",
+    "CTA has an accessible label",
+    "generic WhatsApp number is correct",
+    "generic message is correct",
+    "intro settles into idle once",
+    "idle opacity is 0.35",
+    "idle position is tucked toward right edge",
+    "hover restores full visibility",
+    "mouse click leaves the target anchor focused",
+    "mouse click returns to idle after pointer leaves",
+    "keyboard navigation gives the CTA focus-visible",
+    "keyboard focus restores full visibility",
+    "keyboard focus has visible outline",
+    "keyboard-focused CTA remains active beyond idle timeout",
+    "property message uses structured title",
+    "property message includes page URL",
+    "CTA remains fixed during scroll",
+    "same-session navigation does not replay intro",
+    "mobile-320 CTA remains inside viewport",
+    "mobile-320 CTA remains fixed",
+    "mobile-320 touch target is 54px",
+    "mobile-320 uses 16px base right inset",
+    "mobile-320 uses 100px base bottom inset",
+    "mobile-320 touch activation becomes fully opaque",
+    "mobile-320 touch activation returns to idle",
+    "mobile-320 idle state retains a horizontal tuck",
+    "mobile-360 CTA remains inside viewport",
+    "mobile-360 CTA remains fixed",
+    "mobile-360 touch target is 54px",
+    "mobile-360 uses 16px base right inset",
+    "mobile-360 uses 100px base bottom inset",
+    "mobile-360 touch activation becomes fully opaque",
+    "mobile-360 touch activation returns to idle",
+    "mobile-360 idle state retains a horizontal tuck",
+    "mobile-375 CTA remains inside viewport",
+    "mobile-375 CTA remains fixed",
+    "mobile-375 touch target is 54px",
+    "mobile-375 uses 16px base right inset",
+    "mobile-375 uses 100px base bottom inset",
+    "mobile-375 touch activation becomes fully opaque",
+    "mobile-375 touch activation returns to idle",
+    "mobile-375 idle state retains a horizontal tuck",
+    "mobile-390 CTA remains inside viewport",
+    "mobile-390 CTA remains fixed",
+    "mobile-390 touch target is 54px",
+    "mobile-390 uses 16px base right inset",
+    "mobile-390 uses 100px base bottom inset",
+    "mobile-390 touch activation becomes fully opaque",
+    "mobile-390 touch activation returns to idle",
+    "mobile-390 idle state retains a horizontal tuck",
+    "mobile-412 CTA remains inside viewport",
+    "mobile-412 CTA remains fixed",
+    "mobile-412 touch target is 54px",
+    "mobile-412 uses 16px base right inset",
+    "mobile-412 uses 100px base bottom inset",
+    "mobile-412 touch activation becomes fully opaque",
+    "mobile-412 touch activation returns to idle",
+    "mobile-412 idle state retains a horizontal tuck",
+    "mobile-430 CTA remains inside viewport",
+    "mobile-430 CTA remains fixed",
+    "mobile-430 touch target is 54px",
+    "mobile-430 uses 16px base right inset",
+    "mobile-430 uses 100px base bottom inset",
+    "mobile-430 touch activation becomes fully opaque",
+    "mobile-430 touch activation returns to idle",
+    "mobile-430 idle state retains a horizontal tuck",
+    "tablet-768 CTA remains inside viewport",
+    "tablet-768 CTA remains fixed",
+    "tablet-768 uses desktop right inset",
+    "tablet-768 uses desktop bottom inset",
+    "reduced motion skips intro state",
+    "reduced motion disables keyframes",
+    "reduced motion disables sliding",
+    "admin interface has no CTA",
+    "construction public page has CTA",
+    "desktop property page CTA remains in viewport",
+    "mobile property CTA keeps its 118px collision clearance",
+    "mobile property CTA clears the fixed enquiry bar"
+  ],
+  "viewports": {
+    "mobile-320": {
+      "width": 320,
+      "height": 568,
+      "button": {
+        "x": 250,
+        "y": 414,
+        "width": 54,
+        "height": 54
+      },
+      "position": {
+        "position": "fixed",
+        "right": "16px",
+        "bottom": "100px"
+      }
+    },
+    "mobile-360": {
+      "width": 360,
+      "height": 800,
+      "button": {
+        "x": 290,
+        "y": 646,
+        "width": 54,
+        "height": 54
+      },
+      "position": {
+        "position": "fixed",
+        "right": "16px",
+        "bottom": "100px"
+      }
+    },
+    "mobile-375": {
+      "width": 375,
+      "height": 812,
+      "button": {
+        "x": 305,
+        "y": 658,
+        "width": 54,
+        "height": 54
+      },
+      "position": {
+        "position": "fixed",
+        "right": "16px",
+        "bottom": "100px"
+      }
+    },
+    "mobile-390": {
+      "width": 390,
+      "height": 844,
+      "button": {
+        "x": 320,
+        "y": 690,
+        "width": 54,
+        "height": 54
+      },
+      "position": {
+        "position": "fixed",
+        "right": "16px",
+        "bottom": "100px"
+      }
+    },
+    "mobile-412": {
+      "width": 412,
+      "height": 915,
+      "button": {
+        "x": 342,
+        "y": 761,
+        "width": 54,
+        "height": 54
+      },
+      "position": {
+        "position": "fixed",
+        "right": "16px",
+        "bottom": "100px"
+      }
+    },
+    "mobile-430": {
+      "width": 430,
+      "height": 932,
+      "button": {
+        "x": 360,
+        "y": 778,
+        "width": 54,
+        "height": 54
+      },
+      "position": {
+        "position": "fixed",
+        "right": "16px",
+        "bottom": "100px"
+      }
+    },
+    "tablet-768": {
+      "width": 768,
+      "height": 1024,
+      "button": {
+        "x": 688,
+        "y": 872,
+        "width": 56,
+        "height": 56
+      },
+      "position": {
+        "position": "fixed",
+        "right": "24px",
+        "bottom": "96px"
+      }
+    }
+  },
+  "mobilePropertyCollision": {
+    "bottom": "118px",
+    "buttonTop": 672,
+    "buttonBottom": 726,
+    "barTop": 0,
+    "barBottom": 0,
+    "clearsEnquiryBar": true
+  }
+}

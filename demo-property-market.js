@@ -1,12 +1,8 @@
-
 (function () {
   'use strict';
 
-  var market = {
-    country: '',
-    headquarters: ''
-  };
-
+  var branches = [];
+  var markets = [];
   var applying = false;
 
 
@@ -22,56 +18,225 @@
   }
 
 
-  async function loadMarket() {
+  function cleanBranchName(value) {
+    return clean(value)
+      .replace(/\s+Branch$/i, '')
+      .trim();
+  }
+
+
+  function branchSelect() {
+    return document.getElementById(
+      'fBranch'
+    );
+  }
+
+
+  function countrySelect() {
+    return document.getElementById(
+      'fDemoCountry'
+    );
+  }
+
+
+  function getBranch(branchId) {
+    return branches.find(
+      function (branch) {
+        return (
+          String(branch.id) ===
+          String(branchId)
+        );
+      }
+    ) || null;
+  }
+
+
+  function getMarket(country) {
+    return markets.find(
+      function (market) {
+        return (
+          market.country
+            .toLowerCase() ===
+          clean(country)
+            .toLowerCase()
+        );
+      }
+    ) || null;
+  }
+
+
+  function marketFromBranch(
+    branchId
+  ) {
+    return markets.find(
+      function (market) {
+        return (
+          String(
+            market.headquartersBranchId
+          ) ===
+          String(branchId)
+        );
+      }
+    ) || null;
+  }
+
+
+  async function loadData() {
     var supabase =
       getSupabase();
 
     if (!supabase) {
-      return;
-    }
-
-    try {
-      var response = await supabase
-        .from('app_settings')
-        .select('setting_value')
-        .eq(
-          'setting_key',
-          'demo_market'
-        )
-        .maybeSingle();
-
-      if (response.error) {
-        throw response.error;
-      }
-
-      var value =
-        response.data &&
-        response.data.setting_value
-          ? response.data.setting_value
-          : {};
-
-      market.country =
-        clean(value.country);
-
-      market.headquarters =
-        clean(value.headquarters);
-
-    } catch (error) {
-      console.warn(
-        '[Demo market]',
-        error
+      throw new Error(
+        'Supabase client unavailable.'
       );
     }
+
+
+    var results =
+      await Promise.all([
+
+        supabase
+          .from('branches')
+          .select('id, name')
+          .order(
+            'name',
+            { ascending: true }
+          ),
+
+        supabase
+          .from('app_settings')
+          .select('setting_value')
+          .eq(
+            'setting_key',
+            'demo_market'
+          )
+          .maybeSingle()
+
+      ]);
+
+
+    if (results[0].error) {
+      throw results[0].error;
+    }
+
+    if (results[1].error) {
+      throw results[1].error;
+    }
+
+
+    branches =
+      results[0].data || [];
+
+
+    var value =
+      results[1].data &&
+      results[1].data.setting_value
+        ? results[1].data.setting_value
+        : {};
+
+
+    markets =
+      (
+        Array.isArray(value.markets)
+          ? value.markets
+          : []
+      )
+      .map(
+        function (market) {
+          return {
+            country:
+              clean(
+                market.country
+              ),
+
+            headquartersBranchId:
+              clean(
+                market.headquartersBranchId ||
+                market.headquarters_branch_id
+              )
+          };
+        }
+      )
+      .filter(
+        function (market) {
+          return (
+            market.country &&
+            market.headquartersBranchId
+          );
+        }
+      );
   }
 
 
-  function updateBranchLabel() {
-    var select =
+  function ensureCountryField() {
+    if (
       document.getElementById(
-        'fBranch'
+        'demoCountryPropertyRow'
+      )
+    ) {
+      return;
+    }
+
+
+    var branch =
+      branchSelect();
+
+    if (!branch) return;
+
+
+    var branchRow =
+      branch.closest(
+        '.form-row'
       );
 
-    if (!select) return;
+    if (!branchRow) return;
+
+
+    var row =
+      document.createElement(
+        'div'
+      );
+
+    row.className =
+      'form-row';
+
+    row.id =
+      'demoCountryPropertyRow';
+
+
+    row.innerHTML =
+      `
+      <div class="form-group full">
+
+        <label for="fDemoCountry">
+          Country <span class="req">*</span>
+        </label>
+
+        <select
+          id="fDemoCountry"
+          required>
+
+          <option value="">
+            Select country...
+          </option>
+
+        </select>
+
+        <p class="form-help">
+          Selecting a country automatically chooses
+          that country's headquarters.
+        </p>
+
+      </div>
+      `;
+
+
+    branchRow.parentNode
+      .insertBefore(
+        row,
+        branchRow
+      );
+
 
     var label =
       document.querySelector(
@@ -79,120 +244,182 @@
       );
 
     if (label) {
-      var required =
-        label.querySelector('.req');
 
-      label.childNodes.forEach(
-        function (node) {
-          if (
-            node.nodeType === 3 &&
-            clean(node.nodeValue)
-          ) {
-            node.nodeValue =
-              'Headquarters ';
-
-            return;
-          }
-        }
-      );
-
-      if (
-        !required &&
-        label.textContent
-      ) {
-        label.textContent =
-          'Headquarters';
-      }
+      label.innerHTML =
+        'Headquarters ' +
+        '<span class="req">*</span>';
     }
   }
 
 
-  function applyMarketToBranch() {
-    if (applying) return;
-
+  function populateCountries() {
     var select =
-      document.getElementById(
-        'fBranch'
-      );
+      countrySelect();
 
     if (!select) return;
 
-    if (
-      !market.country ||
-      !market.headquarters
-    ) {
-      return;
-    }
 
-    var options =
-      Array.prototype.slice.call(
-        select.options || []
-      );
+    select.innerHTML =
+      '<option value="">' +
+      'Select country...' +
+      '</option>';
 
-    if (!options.length) {
-      return;
-    }
 
-    var emptyOption =
-      options.find(
-        function (option) {
-          return !option.value;
+    markets
+      .slice()
+      .sort(
+        function (a, b) {
+          return a.country.localeCompare(
+            b.country
+          );
+        }
+      )
+      .forEach(
+        function (market) {
+
+          var option =
+            document.createElement(
+              'option'
+            );
+
+          option.value =
+            market.country;
+
+          option.textContent =
+            market.country;
+
+          select.appendChild(
+            option
+          );
         }
       );
+  }
 
-    var realOptions =
-      options.filter(
-        function (option) {
-          return Boolean(option.value);
-        }
-      );
 
-    if (!realOptions.length) {
-      if (emptyOption) {
-        emptyOption.textContent =
-          'No headquarters branch available';
-      }
+  function showWaitingBranch() {
+    var select =
+      branchSelect();
 
-      return;
-    }
+    if (!select) return;
+
 
     applying = true;
 
     try {
-      updateBranchLabel();
 
-      if (emptyOption) {
-        emptyOption.textContent =
-          'Select ' +
-          market.headquarters +
-          ' headquarters...';
+      select.innerHTML =
+        '<option value="">' +
+        'Select country first...' +
+        '</option>';
+
+      select.value = '';
+
+      select.disabled = true;
+
+    } finally {
+
+      applying = false;
+    }
+  }
+
+
+  function applyCountry(
+    country,
+    silent
+  ) {
+    var select =
+      branchSelect();
+
+    if (!select) return;
+
+
+    var market =
+      getMarket(country);
+
+
+    if (!market) {
+
+      showWaitingBranch();
+
+      return;
+    }
+
+
+    var branch =
+      getBranch(
+        market.headquartersBranchId
+      );
+
+
+    if (!branch) {
+
+      applying = true;
+
+      try {
+
+        select.innerHTML =
+          '<option value="">' +
+          'Headquarters unavailable' +
+          '</option>';
+
+        select.value = '';
+
+        select.disabled = true;
+
+      } finally {
+
+        applying = false;
       }
 
-      var headquartersOption =
-        realOptions[0];
-
-      headquartersOption.textContent =
-        market.headquarters +
-        ' (Headquarters)';
-
-      headquartersOption.hidden =
-        false;
-
-      headquartersOption.disabled =
-        false;
+      return;
+    }
 
 
-      realOptions.slice(1)
-        .forEach(
-          function (option) {
-            option.hidden = true;
-          }
+    applying = true;
+
+    try {
+
+      select.innerHTML = '';
+
+      var option =
+        document.createElement(
+          'option'
         );
 
+      option.value =
+        branch.id;
 
-      if (!select.value) {
-        select.value =
-          headquartersOption.value;
+      option.textContent =
+        cleanBranchName(
+          branch.name
+        ) +
+        ' (Headquarters)';
+
+      select.appendChild(
+        option
+      );
+
+      select.value =
+        branch.id;
+
+
+      var profile =
+        window.hilltopCurrentUser ||
+        {};
+
+
+      var manager =
+        profile.role ===
+          'branch_manager' ||
+        profile.role ===
+          'Branch Manager';
+
+
+      select.disabled =
+        manager;
+
+
+      if (!silent) {
 
         select.dispatchEvent(
           new Event(
@@ -202,67 +429,197 @@
         );
       }
 
-
-      select.setAttribute(
-        'data-demo-country',
-        market.country
-      );
-
-      select.setAttribute(
-        'data-demo-headquarters',
-        market.headquarters
-      );
-
     } finally {
+
       applying = false;
     }
   }
 
 
-  function observeBranchOptions() {
-    var select =
-      document.getElementById(
-        'fBranch'
+  function inferCountry() {
+    var branch =
+      branchSelect();
+
+    var country =
+      countrySelect();
+
+    if (!branch || !country) {
+      return;
+    }
+
+
+    var branchId =
+      branch.value ||
+      (
+        window.hilltopCurrentUser &&
+        window.hilltopCurrentUser.branch_id
+      ) ||
+      '';
+
+
+    if (!branchId) {
+
+      country.value = '';
+
+      showWaitingBranch();
+
+      return;
+    }
+
+
+    var market =
+      marketFromBranch(
+        branchId
       );
 
-    if (!select) return;
 
-    var observer =
-      new MutationObserver(
-        function () {
-          window.setTimeout(
-            applyMarketToBranch,
-            0
-          );
-        }
-      );
+    if (!market) {
 
-    observer.observe(
-      select,
-      {
-        childList: true,
-        subtree: true
-      }
+      /*
+       * Existing property with an unmapped
+       * branch must NOT be silently changed.
+       */
+      country.value = '';
+
+      return;
+    }
+
+
+    country.value =
+      market.country;
+
+
+    applyCountry(
+      market.country,
+      true
     );
   }
 
 
+  function bind() {
+    var country =
+      countrySelect();
+
+    var branch =
+      branchSelect();
+
+    if (!country || !branch) {
+      return;
+    }
+
+
+    country.addEventListener(
+      'change',
+      function () {
+
+        applyCountry(
+          country.value,
+          false
+        );
+      }
+    );
+
+
+    /*
+     * properties.js may rebuild fBranch after
+     * loading Supabase data. Re-apply the
+     * selected country's headquarters afterward.
+     */
+    var observer =
+      new MutationObserver(
+        function () {
+
+          if (applying) return;
+
+          if (country.value) {
+
+            window.setTimeout(
+              function () {
+
+                applyCountry(
+                  country.value,
+                  true
+                );
+
+              },
+              0
+            );
+          }
+        }
+      );
+
+
+    observer.observe(
+      branch,
+      {
+        childList: true
+      }
+    );
+
+
+    /*
+     * Detect Add/Edit Property opening.
+     */
+    var modal =
+      document.getElementById(
+        'propModal'
+      );
+
+
+    if (modal) {
+
+      var modalObserver =
+        new MutationObserver(
+          function () {
+
+            if (
+              modal.classList.contains(
+                'open'
+              )
+            ) {
+
+              window.setTimeout(
+                inferCountry,
+                80
+              );
+            }
+          }
+        );
+
+
+      modalObserver.observe(
+        modal,
+        {
+          attributes: true,
+          attributeFilter: [
+            'class'
+          ]
+        }
+      );
+    }
+  }
+
+
   async function init() {
-    await loadMarket();
+    ensureCountryField();
 
-    applyMarketToBranch();
+    try {
 
-    observeBranchOptions();
+      await loadData();
 
-    window.setTimeout(
-      applyMarketToBranch,
-      300
-    );
+      populateCountries();
 
-    window.setTimeout(
-      applyMarketToBranch,
-      1000
-    );
+      bind();
+
+      showWaitingBranch();
+
+    } catch (error) {
+
+      console.error(
+        '[Country / Headquarters]',
+        error
+      );
+    }
   }
 
 
@@ -270,11 +627,14 @@
     document.readyState ===
     'loading'
   ) {
+
     document.addEventListener(
       'DOMContentLoaded',
       init
     );
+
   } else {
+
     init();
   }
 

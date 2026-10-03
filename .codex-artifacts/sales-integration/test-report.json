@@ -106,8 +106,8 @@
     "no JavaScript regressions"
   ],
   "live": {
-    "sale_count": 10,
-    "averages": "Overall\tZMW K7,490,000 / USD $1,200,000\nHouses\tZMW K8,326,000\nLand\tZMW K9,040,000\nCommercial Property\tZMW K1,200,000 / USD $1,200,000\nFlats & Apartments\tZMW K6,500,000"
+    "sale_count": 14,
+    "averages": "Overall\tZMW K7,742,500 / USD $800,000\nHouses\tZMW K8,605,000\nLand\tZMW K8,693,333.33\nCommercial Property\tZMW K4,350,000 / USD $800,000\nFlats & Apartments\tZMW K6,500,000"
   },
   "layout_comparison": {
     "before": {

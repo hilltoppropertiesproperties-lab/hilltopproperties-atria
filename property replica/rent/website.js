@@ -857,7 +857,9 @@ function propertyCard(property) {
     imageMarkup,
     '<div class="property-card-badges">',
     '<span class="badge purpose-badge">' + escapeHtml(property.purpose) + '</span>',
-    '<span class="badge status-badge ' + statusClass + '">' + escapeHtml(property.status) + '</span>',
+    String(property.status || '').toLowerCase() === 'active'
+      ? ''
+      : '<span class="badge status-badge ' + statusClass + '">' + escapeHtml(property.status) + '</span>',
     '</div>',
     '<div class="property-card-overlay-label">',
     '<span class="property-card-ref">' + escapeHtml(property.reference_number) + '</span>',
